@@ -26,7 +26,7 @@ export default function DebtCard({
 
   return (
     <Card
-      className="border-l-[6px] border-l-destructive hover-elevate active-elevate-2 cursor-pointer rounded-2xl shadow-md"
+      className="border-l-[6px] border-l-destructive hover-elevate active-elevate-2 cursor-pointer rounded-2xl shadow-md bg-gradient-to-br from-primary/15 to-primary/5"
       onClick={onClick}
       data-testid={`card-debt-${id}`}
     >

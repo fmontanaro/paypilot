@@ -27,7 +27,7 @@ export default function PaymentMethodCard({
 
   return (
     <Card
-      className={`border-l-[6px] ${isHighUsage ? 'border-l-destructive' : 'border-l-accent'} hover-elevate active-elevate-2 cursor-pointer rounded-2xl shadow-md`}
+      className={`border-l-[6px] ${isHighUsage ? 'border-l-destructive bg-gradient-to-br from-destructive/15 to-destructive/5' : 'border-l-accent bg-gradient-to-br from-accent/15 to-accent/5'} hover-elevate active-elevate-2 cursor-pointer rounded-2xl shadow-md`}
       onClick={onClick}
       data-testid={`card-payment-${id}`}
     >
