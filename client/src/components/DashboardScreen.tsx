@@ -17,116 +17,88 @@ export default function DashboardScreen() {
   const progressPercentage = (totalPaid / totalOriginalDebt) * 100;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-primary/5 to-background">
-      <header className="sticky top-0 z-50 bg-accent border-b border-accent-foreground/10">
-        <div className="max-w-lg mx-auto px-4 py-4 flex items-center justify-between">
+    <div className="min-h-screen bg-gray-50">
+      <header className="bg-accent px-4 py-4">
+        <div className="max-w-lg mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img src={logoUrl} alt="PayPilot" className="w-10 h-10" data-testid="img-header-logo" />
-            <h1 className="text-xl font-heading font-extrabold text-accent-foreground" data-testid="text-app-title">
-              PayPilot
-            </h1>
+            <img src={logoUrl} alt="PayPilot" className="w-14 h-14" data-testid="img-header-logo" />
+            <div>
+              <h1 className="text-2xl font-heading font-extrabold text-white" data-testid="text-app-title">
+                PayPilot
+              </h1>
+              <p className="text-sm text-white/90 font-medium">Seu copiloto financeiro</p>
+            </div>
           </div>
-          <Button size="icon" variant="ghost" className="rounded-full text-accent-foreground hover:bg-accent-foreground/10" data-testid="button-menu">
-            <span className="sr-only">Menu</span>
-            <div className="w-6 h-0.5 bg-accent-foreground mb-1.5"></div>
-            <div className="w-6 h-0.5 bg-accent-foreground mb-1.5"></div>
-            <div className="w-6 h-0.5 bg-accent-foreground"></div>
+          <Button size="icon" variant="ghost" className="rounded-full text-white hover:bg-white/10" data-testid="button-menu">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 12h18M3 6h18M3 18h18"/>
+            </svg>
           </Button>
         </div>
       </header>
 
-      <main className="max-w-lg mx-auto px-4 py-6 space-y-5">
-        <Card className="bg-primary rounded-2xl hover-elevate active-elevate-2 cursor-pointer border-0" onClick={() => console.log('View debts clicked')} data-testid="card-total-debt">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-semibold text-primary-foreground/80 flex items-center gap-2">
-              <TrendingDown className="w-4 h-4" />
-              Total de Dívidas
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-baseline justify-between mb-3">
-              <span className="text-4xl font-heading font-extrabold text-primary-foreground" data-testid="text-total-debt">
-                {formatCurrency(totalDebt)}
-              </span>
-            </div>
-            <div className="text-sm text-primary-foreground/80 font-medium">
-              3 dívidas ativas • Toque para ver detalhes
-            </div>
-          </CardContent>
+      <main className="max-w-lg mx-auto px-4 py-6 space-y-4">
+        <Card className="bg-primary rounded-3xl border-0 overflow-hidden p-6" data-testid="card-welcome">
+          <div className="flex items-start gap-3 mb-4">
+            <img src={logoUrl} alt="Mascote" className="w-16 h-16" />
+          </div>
+          <h2 className="text-3xl font-heading font-extrabold text-white mb-2">
+            Olá, amigo! 👋
+          </h2>
+          <p className="text-lg text-white/90 font-medium">
+            Vamos organizar suas finanças juntos!
+          </p>
         </Card>
 
-        <Card className="bg-accent rounded-2xl hover-elevate active-elevate-2 cursor-pointer border-0" onClick={() => console.log('View available clicked')} data-testid="card-available">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-semibold text-accent-foreground/80 flex items-center gap-2">
-              <Wallet className="w-4 h-4" />
-              Limite Disponível
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="flex items-baseline justify-between">
-              <span className="text-4xl font-heading font-extrabold text-accent-foreground" data-testid="text-total-available">
-                {formatCurrency(totalAvailable)}
-              </span>
-            </div>
-            <div className="grid grid-cols-2 gap-3 text-sm">
-              <div className="space-y-1">
-                <div className="text-accent-foreground/80 font-medium">Cartões</div>
-                <div className="font-heading font-bold text-base text-accent-foreground">{formatCurrency(availableCredit)}</div>
+        <div className="grid grid-cols-2 gap-3">
+          <Card className="rounded-3xl border-4 border-red-400 bg-white hover-elevate active-elevate-2 cursor-pointer" onClick={() => console.log('View debts clicked')} data-testid="card-total-debt">
+            <CardContent className="p-5 space-y-3">
+              <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
+                <TrendingDown className="w-6 h-6 text-red-500" />
               </div>
-              <div className="space-y-1">
-                <div className="text-accent-foreground/80 font-medium">Em Conta</div>
-                <div className="font-heading font-bold text-base text-accent-foreground">{formatCurrency(cashInAccount)}</div>
+              <div>
+                <p className="text-xs font-bold text-gray-600 uppercase tracking-wide mb-1">Total em Dívidas</p>
+                <p className="text-2xl font-heading font-extrabold text-red-500" data-testid="text-total-debt">
+                  {formatCurrency(totalDebt)}
+                </p>
               </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
 
-        <Card className="bg-primary rounded-2xl border-0">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-semibold text-primary-foreground/80 flex items-center gap-2">
-              <TrendingUp className="w-4 h-4" />
-              Progresso Geral
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="flex items-center justify-center">
-              <span className="text-5xl font-heading font-extrabold text-primary-foreground" data-testid="text-progress-percentage">
-                {progressPercentage.toFixed(0)}%
-              </span>
-            </div>
-            <div className="w-full bg-primary-foreground/20 rounded-full h-3 overflow-hidden">
-              <div
-                className="bg-primary-foreground h-full rounded-full transition-all duration-500"
-                style={{ width: `${progressPercentage}%` }}
-                data-testid="progress-general"
-              />
-            </div>
-            <div className="text-center">
-              <div className="text-xs text-primary-foreground/70 font-medium">
-                {formatCurrency(totalPaid)} de {formatCurrency(totalOriginalDebt)}
+          <Card className="rounded-3xl border-4 border-green-400 bg-white hover-elevate active-elevate-2 cursor-pointer" onClick={() => console.log('View available clicked')} data-testid="card-available">
+            <CardContent className="p-5 space-y-3">
+              <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
+                <TrendingUp className="w-6 h-6 text-green-500" />
               </div>
-            </div>
-          </CardContent>
-        </Card>
+              <div>
+                <p className="text-xs font-bold text-gray-600 uppercase tracking-wide mb-1">Limite Disponível</p>
+                <p className="text-2xl font-heading font-extrabold text-green-500" data-testid="text-total-available">
+                  {formatCurrency(totalAvailable)}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
-        <Card className="bg-accent rounded-2xl border-0">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-semibold text-accent-foreground/80 flex items-center gap-2">
-              <Calendar className="w-4 h-4" />
-              Previsão de Quitação
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-baseline gap-2">
-              <span className="text-4xl font-heading font-extrabold text-accent-foreground" data-testid="text-months-left">
-                {monthsToPayOff}
-              </span>
-              <span className="text-lg font-semibold text-accent-foreground/80">meses</span>
+        <Card className="bg-accent rounded-3xl border-0 p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-xl font-heading font-bold text-white">Progresso Geral</h3>
+            <span className="text-4xl font-heading font-extrabold text-white" data-testid="text-progress-percentage">
+              {progressPercentage.toFixed(0)}%
+            </span>
+          </div>
+          <div className="relative w-full bg-green-700/50 rounded-full h-4 overflow-hidden mb-3">
+            <div
+              className="bg-green-900 h-full rounded-full transition-all duration-500 relative"
+              style={{ width: `${progressPercentage}%` }}
+              data-testid="progress-general"
+            >
+              <div className="absolute right-0 top-1/2 -translate-y-1/2 w-6 h-6 bg-yellow-400 rounded-full border-2 border-white"></div>
             </div>
-            <div className="text-sm text-accent-foreground/80 font-medium mt-2">
-              Pagando conforme planejado
-            </div>
-          </CardContent>
+          </div>
+          <p className="text-base text-white font-medium">
+            Você já pagou {formatCurrency(totalPaid)}! Continue assim! 🎉
+          </p>
         </Card>
 
         <div className="pb-20 pt-2">
