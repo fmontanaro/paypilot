@@ -19,26 +19,28 @@ export default function LoginScreen() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-primary/10 to-background flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-b from-primary/10 to-background flex items-center justify-center p-6">
       <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <img 
-            src={logoUrl} 
-            alt="PayPilot" 
-            className="w-40 h-40 mx-auto mb-4"
-            data-testid="img-logo"
-          />
-          <h1 className="text-3xl font-heading font-extrabold text-foreground mb-2" data-testid="text-welcome">
+        <div className="text-center mb-10">
+          <div className="bg-white dark:bg-card rounded-3xl p-4 w-48 h-48 mx-auto mb-6 flex items-center justify-center shadow-xl">
+            <img 
+              src={logoUrl} 
+              alt="PayPilot" 
+              className="w-full h-full object-contain"
+              data-testid="img-logo"
+            />
+          </div>
+          <h1 className="text-4xl font-heading font-extrabold text-foreground mb-3" data-testid="text-welcome">
             {isSignUp ? "Crie sua conta" : "Bem-vindo de volta!"}
           </h1>
-          <p className="text-muted-foreground font-medium" data-testid="text-subtitle">
+          <p className="text-lg text-muted-foreground font-medium" data-testid="text-subtitle">
             {isSignUp 
               ? "Vamos organizar suas finanças juntos!" 
               : "Vamos colocar suas finanças nos trilhos!"}
           </p>
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-5">
           <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email" className="text-sm font-semibold">Email</Label>
@@ -48,7 +50,7 @@ export default function LoginScreen() {
                 placeholder="seu@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="h-12 rounded-xl border-2 px-4"
+                className="h-14 rounded-2xl border-2 px-5 text-base"
                 data-testid="input-email"
               />
             </div>
@@ -61,7 +63,7 @@ export default function LoginScreen() {
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="h-12 rounded-xl border-2 px-4"
+                className="h-14 rounded-2xl border-2 px-5 text-base"
                 data-testid="input-password"
               />
             </div>
@@ -69,7 +71,7 @@ export default function LoginScreen() {
 
           <Button
             onClick={handleLogin}
-            className="w-full h-12 rounded-xl text-base font-bold"
+            className="w-full h-14 rounded-2xl text-lg font-bold shadow-lg"
             size="lg"
             data-testid="button-login"
           >
@@ -78,28 +80,28 @@ export default function LoginScreen() {
 
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t"></div>
+              <div className="w-full border-t-2"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="bg-background px-4 text-muted-foreground">ou</span>
+              <span className="bg-background px-4 text-muted-foreground font-semibold">ou</span>
             </div>
           </div>
 
           <Button
             onClick={handleGoogleLogin}
             variant="outline"
-            className="w-full h-12 rounded-xl text-base font-semibold border-2"
+            className="w-full h-14 rounded-2xl text-lg font-semibold border-2 shadow-md"
             size="lg"
             data-testid="button-google"
           >
-            <FcGoogle className="w-5 h-5 mr-2" />
+            <FcGoogle className="w-6 h-6 mr-2" />
             Continuar com Google
           </Button>
 
-          <div className="text-center">
+          <div className="text-center pt-2">
             <button
               onClick={() => setIsSignUp(!isSignUp)}
-              className="text-accent font-semibold hover:underline"
+              className="text-accent text-base font-bold hover:underline"
               data-testid="button-toggle-signup"
             >
               {isSignUp 

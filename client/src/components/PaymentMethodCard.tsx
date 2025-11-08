@@ -27,7 +27,7 @@ export default function PaymentMethodCard({
 
   return (
     <Card
-      className={`border-l-4 ${isHighUsage ? 'border-l-destructive' : 'border-l-accent'} hover-elevate active-elevate-2 cursor-pointer`}
+      className={`border-l-[6px] ${isHighUsage ? 'border-l-destructive' : 'border-l-accent'} hover-elevate active-elevate-2 cursor-pointer rounded-2xl shadow-md`}
       onClick={onClick}
       data-testid={`card-payment-${id}`}
     >
@@ -42,25 +42,25 @@ export default function PaymentMethodCard({
       <CardContent className="space-y-3">
         <div className="space-y-1">
           <div className="flex items-baseline justify-between">
-            <span className="text-sm text-muted-foreground">Disponível</span>
+            <span className="text-sm text-muted-foreground font-medium">Disponível</span>
             <span className="text-2xl font-heading font-extrabold text-accent" data-testid={`text-available-${id}`}>
               {formatCurrency(availableCredit)}
             </span>
           </div>
-          <div className="text-xs text-muted-foreground text-right">
+          <div className="text-xs text-muted-foreground text-right font-medium">
             Limite: {formatCurrency(creditLimit)}
           </div>
         </div>
 
         <div className="space-y-2">
-          <div className="w-full bg-muted rounded-full h-3 overflow-hidden">
+          <div className="w-full bg-muted rounded-full h-4 overflow-hidden">
             <div
               className={`h-full rounded-full transition-all duration-300 ${isHighUsage ? 'bg-destructive' : 'bg-primary'}`}
               style={{ width: `${usedPercentage}%` }}
               data-testid={`progress-usage-${id}`}
             />
           </div>
-          <div className="flex items-center justify-between text-xs text-muted-foreground">
+          <div className="flex items-center justify-between text-xs text-muted-foreground font-medium">
             <div className="flex items-center gap-1">
               <Calendar className="w-3 h-3" />
               <span>Fecha dia {closingDay}</span>

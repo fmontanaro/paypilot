@@ -63,7 +63,7 @@ export default function StrategyScreen() {
           </p>
         </div>
 
-        <Card className="border-l-4 border-l-accent bg-gradient-to-br from-accent/10 to-primary/5">
+        <Card className="border-l-[6px] border-l-accent bg-gradient-to-br from-accent/10 to-primary/5 rounded-2xl shadow-lg">
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-semibold text-muted-foreground flex items-center gap-2">
@@ -100,7 +100,7 @@ export default function StrategyScreen() {
         <div className="pb-6 space-y-3">
           <Button
             size="lg"
-            className="w-full h-14 rounded-xl text-lg font-bold"
+            className="w-full h-16 rounded-2xl text-lg font-bold shadow-xl"
             data-testid="button-start-strategy"
             onClick={() => console.log('Start strategy clicked')}
           >
@@ -109,7 +109,7 @@ export default function StrategyScreen() {
           <Button
             size="lg"
             variant="outline"
-            className="w-full h-14 rounded-xl text-lg font-bold border-2"
+            className="w-full h-16 rounded-2xl text-lg font-bold border-2 shadow-md"
             data-testid="button-regenerate"
             onClick={() => console.log('Regenerate clicked')}
           >

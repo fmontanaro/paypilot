@@ -41,7 +41,7 @@ export default function DashboardScreen() {
       </header>
 
       <main className="max-w-lg mx-auto px-4 py-6 space-y-6">
-        <Card className="border-l-4 border-l-primary bg-gradient-to-br from-primary/10 to-accent/5">
+        <Card className="border-l-[6px] border-l-primary bg-gradient-to-br from-primary/10 to-accent/5 rounded-2xl shadow-lg">
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-semibold text-muted-foreground">Total de Dívidas</CardTitle>
           </CardHeader>
@@ -111,7 +111,7 @@ export default function DashboardScreen() {
         <div className="pb-20">
           <Button
             size="lg"
-            className="w-full h-14 rounded-xl text-lg font-bold shadow-lg"
+            className="w-full h-16 rounded-2xl text-lg font-bold shadow-xl"
             data-testid="button-generate-strategy"
             onClick={() => console.log('Generate strategy clicked')}
           >

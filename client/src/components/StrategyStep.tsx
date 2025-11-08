@@ -40,12 +40,12 @@ export default function StrategyStep({
         <div className="flex-1 w-0.5 bg-border mt-2" />
       </div>
 
-      <Card className="flex-1 mb-4 hover-elevate">
-        <CardContent className="p-4 space-y-2">
+      <Card className="flex-1 mb-4 hover-elevate rounded-2xl shadow-md">
+        <CardContent className="p-5 space-y-2">
           <h3 className="font-heading font-bold text-base" data-testid={`step-title-${stepNumber}`}>
             {title}
           </h3>
-          <p className="text-sm text-muted-foreground" data-testid={`step-description-${stepNumber}`}>
+          <p className="text-sm text-muted-foreground leading-relaxed" data-testid={`step-description-${stepNumber}`}>
             {description}
           </p>
           {amount && (
