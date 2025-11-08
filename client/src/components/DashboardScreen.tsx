@@ -21,7 +21,7 @@ export default function DashboardScreen() {
   const isAhead = false;
 
   const getStatusCard = () => {
-    if (totalDebt === 0) {
+    if (totalDebt <= 0) {
       return {
         icon: "🏆",
         title: "Parabéns!",
@@ -138,14 +138,12 @@ export default function DashboardScreen() {
               {progressPercentage.toFixed(0)}%
             </span>
           </div>
-          <div className="relative w-full bg-green-700/50 rounded-full h-4 overflow-hidden mb-3">
+          <div className="relative w-full bg-white/20 rounded-full h-3 overflow-hidden mb-3">
             <div
-              className="bg-green-900 h-full rounded-full transition-all duration-500 relative"
+              className="bg-white h-full rounded-full transition-all duration-500"
               style={{ width: `${progressPercentage}%` }}
               data-testid="progress-general"
-            >
-              <div className="absolute right-0 top-1/2 -translate-y-1/2 w-6 h-6 bg-yellow-400 rounded-full border-2 border-white"></div>
-            </div>
+            />
           </div>
           <p className="text-base text-white font-medium">
             Você já pagou {formatCurrency(totalPaid)}! Continue assim! 🎉
@@ -155,7 +153,7 @@ export default function DashboardScreen() {
         <div className="pb-20 pt-2">
           <Button
             size="lg"
-            className="w-full h-16 rounded-2xl text-lg font-bold shadow-xl"
+            className="w-full h-16 rounded-3xl text-lg font-bold shadow-xl bg-purple-500 hover:bg-purple-600 text-white"
             data-testid="button-generate-strategy"
             onClick={() => console.log('Generate strategy clicked')}
           >
