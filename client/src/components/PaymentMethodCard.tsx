@@ -27,14 +27,14 @@ export default function PaymentMethodCard({
 
   return (
     <Card
-      className={`border-l-[6px] ${isHighUsage ? 'border-l-destructive bg-gradient-to-br from-destructive/15 to-destructive/5' : 'border-l-accent bg-gradient-to-br from-accent/15 to-accent/5'} hover-elevate active-elevate-2 cursor-pointer rounded-2xl shadow-md`}
+      className={`${isHighUsage ? 'bg-primary' : 'bg-accent'} border-0 hover-elevate active-elevate-2 cursor-pointer rounded-2xl`}
       onClick={onClick}
       data-testid={`card-payment-${id}`}
     >
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-2">
-          <CardTitle className="text-lg font-heading font-bold flex items-center gap-2" data-testid={`text-payment-name-${id}`}>
-            <CreditCard className="w-5 h-5 text-primary" />
+          <CardTitle className={`text-lg font-heading font-bold flex items-center gap-2 ${isHighUsage ? 'text-primary-foreground' : 'text-accent-foreground'}`} data-testid={`text-payment-name-${id}`}>
+            <CreditCard className="w-5 h-5" />
             {name}
           </CardTitle>
         </div>
@@ -42,25 +42,25 @@ export default function PaymentMethodCard({
       <CardContent className="space-y-3">
         <div className="space-y-1">
           <div className="flex items-baseline justify-between">
-            <span className="text-sm text-muted-foreground font-medium">Disponível</span>
-            <span className="text-2xl font-heading font-extrabold text-accent" data-testid={`text-available-${id}`}>
+            <span className={`text-sm font-medium ${isHighUsage ? 'text-primary-foreground/80' : 'text-accent-foreground/80'}`}>Disponível</span>
+            <span className={`text-2xl font-heading font-extrabold ${isHighUsage ? 'text-primary-foreground' : 'text-accent-foreground'}`} data-testid={`text-available-${id}`}>
               {formatCurrency(availableCredit)}
             </span>
           </div>
-          <div className="text-xs text-muted-foreground text-right font-medium">
+          <div className={`text-xs text-right font-medium ${isHighUsage ? 'text-primary-foreground/70' : 'text-accent-foreground/70'}`}>
             Limite: {formatCurrency(creditLimit)}
           </div>
         </div>
 
         <div className="space-y-2">
-          <div className="w-full bg-muted rounded-full h-4 overflow-hidden">
+          <div className={`w-full rounded-full h-2 overflow-hidden ${isHighUsage ? 'bg-primary-foreground/20' : 'bg-accent-foreground/20'}`}>
             <div
-              className={`h-full rounded-full transition-all duration-300 ${isHighUsage ? 'bg-destructive' : 'bg-primary'}`}
+              className={`h-full rounded-full transition-all duration-300 ${isHighUsage ? 'bg-primary-foreground' : 'bg-accent-foreground'}`}
               style={{ width: `${usedPercentage}%` }}
               data-testid={`progress-usage-${id}`}
             />
           </div>
-          <div className="flex items-center justify-between text-xs text-muted-foreground font-medium">
+          <div className={`flex items-center justify-between text-xs font-medium ${isHighUsage ? 'text-primary-foreground/80' : 'text-accent-foreground/80'}`}>
             <div className="flex items-center gap-1">
               <Calendar className="w-3 h-3" />
               <span>Fecha dia {closingDay}</span>

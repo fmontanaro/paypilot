@@ -42,19 +42,19 @@ export default function DebtsListScreen() {
       </header>
 
       <main className="max-w-lg mx-auto px-4 py-6 space-y-6">
-        <Card className="border-l-[6px] border-l-destructive bg-gradient-to-br from-destructive/15 to-destructive/5 rounded-2xl shadow-lg">
+        <Card className="bg-primary border-0 rounded-2xl">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-semibold text-muted-foreground flex items-center gap-2">
+            <CardTitle className="text-sm font-semibold text-primary-foreground/80 flex items-center gap-2">
               <TrendingDown className="w-4 h-4" />
               Total de Dívidas
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-baseline justify-between">
-              <span className="text-4xl font-heading font-extrabold text-foreground" data-testid="text-total-debt">
+              <span className="text-4xl font-heading font-extrabold text-primary-foreground" data-testid="text-total-debt">
                 {formatCurrency(totalDebt)}
               </span>
-              <span className="text-sm text-muted-foreground font-medium">
+              <span className="text-sm text-primary-foreground/80 font-medium">
                 {debts.length} {debts.length === 1 ? 'dívida' : 'dívidas'}
               </span>
             </div>
