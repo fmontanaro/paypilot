@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { TrendingDown, CreditCard, Sparkles, Wallet, Calendar, TrendingUp, List } from "lucide-react";
+import { TrendingDown, CreditCard, Sparkles, Wallet, Calendar, TrendingUp, List, Trophy, AlertCircle, AlertTriangle, Award, ThumbsUp } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 import { useState } from "react";
 import { Link } from "wouter";
@@ -23,7 +23,7 @@ export default function DashboardScreen() {
   const getStatusCard = () => {
     if (totalDebt <= 0) {
       return {
-        icon: "🏆",
+        icon: Trophy,
         title: "Parabéns!",
         message: "Você não tem dívidas ativas!",
         bgColor: "bg-yellow-400"
@@ -31,7 +31,7 @@ export default function DashboardScreen() {
     }
     if (hasOverduePayments) {
       return {
-        icon: "😰",
+        icon: AlertCircle,
         title: "Opa, atenção!",
         message: "Você tem pagamentos atrasados. Vamos organizar isso?",
         bgColor: "bg-red-400"
@@ -39,7 +39,7 @@ export default function DashboardScreen() {
     }
     if (hasUpcomingPayments) {
       return {
-        icon: "⚠️",
+        icon: AlertTriangle,
         title: "Fique atento!",
         message: "Tem vencimentos chegando nos próximos dias!",
         bgColor: "bg-orange-400"
@@ -47,14 +47,14 @@ export default function DashboardScreen() {
     }
     if (isAhead) {
       return {
-        icon: "🎉",
+        icon: Award,
         title: "Incrível!",
         message: "Você está adiantado nos pagamentos!",
         bgColor: "bg-green-400"
       };
     }
     return {
-      icon: "👍",
+      icon: ThumbsUp,
       title: "Tudo em dia!",
       message: "Continue assim, você está indo muito bem!",
       bgColor: "bg-primary"
@@ -87,8 +87,8 @@ export default function DashboardScreen() {
       <main className="max-w-lg mx-auto px-4 py-6 space-y-4">
         <Card className={`${statusCard.bgColor} rounded-3xl border-0 overflow-hidden p-6`} data-testid="card-status">
           <div className="flex items-start gap-4">
-            <div className="text-6xl" role="img" aria-label="status">
-              {statusCard.icon}
+            <div className="flex-shrink-0">
+              <statusCard.icon className="w-16 h-16 text-white" strokeWidth={2} />
             </div>
             <div className="flex-1">
               <h2 className="text-3xl font-heading font-extrabold text-white mb-2">
