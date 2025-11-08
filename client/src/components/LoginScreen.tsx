@@ -4,18 +4,60 @@ import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import logoUrl from "@assets/4801ec1b-4f41-47c7-8453-60ba6517c851_1762570567956.png";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
 
-export default function LoginScreen() {
+interface LoginScreenProps {
+  onLoginSuccess: () => void;
+}
+
+export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
   const [isSignUp, setIsSignUp] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
 
-  const handleLogin = () => {
-    console.log("Login triggered", { email, password });
+  const handleLogin = async () => {
+    if (!email) {
+      toast({
+        title: "Erro",
+        description: "Por favor, preencha seu email",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      await apiRequest("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, name: isSignUp ? name : undefined }),
+      });
+
+      toast({
+        title: "Sucesso!",
+        description: "Login realizado com sucesso",
+      });
+
+      onLoginSuccess();
+    } catch (error) {
+      toast({
+        title: "Erro",
+        description: "Não foi possível fazer login. Tente novamente.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleGoogleLogin = () => {
-    console.log("Google login triggered");
+    toast({
+      title: "Em breve",
+      description: "Login com Google estará disponível em breve!",
+    });
   };
 
   return (
@@ -53,27 +95,30 @@ export default function LoginScreen() {
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="password" className="text-sm font-semibold">Senha</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="h-14 rounded-2xl border-2 px-5 text-base"
-                data-testid="input-password"
-              />
-            </div>
+            {isSignUp && (
+              <div className="space-y-2">
+                <Label htmlFor="name" className="text-sm font-semibold">Nome (opcional)</Label>
+                <Input
+                  id="name"
+                  type="text"
+                  placeholder="Seu nome"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="h-14 rounded-2xl border-2 px-5 text-base"
+                  data-testid="input-name"
+                />
+              </div>
+            )}
           </div>
 
           <Button
             onClick={handleLogin}
+            disabled={isLoading}
             className="w-full h-14 rounded-2xl text-lg font-bold shadow-lg"
             size="lg"
             data-testid="button-login"
           >
-            {isSignUp ? "Criar conta" : "Entrar"}
+            {isLoading ? "Entrando..." : (isSignUp ? "Criar conta" : "Entrar")}
           </Button>
 
           <div className="relative">
