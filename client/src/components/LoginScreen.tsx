@@ -22,14 +22,12 @@ export default function LoginScreen() {
     <div className="min-h-screen bg-gradient-to-b from-primary/10 to-background flex items-center justify-center p-6">
       <div className="w-full max-w-md">
         <div className="text-center mb-10">
-          <div className="bg-white dark:bg-card rounded-3xl p-4 w-48 h-48 mx-auto mb-6 flex items-center justify-center shadow-xl">
-            <img 
-              src={logoUrl} 
-              alt="PayPilot" 
-              className="w-full h-full object-contain"
-              data-testid="img-logo"
-            />
-          </div>
+          <img 
+            src={logoUrl} 
+            alt="PayPilot" 
+            className="w-48 h-48 mx-auto mb-6 rounded-3xl shadow-xl object-cover"
+            data-testid="img-logo"
+          />
           <h1 className="text-4xl font-heading font-extrabold text-foreground mb-3" data-testid="text-welcome">
             {isSignUp ? "Crie sua conta" : "Bem-vindo de volta!"}
           </h1>
