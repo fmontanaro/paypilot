@@ -16,6 +16,53 @@ export default function DashboardScreen() {
   const monthsToPayOff = 8;
   const progressPercentage = (totalPaid / totalOriginalDebt) * 100;
 
+  const hasOverduePayments = false;
+  const hasUpcomingPayments = true;
+  const isAhead = false;
+
+  const getStatusCard = () => {
+    if (totalDebt === 0) {
+      return {
+        icon: "🏆",
+        title: "Parabéns!",
+        message: "Você não tem dívidas ativas!",
+        bgColor: "bg-yellow-400"
+      };
+    }
+    if (hasOverduePayments) {
+      return {
+        icon: "😰",
+        title: "Opa, atenção!",
+        message: "Você tem pagamentos atrasados. Vamos organizar isso?",
+        bgColor: "bg-red-400"
+      };
+    }
+    if (hasUpcomingPayments) {
+      return {
+        icon: "⚠️",
+        title: "Fique atento!",
+        message: "Tem vencimentos chegando nos próximos dias!",
+        bgColor: "bg-orange-400"
+      };
+    }
+    if (isAhead) {
+      return {
+        icon: "🎉",
+        title: "Incrível!",
+        message: "Você está adiantado nos pagamentos!",
+        bgColor: "bg-green-400"
+      };
+    }
+    return {
+      icon: "👍",
+      title: "Tudo em dia!",
+      message: "Continue assim, você está indo muito bem!",
+      bgColor: "bg-primary"
+    };
+  };
+
+  const statusCard = getStatusCard();
+
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-accent px-4 py-4">
@@ -38,16 +85,20 @@ export default function DashboardScreen() {
       </header>
 
       <main className="max-w-lg mx-auto px-4 py-6 space-y-4">
-        <Card className="bg-primary rounded-3xl border-0 overflow-hidden p-6" data-testid="card-welcome">
-          <div className="flex items-start gap-3 mb-4">
-            <img src={logoUrl} alt="Mascote" className="w-16 h-16" />
+        <Card className={`${statusCard.bgColor} rounded-3xl border-0 overflow-hidden p-6`} data-testid="card-status">
+          <div className="flex items-start gap-4">
+            <div className="text-6xl" role="img" aria-label="status">
+              {statusCard.icon}
+            </div>
+            <div className="flex-1">
+              <h2 className="text-3xl font-heading font-extrabold text-white mb-2">
+                {statusCard.title}
+              </h2>
+              <p className="text-lg text-white/90 font-medium">
+                {statusCard.message}
+              </p>
+            </div>
           </div>
-          <h2 className="text-3xl font-heading font-extrabold text-white mb-2">
-            Olá, amigo! 👋
-          </h2>
-          <p className="text-lg text-white/90 font-medium">
-            Vamos organizar suas finanças juntos!
-          </p>
         </Card>
 
         <div className="grid grid-cols-2 gap-3">
