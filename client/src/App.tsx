@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import LoginScreen from "@/components/LoginScreen";
 import DashboardScreen from "@/components/DashboardScreen";
 import DebtsListScreen from "@/components/DebtsListScreen";
+import CardsScreen from "@/components/CardsScreen";
 import StrategyScreen from "@/components/StrategyScreen";
 import NotFound from "@/pages/not-found";
 import { useEffect } from "react";
@@ -44,6 +45,7 @@ function Router() {
       <Route path="/" component={() => <LoginScreen onLoginSuccess={() => setLocation("/dashboard")} />} />
       <Route path="/dashboard" component={DashboardScreen} />
       <Route path="/debts" component={DebtsListScreen} />
+      <Route path="/cards" component={CardsScreen} />
       <Route path="/strategy" component={StrategyScreen} />
       <Route component={NotFound} />
     </Switch>

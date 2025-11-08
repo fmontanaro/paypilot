@@ -165,6 +165,80 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json(req.user);
   });
 
+  app.post("/api/strategy/generate", async (req: AuthRequest, res) => {
+    if (!req.user) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+    
+    try {
+      const debts = await storage.getDebts(req.user.id);
+      const paymentMethods = await storage.getPaymentMethods(req.user.id);
+
+      if (debts.length === 0) {
+        return res.json({
+          strategy: "Você não possui dívidas cadastradas no momento. Adicione suas dívidas para receber uma estratégia personalizada de pagamento.",
+          recommendations: [],
+        });
+      }
+
+      const totalDebt = debts.reduce((sum, debt) => sum + (parseFloat(debt.totalAmount) - parseFloat(debt.paidAmount)), 0);
+      const totalAvailableLimit = paymentMethods.reduce((sum, pm) => sum + parseFloat(pm.availableLimit), 0);
+
+      const openai = await import("openai");
+      const client = new openai.default({
+        apiKey: process.env.OPENAI_API_KEY,
+      });
+
+      const debtsList = debts
+        .map((d, i) => `${i + 1}. ${d.name}: R$ ${(parseFloat(d.totalAmount) - parseFloat(d.paidAmount)).toFixed(2)} (vencimento: ${d.dueDate})`)
+        .join("\n");
+
+      const cardsList = paymentMethods
+        .map((pm, i) => `${i + 1}. ${pm.name}: Limite disponível R$ ${parseFloat(pm.availableLimit).toFixed(2)} (vence dia ${pm.dueDay})`)
+        .join("\n");
+
+      const completion = await client.chat.completions.create({
+        model: "gpt-4o-mini",
+        messages: [
+          {
+            role: "system",
+            content: "Você é um assistente financeiro especializado em estratégias de pagamento de dívidas. Seja direto, prático e use linguagem casual e amigável como o Duolingo. Use emojis moderadamente para deixar a mensagem mais leve.",
+          },
+          {
+            role: "user",
+            content: `Analise minha situação financeira e crie uma estratégia de pagamento:
+
+DÍVIDAS:
+${debtsList}
+
+CARTÕES DISPONÍVEIS:
+${cardsList}
+
+Total de dívidas: R$ ${totalDebt.toFixed(2)}
+Limite disponível total: R$ ${totalAvailableLimit.toFixed(2)}
+
+Me dê uma estratégia clara e prática de como pagar essas dívidas, priorizando as que vencem primeiro e otimizando o uso dos limites disponíveis. Inclua dicas de economia e motivação.`,
+          },
+        ],
+        temperature: 0.7,
+        max_tokens: 1000,
+      });
+
+      const strategy = completion.choices[0]?.message?.content || "Não foi possível gerar uma estratégia no momento.";
+
+      res.json({
+        strategy,
+        totalDebt,
+        totalAvailableLimit,
+        debtsCount: debts.length,
+        cardsCount: paymentMethods.length,
+      });
+    } catch (error) {
+      console.error("Strategy generation error:", error);
+      res.status(500).json({ error: "Failed to generate strategy" });
+    }
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;

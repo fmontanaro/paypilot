@@ -2,23 +2,46 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { TrendingDown, CreditCard, Sparkles, Wallet, Calendar, TrendingUp, List, Trophy, AlertCircle, AlertTriangle, Award, ThumbsUp } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
-import { useState } from "react";
 import { Link } from "wouter";
 import logoUrl from "@assets/1000074692_1762573929735.png";
+import { useQuery } from "@tanstack/react-query";
+import type { Debt, PaymentMethod, User } from "@shared/schema";
 
 export default function DashboardScreen() {
-  const totalDebt = 34000;
-  const totalPaid = 11000;
-  const totalOriginalDebt = 45000;
-  const availableCredit = 14700;
-  const cashInAccount = 2500;
-  const totalAvailable = availableCredit + cashInAccount;
-  const monthsToPayOff = 8;
-  const progressPercentage = (totalPaid / totalOriginalDebt) * 100;
+  const { data: user } = useQuery<User>({ queryKey: ["/api/user"] });
+  const { data: debts = [], isLoading: debtsLoading } = useQuery<Debt[]>({ queryKey: ["/api/debts"] });
+  const { data: paymentMethods = [], isLoading: pmLoading } = useQuery<PaymentMethod[]>({ queryKey: ["/api/payment-methods"] });
 
-  const hasOverduePayments = false;
-  const hasUpcomingPayments = true;
-  const isAhead = false;
+  const totalDebt = debts.reduce((sum, debt) => sum + (parseFloat(debt.totalAmount) - parseFloat(debt.paidAmount)), 0);
+  const totalPaid = debts.reduce((sum, debt) => sum + parseFloat(debt.paidAmount), 0);
+  const totalOriginalDebt = totalDebt + totalPaid;
+  const progressPercentage = totalOriginalDebt > 0 ? (totalPaid / totalOriginalDebt) * 100 : 0;
+  
+  const totalAvailableLimit = paymentMethods.reduce((sum, pm) => sum + parseFloat(pm.availableLimit), 0);
+  const totalLimit = paymentMethods.reduce((sum, pm) => sum + parseFloat(pm.limit), 0);
+
+  const username = user?.name?.split(" ")[0] || "Usuário";
+
+  const today = new Date();
+  const hasOverduePayments = debts.some(debt => {
+    const dueDate = new Date(debt.dueDate);
+    return !debt.isPaid && dueDate < today;
+  });
+  
+  const upcomingDays = 7;
+  const upcomingDate = new Date(today);
+  upcomingDate.setDate(today.getDate() + upcomingDays);
+  const hasUpcomingPayments = debts.some(debt => {
+    const dueDate = new Date(debt.dueDate);
+    return !debt.isPaid && dueDate >= today && dueDate <= upcomingDate;
+  });
+  
+  const isAhead = debts.length > 0 && debts.every(debt => {
+    const dueDate = new Date(debt.dueDate);
+    return debt.isPaid || dueDate > upcomingDate;
+  });
+
+  const isLoading = debtsLoading || pmLoading;
 
   const getStatusCard = () => {
     if (totalDebt <= 0) {
@@ -62,6 +85,17 @@ export default function DashboardScreen() {
   };
 
   const statusCard = getStatusCard();
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Carregando...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -151,15 +185,16 @@ export default function DashboardScreen() {
         </Card>
 
         <div className="pb-20 pt-2">
-          <Button
-            size="lg"
-            className="w-full h-16 rounded-3xl text-lg font-bold shadow-xl bg-purple-500 hover:bg-purple-600 text-white"
-            data-testid="button-generate-strategy"
-            onClick={() => console.log('Generate strategy clicked')}
-          >
-            <Sparkles className="w-5 h-5 mr-2" />
-            Gerar Estratégia com IA
-          </Button>
+          <Link href="/strategy">
+            <Button
+              size="lg"
+              className="w-full h-16 rounded-3xl text-lg font-bold shadow-xl bg-purple-500 hover:bg-purple-600 text-white"
+              data-testid="button-generate-strategy"
+            >
+              <Sparkles className="w-5 h-5 mr-2" />
+              Gerar Estratégia com IA
+            </Button>
+          </Link>
         </div>
       </main>
 
