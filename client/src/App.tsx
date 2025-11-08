@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import LoginScreen from "@/components/LoginScreen";
 import DashboardScreen from "@/components/DashboardScreen";
+import DebtsListScreen from "@/components/DebtsListScreen";
 import StrategyScreen from "@/components/StrategyScreen";
 import NotFound from "@/pages/not-found";
 
@@ -13,6 +14,7 @@ function Router() {
     <Switch>
       <Route path="/" component={LoginScreen} />
       <Route path="/dashboard" component={DashboardScreen} />
+      <Route path="/debts" component={DebtsListScreen} />
       <Route path="/strategy" component={StrategyScreen} />
       <Route component={NotFound} />
     </Switch>

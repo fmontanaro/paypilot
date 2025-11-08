@@ -1,25 +1,19 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, TrendingDown, CreditCard, Sparkles } from "lucide-react";
-import DebtCard from "./DebtCard";
-import PaymentMethodCard from "./PaymentMethodCard";
+import { TrendingDown, CreditCard, Sparkles, Wallet, Calendar, TrendingUp } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 import { useState } from "react";
 import logoUrl from "@assets/4801ec1b-4f41-47c7-8453-60ba6517c851_1762570567956.png";
 
 export default function DashboardScreen() {
-  const [debts] = useState([
-    { id: "1", name: "Cartão de Crédito Nubank", totalAmount: 5000, remainingAmount: 3200, interestRate: 12.5, dueDate: "15/12/2025" },
-    { id: "2", name: "Empréstimo Pessoal", totalAmount: 15000, remainingAmount: 12300, interestRate: 8.9, dueDate: "20/12/2025" },
-    { id: "3", name: "Financiamento", totalAmount: 25000, remainingAmount: 18500, interestRate: 5.5, dueDate: "10/12/2025" },
-  ]);
-
-  const [paymentMethods] = useState([
-    { id: "1", name: "Nubank Ultravioleta", creditLimit: 15000, availableCredit: 8500, closingDay: 5, dueDay: 15 },
-    { id: "2", name: "Itaú Gold", creditLimit: 8000, availableCredit: 6200, closingDay: 10, dueDay: 20 },
-  ]);
-
-  const totalDebt = debts.reduce((sum, debt) => sum + debt.remainingAmount, 0);
+  const totalDebt = 34000;
+  const totalPaid = 11000;
+  const totalOriginalDebt = 45000;
+  const availableCredit = 14700;
+  const cashInAccount = 2500;
+  const totalAvailable = availableCredit + cashInAccount;
+  const monthsToPayOff = 8;
+  const progressPercentage = (totalPaid / totalOriginalDebt) * 100;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-primary/5 to-background">
@@ -40,75 +34,102 @@ export default function DashboardScreen() {
         </div>
       </header>
 
-      <main className="max-w-lg mx-auto px-4 py-6 space-y-6">
-        <Card className="border-l-[6px] border-l-primary bg-gradient-to-br from-primary/10 to-accent/5 rounded-2xl shadow-lg">
+      <main className="max-w-lg mx-auto px-4 py-6 space-y-5">
+        <Card className="border-l-[6px] border-l-destructive bg-gradient-to-br from-destructive/15 to-destructive/5 rounded-2xl shadow-lg hover-elevate active-elevate-2 cursor-pointer" onClick={() => console.log('View debts clicked')} data-testid="card-total-debt">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-semibold text-muted-foreground">Total de Dívidas</CardTitle>
+            <CardTitle className="text-sm font-semibold text-muted-foreground flex items-center gap-2">
+              <TrendingDown className="w-4 h-4" />
+              Total de Dívidas
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="flex items-baseline justify-between">
+            <div className="flex items-baseline justify-between mb-3">
               <span className="text-4xl font-heading font-extrabold text-foreground" data-testid="text-total-debt">
                 {formatCurrency(totalDebt)}
               </span>
-              <TrendingDown className="w-8 h-8 text-accent" />
+            </div>
+            <div className="text-sm text-muted-foreground font-medium">
+              3 dívidas ativas • Toque para ver detalhes
             </div>
           </CardContent>
         </Card>
 
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-heading font-extrabold text-foreground" data-testid="text-debts-title">
-              Suas Dívidas
-            </h2>
-            <Button
-              size="icon"
-              className="rounded-full w-10 h-10"
-              data-testid="button-add-debt"
-              onClick={() => console.log('Add debt clicked')}
-            >
-              <Plus className="w-5 h-5" />
-            </Button>
-          </div>
+        <Card className="border-l-[6px] border-l-accent bg-gradient-to-br from-accent/15 to-accent/5 rounded-2xl shadow-lg hover-elevate active-elevate-2 cursor-pointer" onClick={() => console.log('View available clicked')} data-testid="card-available">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-semibold text-muted-foreground flex items-center gap-2">
+              <Wallet className="w-4 h-4" />
+              Limite Disponível
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="flex items-baseline justify-between">
+              <span className="text-4xl font-heading font-extrabold text-foreground" data-testid="text-total-available">
+                {formatCurrency(totalAvailable)}
+              </span>
+            </div>
+            <div className="grid grid-cols-2 gap-3 text-sm">
+              <div className="space-y-1">
+                <div className="text-muted-foreground font-medium">Cartões</div>
+                <div className="font-heading font-bold text-base">{formatCurrency(availableCredit)}</div>
+              </div>
+              <div className="space-y-1">
+                <div className="text-muted-foreground font-medium">Em Conta</div>
+                <div className="font-heading font-bold text-base">{formatCurrency(cashInAccount)}</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
-          <div className="space-y-3">
-            {debts.map((debt) => (
-              <DebtCard
-                key={debt.id}
-                {...debt}
-                onClick={() => console.log('Debt clicked:', debt.id)}
-              />
-            ))}
-          </div>
-        </div>
+        <Card className="border-l-[6px] border-l-primary bg-gradient-to-br from-primary/15 to-primary/5 rounded-2xl shadow-lg">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-semibold text-muted-foreground flex items-center gap-2">
+              <TrendingUp className="w-4 h-4" />
+              Progresso Geral
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <div className="flex items-baseline justify-between">
+                <span className="text-sm text-muted-foreground font-medium">Já pago</span>
+                <span className="text-2xl font-heading font-extrabold text-primary" data-testid="text-total-paid">
+                  {formatCurrency(totalPaid)}
+                </span>
+              </div>
+              <div className="w-full bg-muted rounded-full h-4 overflow-hidden">
+                <div
+                  className="bg-primary h-full rounded-full transition-all duration-300"
+                  style={{ width: `${progressPercentage}%` }}
+                  data-testid="progress-general"
+                />
+              </div>
+              <div className="text-xs text-muted-foreground font-medium text-right">
+                {progressPercentage.toFixed(0)}% de {formatCurrency(totalOriginalDebt)}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-heading font-extrabold text-foreground flex items-center gap-2">
-              <CreditCard className="w-6 h-6 text-primary" />
-              Meios de Pagamento
-            </h2>
-            <Button
-              size="icon"
-              className="rounded-full w-10 h-10"
-              data-testid="button-add-payment"
-              onClick={() => console.log('Add payment method clicked')}
-            >
-              <Plus className="w-5 h-5" />
-            </Button>
-          </div>
+        <Card className="border-l-[6px] border-l-primary bg-gradient-to-br from-primary/10 to-accent/5 rounded-2xl shadow-lg">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-semibold text-muted-foreground flex items-center gap-2">
+              <Calendar className="w-4 h-4" />
+              Previsão de Quitação
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-baseline gap-2">
+              <span className="text-4xl font-heading font-extrabold text-foreground" data-testid="text-months-left">
+                {monthsToPayOff}
+              </span>
+              <span className="text-lg font-semibold text-muted-foreground">meses</span>
+            </div>
+            <div className="text-sm text-muted-foreground font-medium mt-2">
+              Pagando conforme planejado
+            </div>
+          </CardContent>
+        </Card>
 
-          <div className="space-y-3">
-            {paymentMethods.map((method) => (
-              <PaymentMethodCard
-                key={method.id}
-                {...method}
-                onClick={() => console.log('Payment method clicked:', method.id)}
-              />
-            ))}
-          </div>
-        </div>
-
-        <div className="pb-20">
+        <div className="pb-20 pt-2">
           <Button
             size="lg"
             className="w-full h-16 rounded-2xl text-lg font-bold shadow-xl"
