@@ -4,7 +4,7 @@ import { TrendingDown, CreditCard, Sparkles, Wallet, Calendar, TrendingUp, List 
 import { formatCurrency } from "@/lib/utils";
 import { useState } from "react";
 import { Link } from "wouter";
-import logoUrl from "@assets/4801ec1b-4f41-47c7-8453-60ba6517c851_1762570567956.png";
+import logoUrl from "@assets/1000074692_1762573929735.png";
 
 export default function DashboardScreen() {
   const totalDebt = 34000;
