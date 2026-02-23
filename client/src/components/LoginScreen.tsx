@@ -1,63 +1,10 @@
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useState } from "react";
-import { FcGoogle } from "react-icons/fc";
 import logoUrl from "@assets/4801ec1b-4f41-47c7-8453-60ba6517c851_1762570567956.png";
-import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
+import { SiGoogle } from "react-icons/si";
 
-interface LoginScreenProps {
-  onLoginSuccess: () => void;
-}
-
-export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
-  const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
-  const [isSignUp, setIsSignUp] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const { toast } = useToast();
-
-  const handleLogin = async () => {
-    if (!email) {
-      toast({
-        title: "Erro",
-        description: "Por favor, preencha seu email",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      await apiRequest("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, name: isSignUp ? name : undefined }),
-      });
-
-      toast({
-        title: "Sucesso!",
-        description: "Login realizado com sucesso",
-      });
-
-      onLoginSuccess();
-    } catch (error) {
-      toast({
-        title: "Erro",
-        description: "Não foi possível fazer login. Tente novamente.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleGoogleLogin = () => {
-    toast({
-      title: "Em breve",
-      description: "Login com Google estará disponível em breve!",
-    });
+export default function LoginScreen() {
+  const handleLogin = () => {
+    window.location.href = "/api/login";
   };
 
   return (
@@ -71,87 +18,37 @@ export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
             data-testid="img-logo"
           />
           <h1 className="text-4xl font-heading font-extrabold text-foreground mb-3" data-testid="text-welcome">
-            {isSignUp ? "Crie sua conta" : "Bem-vindo de volta!"}
+            Bem-vindo ao PayPilot!
           </h1>
           <p className="text-lg text-muted-foreground font-medium" data-testid="text-subtitle">
-            {isSignUp 
-              ? "Vamos organizar suas finanças juntos!" 
-              : "Vamos colocar suas finanças nos trilhos!"}
+            Vamos colocar suas finanças nos trilhos!
           </p>
         </div>
 
         <div className="space-y-5">
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email" className="text-sm font-semibold">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="seu@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="h-14 rounded-2xl border-2 px-5 text-base"
-                data-testid="input-email"
-              />
-            </div>
-
-            {isSignUp && (
-              <div className="space-y-2">
-                <Label htmlFor="name" className="text-sm font-semibold">Nome (opcional)</Label>
-                <Input
-                  id="name"
-                  type="text"
-                  placeholder="Seu nome"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="h-14 rounded-2xl border-2 px-5 text-base"
-                  data-testid="input-name"
-                />
-              </div>
-            )}
-          </div>
-
           <Button
             onClick={handleLogin}
-            disabled={isLoading}
             className="w-full h-14 rounded-2xl text-lg font-bold shadow-lg"
             size="lg"
             data-testid="button-login"
           >
-            {isLoading ? "Entrando..." : (isSignUp ? "Criar conta" : "Entrar")}
+            Entrar
           </Button>
 
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t-2"></div>
+              <span className="w-full border-t" />
             </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="bg-background px-4 text-muted-foreground font-semibold">ou</span>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-muted-foreground">
+                Login seguro via Replit
+              </span>
             </div>
           </div>
 
-          <Button
-            onClick={handleGoogleLogin}
-            variant="outline"
-            className="w-full h-14 rounded-2xl text-lg font-semibold border-2 shadow-md"
-            size="lg"
-            data-testid="button-google"
-          >
-            <FcGoogle className="w-6 h-6 mr-2" />
-            Continuar com Google
-          </Button>
-
-          <div className="text-center pt-2">
-            <button
-              onClick={() => setIsSignUp(!isSignUp)}
-              className="text-accent text-base font-bold hover:underline"
-              data-testid="button-toggle-signup"
-            >
-              {isSignUp 
-                ? "Já tem uma conta? Entre aqui" 
-                : "Não tem conta? Crie agora"}
-            </button>
-          </div>
+          <p className="text-center text-sm text-muted-foreground" data-testid="text-auth-info">
+            Suporte a Google, GitHub, Apple e mais
+          </p>
         </div>
       </div>
     </div>

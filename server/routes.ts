@@ -1,35 +1,28 @@
-import type { Express, Request } from "express";
+import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertDebtSchema, insertPaymentMethodSchema } from "@shared/schema";
+import { isAuthenticated } from "./replit_integrations/auth";
 
-interface AuthRequest extends Request {
-  user?: {
-    id: string;
-    email: string;
-    name?: string;
-  };
+function getUserId(req: any): string {
+  const userId = req.user?.claims?.sub;
+  if (!userId) throw new Error("User ID not found in claims");
+  return userId;
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  app.get("/api/debts", async (req: AuthRequest, res) => {
-    if (!req.user) {
-      return res.status(401).json({ error: "Unauthorized" });
-    }
+  app.get("/api/debts", isAuthenticated, async (req, res) => {
     try {
-      const debts = await storage.getDebts(req.user.id);
+      const debts = await storage.getDebts(getUserId(req));
       res.json(debts);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch debts" });
     }
   });
 
-  app.get("/api/debts/:id", async (req: AuthRequest, res) => {
-    if (!req.user) {
-      return res.status(401).json({ error: "Unauthorized" });
-    }
+  app.get("/api/debts/:id", isAuthenticated, async (req, res) => {
     try {
-      const debt = await storage.getDebt(req.params.id, req.user.id);
+      const debt = await storage.getDebt(req.params.id, getUserId(req));
       if (!debt) {
         return res.status(404).json({ error: "Debt not found" });
       }
@@ -39,14 +32,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/debts", async (req: AuthRequest, res) => {
-    if (!req.user) {
-      return res.status(401).json({ error: "Unauthorized" });
-    }
+  app.post("/api/debts", isAuthenticated, async (req, res) => {
     try {
       const debtData = insertDebtSchema.parse({
         ...req.body,
-        userId: req.user.id,
+        userId: getUserId(req),
       });
       const debt = await storage.createDebt(debtData);
       res.status(201).json(debt);
@@ -55,12 +45,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.patch("/api/debts/:id", async (req: AuthRequest, res) => {
-    if (!req.user) {
-      return res.status(401).json({ error: "Unauthorized" });
-    }
+  app.patch("/api/debts/:id", isAuthenticated, async (req, res) => {
     try {
-      const debt = await storage.updateDebt(req.params.id, req.user.id, req.body);
+      const debt = await storage.updateDebt(req.params.id, getUserId(req), req.body);
       if (!debt) {
         return res.status(404).json({ error: "Debt not found" });
       }
@@ -70,12 +57,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/debts/:id", async (req: AuthRequest, res) => {
-    if (!req.user) {
-      return res.status(401).json({ error: "Unauthorized" });
-    }
+  app.delete("/api/debts/:id", isAuthenticated, async (req, res) => {
     try {
-      const success = await storage.deleteDebt(req.params.id, req.user.id);
+      const success = await storage.deleteDebt(req.params.id, getUserId(req));
       if (!success) {
         return res.status(404).json({ error: "Debt not found" });
       }
@@ -85,24 +69,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/payment-methods", async (req: AuthRequest, res) => {
-    if (!req.user) {
-      return res.status(401).json({ error: "Unauthorized" });
-    }
+  app.get("/api/payment-methods", isAuthenticated, async (req, res) => {
     try {
-      const paymentMethods = await storage.getPaymentMethods(req.user.id);
+      const paymentMethods = await storage.getPaymentMethods(getUserId(req));
       res.json(paymentMethods);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch payment methods" });
     }
   });
 
-  app.get("/api/payment-methods/:id", async (req: AuthRequest, res) => {
-    if (!req.user) {
-      return res.status(401).json({ error: "Unauthorized" });
-    }
+  app.get("/api/payment-methods/:id", isAuthenticated, async (req, res) => {
     try {
-      const paymentMethod = await storage.getPaymentMethod(req.params.id, req.user.id);
+      const paymentMethod = await storage.getPaymentMethod(req.params.id, getUserId(req));
       if (!paymentMethod) {
         return res.status(404).json({ error: "Payment method not found" });
       }
@@ -112,14 +90,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/payment-methods", async (req: AuthRequest, res) => {
-    if (!req.user) {
-      return res.status(401).json({ error: "Unauthorized" });
-    }
+  app.post("/api/payment-methods", isAuthenticated, async (req, res) => {
     try {
       const paymentMethodData = insertPaymentMethodSchema.parse({
         ...req.body,
-        userId: req.user.id,
+        userId: getUserId(req),
       });
       const paymentMethod = await storage.createPaymentMethod(paymentMethodData);
       res.status(201).json(paymentMethod);
@@ -128,12 +103,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.patch("/api/payment-methods/:id", async (req: AuthRequest, res) => {
-    if (!req.user) {
-      return res.status(401).json({ error: "Unauthorized" });
-    }
+  app.patch("/api/payment-methods/:id", isAuthenticated, async (req, res) => {
     try {
-      const paymentMethod = await storage.updatePaymentMethod(req.params.id, req.user.id, req.body);
+      const paymentMethod = await storage.updatePaymentMethod(req.params.id, getUserId(req), req.body);
       if (!paymentMethod) {
         return res.status(404).json({ error: "Payment method not found" });
       }
@@ -143,12 +115,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/payment-methods/:id", async (req: AuthRequest, res) => {
-    if (!req.user) {
-      return res.status(401).json({ error: "Unauthorized" });
-    }
+  app.delete("/api/payment-methods/:id", isAuthenticated, async (req, res) => {
     try {
-      const success = await storage.deletePaymentMethod(req.params.id, req.user.id);
+      const success = await storage.deletePaymentMethod(req.params.id, getUserId(req));
       if (!success) {
         return res.status(404).json({ error: "Payment method not found" });
       }
@@ -158,21 +127,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/user", async (req: AuthRequest, res) => {
-    if (!req.user) {
-      return res.status(401).json({ error: "Unauthorized" });
-    }
-    res.json(req.user);
-  });
-
-  app.post("/api/strategy/generate", async (req: AuthRequest, res) => {
-    if (!req.user) {
-      return res.status(401).json({ error: "Unauthorized" });
-    }
-    
+  app.post("/api/strategy/generate", isAuthenticated, async (req, res) => {
     try {
-      const debts = await storage.getDebts(req.user.id);
-      const paymentMethods = await storage.getPaymentMethods(req.user.id);
+      const userId = getUserId(req);
+      const debts = await storage.getDebts(userId);
+      const paymentMethods = await storage.getPaymentMethods(userId);
 
       if (debts.length === 0) {
         return res.json({

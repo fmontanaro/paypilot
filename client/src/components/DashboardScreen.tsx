@@ -1,14 +1,15 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { TrendingDown, CreditCard, Sparkles, Wallet, Calendar, TrendingUp, List, Trophy, AlertCircle, AlertTriangle, Award, ThumbsUp } from "lucide-react";
+import { TrendingDown, CreditCard, Sparkles, Wallet, Calendar, TrendingUp, List, Trophy, AlertCircle, AlertTriangle, Award, ThumbsUp, LogOut } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 import { Link } from "wouter";
 import logoUrl from "@assets/1000074692_1762573929735.png";
 import { useQuery } from "@tanstack/react-query";
-import type { Debt, PaymentMethod, User } from "@shared/schema";
+import { useAuth } from "@/hooks/use-auth";
+import type { Debt, PaymentMethod } from "@shared/schema";
 
 export default function DashboardScreen() {
-  const { data: user } = useQuery<User>({ queryKey: ["/api/user"] });
+  const { user, logout } = useAuth();
   const { data: debts = [], isLoading: debtsLoading } = useQuery<Debt[]>({ queryKey: ["/api/debts"] });
   const { data: paymentMethods = [], isLoading: pmLoading } = useQuery<PaymentMethod[]>({ queryKey: ["/api/payment-methods"] });
 
@@ -20,7 +21,7 @@ export default function DashboardScreen() {
   const totalAvailableLimit = paymentMethods.reduce((sum, pm) => sum + parseFloat(pm.availableLimit), 0);
   const totalLimit = paymentMethods.reduce((sum, pm) => sum + parseFloat(pm.limit), 0);
 
-  const username = user?.name?.split(" ")[0] || "Usuário";
+  const username = user?.firstName || "Usuário";
 
   const today = new Date();
   const hasOverduePayments = debts.some(debt => {
@@ -110,10 +111,8 @@ export default function DashboardScreen() {
               <p className="text-sm text-white/90 font-medium">Seu copiloto financeiro</p>
             </div>
           </div>
-          <Button size="icon" variant="ghost" className="rounded-full text-white hover:bg-white/10" data-testid="button-menu">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M3 12h18M3 6h18M3 18h18"/>
-            </svg>
+          <Button size="icon" variant="ghost" className="rounded-full text-white" onClick={() => logout()} data-testid="button-logout">
+            <LogOut className="w-5 h-5" />
           </Button>
         </div>
       </header>
@@ -158,7 +157,7 @@ export default function DashboardScreen() {
               <div>
                 <p className="text-xs font-bold text-gray-600 uppercase tracking-wide mb-1">Limite Disponível</p>
                 <p className="text-2xl font-heading font-extrabold text-green-500" data-testid="text-total-available">
-                  {formatCurrency(totalAvailable)}
+                  {formatCurrency(totalAvailableLimit)}
                 </p>
               </div>
             </CardContent>
@@ -220,14 +219,16 @@ export default function DashboardScreen() {
               <span className="text-xs text-muted-foreground">Dívidas</span>
             </Button>
           </Link>
-          <Button
-            variant="ghost"
-            className="flex-col h-auto py-2 gap-1"
-            data-testid="button-nav-cards"
-          >
-            <CreditCard className="w-5 h-5 text-muted-foreground" />
-            <span className="text-xs text-muted-foreground">Cartões</span>
-          </Button>
+          <Link href="/cards">
+            <Button
+              variant="ghost"
+              className="flex-col h-auto py-2 gap-1"
+              data-testid="button-nav-cards"
+            >
+              <CreditCard className="w-5 h-5 text-muted-foreground" />
+              <span className="text-xs text-muted-foreground">Cartões</span>
+            </Button>
+          </Link>
           <Link href="/strategy">
             <Button
               variant="ghost"

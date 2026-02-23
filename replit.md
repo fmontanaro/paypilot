@@ -42,8 +42,8 @@ Preferred communication style: Simple, everyday language.
 
 **Framework**: Express.js with TypeScript
 - **Runtime**: Node.js
-- **Session Management**: express-session with in-memory store (MemoryStore from memorystore package)
-- **Authentication**: Session-based authentication stored in cookies
+- **Session Management**: express-session with PostgreSQL-backed store (connect-pg-simple)
+- **Authentication**: Replit Auth (OIDC-based) supporting Google, GitHub, Apple, and email/password login
 
 **API Structure**:
 - RESTful API endpoints under `/api` prefix
@@ -115,7 +115,7 @@ Three main tables:
 
 **Notable Design Decisions**:
 - Session-based authentication chosen over JWT for simplicity and better security for web applications
-- In-memory session store used (should be replaced with Redis or database-backed store for production)
+- PostgreSQL-backed session store via connect-pg-simple for production-ready session persistence
 - Neon serverless PostgreSQL chosen for automatic scaling and serverless architecture compatibility
 - Mobile-first design approach with single-column layouts optimized for mobile devices
 - AI strategy generation endpoint suggests using available credit to pay off high-interest debts

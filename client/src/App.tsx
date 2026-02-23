@@ -1,8 +1,9 @@
 import { Switch, Route, useLocation } from "wouter";
 import { queryClient } from "./lib/queryClient";
-import { QueryClientProvider, useQuery } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { useAuth } from "@/hooks/use-auth";
 import LoginScreen from "@/components/LoginScreen";
 import DashboardScreen from "@/components/DashboardScreen";
 import DebtsListScreen from "@/components/DebtsListScreen";
@@ -13,21 +14,17 @@ import { useEffect } from "react";
 
 function Router() {
   const [, setLocation] = useLocation();
-  
-  const { data: user, isLoading } = useQuery({
-    queryKey: ["/api/user"],
-    retry: false,
-  });
+  const { user, isLoading, isAuthenticated } = useAuth();
 
   useEffect(() => {
     if (!isLoading) {
-      if (!user && window.location.pathname !== "/") {
+      if (!isAuthenticated && window.location.pathname !== "/") {
         setLocation("/");
-      } else if (user && window.location.pathname === "/") {
+      } else if (isAuthenticated && window.location.pathname === "/") {
         setLocation("/dashboard");
       }
     }
-  }, [user, isLoading, setLocation]);
+  }, [isAuthenticated, isLoading, setLocation]);
 
   if (isLoading) {
     return (
@@ -42,7 +39,7 @@ function Router() {
 
   return (
     <Switch>
-      <Route path="/" component={() => <LoginScreen onLoginSuccess={() => setLocation("/dashboard")} />} />
+      <Route path="/" component={LoginScreen} />
       <Route path="/dashboard" component={DashboardScreen} />
       <Route path="/debts" component={DebtsListScreen} />
       <Route path="/cards" component={CardsScreen} />
