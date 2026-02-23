@@ -1,8 +1,12 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertDebtSchema, insertPaymentMethodSchema } from "@shared/schema";
-import { isAuthenticated } from "./replit_integrations/auth";
+import { insertDebtSchema, insertPaymentMethodSchema, users } from "@shared/schema";
+import { isAuthenticated, authStorage } from "./replit_integrations/auth";
+import { nanoid } from "nanoid";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
+import bcrypt from "bcryptjs";
 
 function getUserId(req: any): string {
   const userId = req.user?.claims?.sub;
@@ -11,6 +15,111 @@ function getUserId(req: any): string {
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  app.post("/api/auth/email-signup", async (req: any, res) => {
+    try {
+      const { email, password, name } = req.body;
+
+      if (!email || !password) {
+        return res.status(400).json({ error: "Email e senha são obrigatórios" });
+      }
+
+      if (password.length < 6) {
+        return res.status(400).json({ error: "A senha deve ter pelo menos 6 caracteres" });
+      }
+
+      const [existingUser] = await db.select().from(users).where(eq(users.email, email));
+      if (existingUser) {
+        return res.status(409).json({ error: "Este email já está cadastrado. Faça login." });
+      }
+
+      const passwordHash = await bcrypt.hash(password, 10);
+      const userId = `email_${nanoid(12)}`;
+
+      const [user] = await db.insert(users).values({
+        id: userId,
+        email,
+        firstName: name || null,
+        lastName: null,
+        profileImageUrl: null,
+        passwordHash,
+      }).returning();
+
+      const sessionUser = {
+        claims: {
+          sub: user.id,
+          email: user.email,
+          first_name: user.firstName,
+          last_name: user.lastName,
+        },
+        expires_at: Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60,
+      };
+
+      req.login(sessionUser, (err: any) => {
+        if (err) {
+          return res.status(500).json({ error: "Erro ao criar conta" });
+        }
+        res.json({ success: true, user: { id: user.id, email: user.email, firstName: user.firstName } });
+      });
+    } catch (error) {
+      console.error("Email signup error:", error);
+      res.status(500).json({ error: "Erro ao criar conta" });
+    }
+  });
+
+  app.post("/api/auth/email-login", async (req: any, res) => {
+    try {
+      const { email, password } = req.body;
+
+      if (!email || !password) {
+        return res.status(400).json({ error: "Email e senha são obrigatórios" });
+      }
+
+      const [user] = await db.select().from(users).where(eq(users.email, email));
+
+      if (!user) {
+        return res.status(401).json({ error: "Email ou senha incorretos" });
+      }
+
+      if (!user.passwordHash) {
+        return res.status(401).json({ error: "Esta conta usa login social. Use o botão 'Continuar com Google / Replit'." });
+      }
+
+      const validPassword = await bcrypt.compare(password, user.passwordHash);
+      if (!validPassword) {
+        return res.status(401).json({ error: "Email ou senha incorretos" });
+      }
+
+      const sessionUser = {
+        claims: {
+          sub: user.id,
+          email: user.email,
+          first_name: user.firstName,
+          last_name: user.lastName,
+        },
+        expires_at: Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60,
+      };
+
+      req.login(sessionUser, (err: any) => {
+        if (err) {
+          return res.status(500).json({ error: "Erro ao fazer login" });
+        }
+        res.json({ success: true, user: { id: user.id, email: user.email, firstName: user.firstName } });
+      });
+    } catch (error) {
+      console.error("Email login error:", error);
+      res.status(500).json({ error: "Erro ao fazer login" });
+    }
+  });
+
+  app.post("/api/auth/email-logout", (req: any, res) => {
+    req.logout(() => {
+      req.session.destroy(() => {
+        res.json({ success: true });
+      });
+    });
+  });
+
+
   app.get("/api/debts", isAuthenticated, async (req, res) => {
     try {
       const debts = await storage.getDebts(getUserId(req));
