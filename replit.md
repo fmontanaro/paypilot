@@ -32,10 +32,11 @@ Preferred communication style: Simple, everyday language.
 - Generous spacing and rounded corners (border-radius: 1rem to 2.5rem)
 
 **Key Features**:
-- Authentication flow with login/signup screens
-- Dashboard with debt overview and progress tracking
+- Authentication flow with login/signup screens (Replit Auth + email/password)
+- Dashboard with debt overview, income summary, and progress tracking
 - Debt management (list, create, update, delete)
 - Payment method (credit card) management
+- Income tracking ("Receitas") - monthly income sources with recurring/one-time distinction
 - AI-powered strategy generation screen
 
 ### Backend Architecture
@@ -48,7 +49,7 @@ Preferred communication style: Simple, everyday language.
 **API Structure**:
 - RESTful API endpoints under `/api` prefix
 - Authentication middleware that attaches user to request object
-- CRUD operations for debts and payment methods
+- CRUD operations for debts, payment methods, and incomes
 - Strategy generation endpoint for AI recommendations
 
 **Session Configuration**:
@@ -64,16 +65,18 @@ Preferred communication style: Simple, everyday language.
 - **Connection**: WebSocket-based connection using @neondatabase/serverless with connection pooling
 
 **Schema Design**:
-Three main tables:
-1. **users**: Stores user account information (id, email, name, createdAt)
-2. **debts**: Tracks individual debts (id, userId, paymentMethodId, name, totalAmount, paidAmount, dueDate, isPaid, category, interestRate, createdAt, updatedAt)
+Four main tables:
+1. **users**: Stores user account information (id, email, name, passwordHash, createdAt)
+2. **debts**: Tracks individual debts (id, userId, paymentMethodId, name, totalAmount, paidAmount, dueDate, isPaid, category, notes, createdAt)
 3. **paymentMethods**: Manages credit cards and payment sources (id, userId, name, type, limit, availableLimit, closingDay, dueDay, createdAt)
+4. **incomes**: Tracks monthly income sources (id, userId, name, amount, category, isRecurring, createdAt)
 
 **Relationships**:
 - Users have many debts (one-to-many)
 - Users have many payment methods (one-to-many)
+- Users have many incomes (one-to-many)
 - Debts optionally reference payment methods (many-to-one with nullable foreign key)
-- Cascade deletion: When a user is deleted, all associated debts and payment methods are deleted
+- Cascade deletion: When a user is deleted, all associated debts, payment methods, and incomes are deleted
 
 **Data Validation**: Zod schemas generated from Drizzle schema definitions for runtime validation
 

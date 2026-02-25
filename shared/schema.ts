@@ -47,3 +47,21 @@ export const insertDebtSchema = createInsertSchema(debts).omit({
 
 export type InsertDebt = z.infer<typeof insertDebtSchema>;
 export type Debt = typeof debts.$inferSelect;
+
+export const incomes = pgTable("incomes", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
+  category: text("category"),
+  isRecurring: boolean("is_recurring").notNull().default(true),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const insertIncomeSchema = createInsertSchema(incomes).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type InsertIncome = z.infer<typeof insertIncomeSchema>;
+export type Income = typeof incomes.$inferSelect;

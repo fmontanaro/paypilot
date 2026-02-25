@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertDebtSchema, insertPaymentMethodSchema, users } from "@shared/schema";
+import { insertDebtSchema, insertPaymentMethodSchema, insertIncomeSchema, users } from "@shared/schema";
 import { isAuthenticated, authStorage } from "./replit_integrations/auth";
 import { nanoid } from "nanoid";
 import { db } from "./db";
@@ -233,6 +233,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(204).send();
     } catch (error) {
       res.status(500).json({ error: "Failed to delete payment method" });
+    }
+  });
+
+  app.get("/api/incomes", isAuthenticated, async (req, res) => {
+    try {
+      const incomes = await storage.getIncomes(getUserId(req));
+      res.json(incomes);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch incomes" });
+    }
+  });
+
+  app.post("/api/incomes", isAuthenticated, async (req, res) => {
+    try {
+      const incomeData = insertIncomeSchema.parse({
+        ...req.body,
+        userId: getUserId(req),
+      });
+      const income = await storage.createIncome(incomeData);
+      res.status(201).json(income);
+    } catch (error) {
+      res.status(400).json({ error: "Invalid income data" });
+    }
+  });
+
+  app.patch("/api/incomes/:id", isAuthenticated, async (req, res) => {
+    try {
+      const income = await storage.updateIncome(req.params.id, getUserId(req), req.body);
+      if (!income) {
+        return res.status(404).json({ error: "Income not found" });
+      }
+      res.json(income);
+    } catch (error) {
+      res.status(400).json({ error: "Failed to update income" });
+    }
+  });
+
+  app.delete("/api/incomes/:id", isAuthenticated, async (req, res) => {
+    try {
+      const success = await storage.deleteIncome(req.params.id, getUserId(req));
+      if (!success) {
+        return res.status(404).json({ error: "Income not found" });
+      }
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete income" });
     }
   });
 

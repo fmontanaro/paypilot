@@ -1,17 +1,18 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { TrendingDown, CreditCard, Sparkles, Wallet, Calendar, TrendingUp, List, Trophy, AlertCircle, AlertTriangle, Award, ThumbsUp, LogOut } from "lucide-react";
+import { TrendingDown, CreditCard, Sparkles, Wallet, Calendar, TrendingUp, List, Trophy, AlertCircle, AlertTriangle, Award, ThumbsUp, LogOut, DollarSign } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 import { Link } from "wouter";
 import logoUrl from "@assets/1000074692_1762573929735.png";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
-import type { Debt, PaymentMethod } from "@shared/schema";
+import type { Debt, PaymentMethod, Income } from "@shared/schema";
 
 export default function DashboardScreen() {
   const { user, logout } = useAuth();
   const { data: debts = [], isLoading: debtsLoading } = useQuery<Debt[]>({ queryKey: ["/api/debts"] });
   const { data: paymentMethods = [], isLoading: pmLoading } = useQuery<PaymentMethod[]>({ queryKey: ["/api/payment-methods"] });
+  const { data: incomes = [], isLoading: incomesLoading } = useQuery<Income[]>({ queryKey: ["/api/incomes"] });
 
   const totalDebt = debts.reduce((sum, debt) => sum + (parseFloat(debt.totalAmount) - parseFloat(debt.paidAmount)), 0);
   const totalPaid = debts.reduce((sum, debt) => sum + parseFloat(debt.paidAmount), 0);
@@ -42,7 +43,9 @@ export default function DashboardScreen() {
     return debt.isPaid || dueDate > upcomingDate;
   });
 
-  const isLoading = debtsLoading || pmLoading;
+  const totalIncome = incomes.reduce((sum, inc) => sum + parseFloat(inc.amount), 0);
+
+  const isLoading = debtsLoading || pmLoading || incomesLoading;
 
   const getStatusCard = () => {
     if (totalDebt <= 0) {
@@ -164,6 +167,27 @@ export default function DashboardScreen() {
           </Card>
         </div>
 
+        <Link href="/incomes">
+          <Card className="rounded-3xl border-4 border-green-500 bg-white hover-elevate active-elevate-2 cursor-pointer" data-testid="card-total-income">
+            <CardContent className="p-5">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                  <DollarSign className="w-6 h-6 text-green-600" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-xs font-bold text-gray-600 uppercase tracking-wide mb-1">Receita Mensal</p>
+                  <p className="text-2xl font-heading font-extrabold text-green-600" data-testid="text-total-income">
+                    {formatCurrency(totalIncome)}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="text-xs text-muted-foreground">{incomes.length} {incomes.length === 1 ? "fonte" : "fontes"}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </Link>
+
         <Card className="bg-accent rounded-3xl border-0 p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-xl font-heading font-bold text-white">Progresso Geral</h3>
@@ -217,6 +241,16 @@ export default function DashboardScreen() {
             >
               <List className="w-5 h-5 text-muted-foreground" />
               <span className="text-xs text-muted-foreground">Dívidas</span>
+            </Button>
+          </Link>
+          <Link href="/incomes">
+            <Button
+              variant="ghost"
+              className="flex-col h-auto py-2 gap-1"
+              data-testid="button-nav-incomes"
+            >
+              <DollarSign className="w-5 h-5 text-muted-foreground" />
+              <span className="text-xs text-muted-foreground">Receitas</span>
             </Button>
           </Link>
           <Link href="/cards">

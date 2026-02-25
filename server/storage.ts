@@ -1,6 +1,6 @@
-import { type Debt, type InsertDebt, type PaymentMethod, type InsertPaymentMethod } from "@shared/schema";
+import { type Debt, type InsertDebt, type PaymentMethod, type InsertPaymentMethod, type Income, type InsertIncome } from "@shared/schema";
 import { db } from "./db";
-import { debts, paymentMethods } from "@shared/schema";
+import { debts, paymentMethods, incomes } from "@shared/schema";
 import { eq, and, desc } from "drizzle-orm";
 
 export interface IStorage {
@@ -15,6 +15,12 @@ export interface IStorage {
   createPaymentMethod(paymentMethod: InsertPaymentMethod): Promise<PaymentMethod>;
   updatePaymentMethod(id: string, userId: string, paymentMethod: Partial<InsertPaymentMethod>): Promise<PaymentMethod | undefined>;
   deletePaymentMethod(id: string, userId: string): Promise<boolean>;
+
+  getIncomes(userId: string): Promise<Income[]>;
+  getIncome(id: string, userId: string): Promise<Income | undefined>;
+  createIncome(income: InsertIncome): Promise<Income>;
+  updateIncome(id: string, userId: string, income: Partial<InsertIncome>): Promise<Income | undefined>;
+  deleteIncome(id: string, userId: string): Promise<boolean>;
 }
 
 export class DbStorage implements IStorage {
@@ -63,6 +69,30 @@ export class DbStorage implements IStorage {
 
   async deletePaymentMethod(id: string, userId: string): Promise<boolean> {
     const result = await db.delete(paymentMethods).where(and(eq(paymentMethods.id, id), eq(paymentMethods.userId, userId))).returning();
+    return result.length > 0;
+  }
+
+  async getIncomes(userId: string): Promise<Income[]> {
+    return await db.select().from(incomes).where(eq(incomes.userId, userId)).orderBy(desc(incomes.createdAt));
+  }
+
+  async getIncome(id: string, userId: string): Promise<Income | undefined> {
+    const result = await db.select().from(incomes).where(and(eq(incomes.id, id), eq(incomes.userId, userId))).limit(1);
+    return result[0];
+  }
+
+  async createIncome(income: InsertIncome): Promise<Income> {
+    const result = await db.insert(incomes).values(income).returning();
+    return result[0];
+  }
+
+  async updateIncome(id: string, userId: string, income: Partial<InsertIncome>): Promise<Income | undefined> {
+    const result = await db.update(incomes).set(income).where(and(eq(incomes.id, id), eq(incomes.userId, userId))).returning();
+    return result[0];
+  }
+
+  async deleteIncome(id: string, userId: string): Promise<boolean> {
+    const result = await db.delete(incomes).where(and(eq(incomes.id, id), eq(incomes.userId, userId))).returning();
     return result.length > 0;
   }
 }
