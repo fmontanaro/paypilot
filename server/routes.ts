@@ -58,7 +58,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         if (err) {
           return res.status(500).json({ error: "Erro ao criar conta" });
         }
-        res.json({ success: true, user: { id: user.id, email: user.email, firstName: user.firstName } });
+        req.session.save((saveErr: any) => {
+          if (saveErr) {
+            return res.status(500).json({ error: "Erro ao criar conta" });
+          }
+          res.json({ success: true, user: { id: user.id, email: user.email, firstName: user.firstName } });
+        });
       });
     } catch (error) {
       console.error("Email signup error:", error);
@@ -103,7 +108,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         if (err) {
           return res.status(500).json({ error: "Erro ao fazer login" });
         }
-        res.json({ success: true, user: { id: user.id, email: user.email, firstName: user.firstName } });
+        req.session.save((saveErr: any) => {
+          if (saveErr) {
+            return res.status(500).json({ error: "Erro ao fazer login" });
+          }
+          res.json({ success: true, user: { id: user.id, email: user.email, firstName: user.firstName } });
+        });
       });
     } catch (error) {
       console.error("Email login error:", error);
