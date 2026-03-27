@@ -1,6 +1,6 @@
-import { type Debt, type InsertDebt, type PaymentMethod, type InsertPaymentMethod, type Income, type InsertIncome } from "@shared/schema";
+import { type Debt, type InsertDebt, type PaymentMethod, type InsertPaymentMethod, type Income, type InsertIncome, type Investment, type InsertInvestment } from "@shared/schema";
 import { db } from "./db";
-import { debts, paymentMethods, incomes } from "@shared/schema";
+import { debts, paymentMethods, incomes, investments } from "@shared/schema";
 import { eq, and, desc } from "drizzle-orm";
 
 export interface IStorage {
@@ -21,6 +21,12 @@ export interface IStorage {
   createIncome(income: InsertIncome): Promise<Income>;
   updateIncome(id: string, userId: string, income: Partial<InsertIncome>): Promise<Income | undefined>;
   deleteIncome(id: string, userId: string): Promise<boolean>;
+
+  getInvestments(userId: string): Promise<Investment[]>;
+  getInvestment(id: string, userId: string): Promise<Investment | undefined>;
+  createInvestment(investment: InsertInvestment): Promise<Investment>;
+  updateInvestment(id: string, userId: string, investment: Partial<InsertInvestment>): Promise<Investment | undefined>;
+  deleteInvestment(id: string, userId: string): Promise<boolean>;
 }
 
 export class DbStorage implements IStorage {
@@ -93,6 +99,30 @@ export class DbStorage implements IStorage {
 
   async deleteIncome(id: string, userId: string): Promise<boolean> {
     const result = await db.delete(incomes).where(and(eq(incomes.id, id), eq(incomes.userId, userId))).returning();
+    return result.length > 0;
+  }
+
+  async getInvestments(userId: string): Promise<Investment[]> {
+    return await db.select().from(investments).where(eq(investments.userId, userId)).orderBy(desc(investments.createdAt));
+  }
+
+  async getInvestment(id: string, userId: string): Promise<Investment | undefined> {
+    const result = await db.select().from(investments).where(and(eq(investments.id, id), eq(investments.userId, userId))).limit(1);
+    return result[0];
+  }
+
+  async createInvestment(investment: InsertInvestment): Promise<Investment> {
+    const result = await db.insert(investments).values(investment).returning();
+    return result[0];
+  }
+
+  async updateInvestment(id: string, userId: string, investment: Partial<InsertInvestment>): Promise<Investment | undefined> {
+    const result = await db.update(investments).set(investment).where(and(eq(investments.id, id), eq(investments.userId, userId))).returning();
+    return result[0];
+  }
+
+  async deleteInvestment(id: string, userId: string): Promise<boolean> {
+    const result = await db.delete(investments).where(and(eq(investments.id, id), eq(investments.userId, userId))).returning();
     return result.length > 0;
   }
 }

@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertDebtSchema, insertPaymentMethodSchema, insertIncomeSchema, users } from "@shared/schema";
+import { insertDebtSchema, insertPaymentMethodSchema, insertIncomeSchema, insertInvestmentSchema, users } from "@shared/schema";
 import { isAuthenticated, authStorage } from "./replit_integrations/auth";
 import { nanoid } from "nanoid";
 import { db } from "./db";
@@ -289,6 +289,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(204).send();
     } catch (error) {
       res.status(500).json({ error: "Failed to delete income" });
+    }
+  });
+
+  app.get("/api/investments", isAuthenticated, async (req, res) => {
+    try {
+      const inv = await storage.getInvestments(getUserId(req));
+      res.json(inv);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch investments" });
+    }
+  });
+
+  app.post("/api/investments", isAuthenticated, async (req, res) => {
+    try {
+      const data = insertInvestmentSchema.parse({ ...req.body, userId: getUserId(req) });
+      const inv = await storage.createInvestment(data);
+      res.status(201).json(inv);
+    } catch (error) {
+      res.status(400).json({ error: "Invalid investment data" });
+    }
+  });
+
+  app.patch("/api/investments/:id", isAuthenticated, async (req, res) => {
+    try {
+      const inv = await storage.updateInvestment(req.params.id, getUserId(req), req.body);
+      if (!inv) return res.status(404).json({ error: "Investment not found" });
+      res.json(inv);
+    } catch (error) {
+      res.status(400).json({ error: "Failed to update investment" });
+    }
+  });
+
+  app.delete("/api/investments/:id", isAuthenticated, async (req, res) => {
+    try {
+      const success = await storage.deleteInvestment(req.params.id, getUserId(req));
+      if (!success) return res.status(404).json({ error: "Investment not found" });
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete investment" });
     }
   });
 

@@ -65,11 +65,12 @@ Preferred communication style: Simple, everyday language.
 - **Connection**: WebSocket-based connection using @neondatabase/serverless with connection pooling
 
 **Schema Design**:
-Four main tables:
+Five main tables:
 1. **users**: Stores user account information (id, email, name, passwordHash, createdAt)
 2. **debts**: Tracks individual debts (id, userId, paymentMethodId, name, totalAmount, paidAmount, dueDate, isPaid, category, notes, createdAt)
-3. **paymentMethods**: Manages credit cards and payment sources (id, userId, name, type, limit, availableLimit, closingDay, dueDay, createdAt)
+3. **paymentMethods**: Manages credit cards and payment sources (id, userId, name, type, limit, availableLimit, closingDay, dueDay, createdAt) — kept in DB but no longer exposed in UI
 4. **incomes**: Tracks monthly income sources (id, userId, name, amount, category, isRecurring, createdAt)
+5. **investments**: Tracks investment portfolio (id, userId, name, amount, category, notes, createdAt)
 
 **Relationships**:
 - Users have many debts (one-to-many)

@@ -1,26 +1,25 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { TrendingDown, CreditCard, Sparkles, Wallet, Calendar, TrendingUp, List, Trophy, AlertCircle, AlertTriangle, Award, ThumbsUp, LogOut, DollarSign } from "lucide-react";
+import { TrendingDown, Sparkles, TrendingUp, List, Trophy, AlertCircle, AlertTriangle, Award, ThumbsUp, LogOut, DollarSign, BarChart2 } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 import { Link } from "wouter";
 import logoUrl from "@assets/1000074692_1762573929735.png";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
-import type { Debt, PaymentMethod, Income } from "@shared/schema";
+import type { Debt, Income, Investment } from "@shared/schema";
 
 export default function DashboardScreen() {
   const { user, logout } = useAuth();
   const { data: debts = [], isLoading: debtsLoading } = useQuery<Debt[]>({ queryKey: ["/api/debts"] });
-  const { data: paymentMethods = [], isLoading: pmLoading } = useQuery<PaymentMethod[]>({ queryKey: ["/api/payment-methods"] });
   const { data: incomes = [], isLoading: incomesLoading } = useQuery<Income[]>({ queryKey: ["/api/incomes"] });
+  const { data: investments = [], isLoading: investmentsLoading } = useQuery<Investment[]>({ queryKey: ["/api/investments"] });
 
   const totalDebt = debts.reduce((sum, debt) => sum + (parseFloat(debt.totalAmount) - parseFloat(debt.paidAmount)), 0);
   const totalPaid = debts.reduce((sum, debt) => sum + parseFloat(debt.paidAmount), 0);
   const totalOriginalDebt = totalDebt + totalPaid;
   const progressPercentage = totalOriginalDebt > 0 ? (totalPaid / totalOriginalDebt) * 100 : 0;
   
-  const totalAvailableLimit = paymentMethods.reduce((sum, pm) => sum + parseFloat(pm.availableLimit), 0);
-  const totalLimit = paymentMethods.reduce((sum, pm) => sum + parseFloat(pm.limit), 0);
+  const totalInvested = investments.reduce((sum, inv) => sum + parseFloat(inv.amount), 0);
 
   const username = user?.firstName || "Usuário";
 
@@ -45,7 +44,7 @@ export default function DashboardScreen() {
 
   const totalIncome = incomes.reduce((sum, inc) => sum + parseFloat(inc.amount), 0);
 
-  const isLoading = debtsLoading || pmLoading || incomesLoading;
+  const isLoading = debtsLoading || incomesLoading || investmentsLoading;
 
   const getStatusCard = () => {
     if (totalDebt <= 0) {
@@ -152,19 +151,21 @@ export default function DashboardScreen() {
             </CardContent>
           </Card>
 
-          <Card className="rounded-3xl border-4 border-green-400 bg-white hover-elevate active-elevate-2 cursor-pointer" onClick={() => console.log('View available clicked')} data-testid="card-available">
-            <CardContent className="p-5 space-y-3">
-              <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
-                <TrendingUp className="w-6 h-6 text-green-500" />
-              </div>
-              <div>
-                <p className="text-xs font-bold text-gray-600 uppercase tracking-wide mb-1">Limite Disponível</p>
-                <p className="text-2xl font-heading font-extrabold text-green-500" data-testid="text-total-available">
-                  {formatCurrency(totalAvailableLimit)}
-                </p>
-              </div>
-            </CardContent>
-          </Card>
+          <Link href="/investments">
+            <Card className="rounded-3xl border-4 border-blue-400 bg-white hover-elevate active-elevate-2 cursor-pointer" data-testid="card-total-invested">
+              <CardContent className="p-5 space-y-3">
+                <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
+                  <BarChart2 className="w-6 h-6 text-blue-500" />
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-gray-600 uppercase tracking-wide mb-1">Total Investido</p>
+                  <p className="text-2xl font-heading font-extrabold text-blue-500" data-testid="text-total-invested">
+                    {formatCurrency(totalInvested)}
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
         </div>
 
         <Link href="/incomes">
@@ -253,14 +254,14 @@ export default function DashboardScreen() {
               <span className="text-xs text-muted-foreground">Receitas</span>
             </Button>
           </Link>
-          <Link href="/cards">
+          <Link href="/investments">
             <Button
               variant="ghost"
               className="flex-col h-auto py-2 gap-1"
-              data-testid="button-nav-cards"
+              data-testid="button-nav-investments"
             >
-              <CreditCard className="w-5 h-5 text-muted-foreground" />
-              <span className="text-xs text-muted-foreground">Cartões</span>
+              <BarChart2 className="w-5 h-5 text-muted-foreground" />
+              <span className="text-xs text-muted-foreground">Investimentos</span>
             </Button>
           </Link>
           <Link href="/strategy">

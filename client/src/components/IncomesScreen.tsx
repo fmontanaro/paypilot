@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
-import { TrendingDown, CreditCard, Sparkles, List } from "lucide-react";
+import { TrendingDown, BarChart2, Sparkles, List } from "lucide-react";
 
 const INCOME_CATEGORIES = [
   { value: "salario", label: "Salário" },
@@ -420,10 +420,10 @@ export default function IncomesScreen() {
               <span className="text-xs font-bold">Receitas</span>
             </Button>
           </Link>
-          <Link href="/cards">
-            <Button variant="ghost" className="flex flex-col items-center gap-1 h-auto py-2" data-testid="nav-cards">
-              <CreditCard className="w-5 h-5" />
-              <span className="text-xs">Cartões</span>
+          <Link href="/investments">
+            <Button variant="ghost" className="flex flex-col items-center gap-1 h-auto py-2" data-testid="nav-investments">
+              <BarChart2 className="w-5 h-5" />
+              <span className="text-xs">Investimentos</span>
             </Button>
           </Link>
           <Link href="/strategy">

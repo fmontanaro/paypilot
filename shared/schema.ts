@@ -48,6 +48,24 @@ export const insertDebtSchema = createInsertSchema(debts).omit({
 export type InsertDebt = z.infer<typeof insertDebtSchema>;
 export type Debt = typeof debts.$inferSelect;
 
+export const investments = pgTable("investments", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
+  category: text("category"),
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const insertInvestmentSchema = createInsertSchema(investments).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type InsertInvestment = z.infer<typeof insertInvestmentSchema>;
+export type Investment = typeof investments.$inferSelect;
+
 export const incomes = pgTable("incomes", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),

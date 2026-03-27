@@ -7,7 +7,7 @@ import { useAuth } from "@/hooks/use-auth";
 import LoginScreen from "@/components/LoginScreen";
 import DashboardScreen from "@/components/DashboardScreen";
 import DebtsListScreen from "@/components/DebtsListScreen";
-import CardsScreen from "@/components/CardsScreen";
+import InvestmentsScreen from "@/components/InvestmentsScreen";
 import StrategyScreen from "@/components/StrategyScreen";
 import IncomesScreen from "@/components/IncomesScreen";
 import NotFound from "@/pages/not-found";
@@ -43,7 +43,7 @@ function Router() {
       <Route path="/" component={LoginScreen} />
       <Route path="/dashboard" component={DashboardScreen} />
       <Route path="/debts" component={DebtsListScreen} />
-      <Route path="/cards" component={CardsScreen} />
+      <Route path="/investments" component={InvestmentsScreen} />
       <Route path="/incomes" component={IncomesScreen} />
       <Route path="/strategy" component={StrategyScreen} />
       <Route component={NotFound} />
