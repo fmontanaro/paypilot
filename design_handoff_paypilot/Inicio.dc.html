@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0B6B3A">
+<link rel="icon" href="assets/logo.png">
+<link rel="apple-touch-icon" href="assets/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Nunito:wght@700;800;900&amp;display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,300..600,0..1,0&amp;display=block">
+<style>
+:root,[data-theme="claro"]{color-scheme:light;--bg:#F5F2EA;--surface:#FFFFFF;--surface2:#EEEAE0;--line:#E2DDD1;--ink:#16211B;--ink2:#46534B;--ink3:#626D66;--brand:#0B6B3A;--brand-on:#FFFFFF;--brand-t:#0B6B3A;--brand-soft:#E1EFE5;--brand-deep:#0A4F2C;--accent:#E9822A;--accent-soft:#FCEBD6;--accent-t:#9C4B0B;--good:#1E8C4E;--good-soft:#DCF2E3;--good-t:#16703D;--warn:#C98A0B;--warn-soft:#FBEFD2;--warn-t:#7F5300;--risk:#BF4A41;--risk-soft:#F8E3E0;--risk-t:#A03830;--cream:#FCE7C3;--shadow:0 1px 2px rgba(22,33,27,.06),0 6px 20px rgba(22,33,27,.07);--scrim:rgba(14,21,17,.42)}
+[data-theme="escuro"]{color-scheme:dark;--bg:#0D1410;--surface:#151F19;--surface2:#1D2922;--line:#2B3931;--ink:#ECF1ED;--ink2:#B4C0B8;--ink3:#93A097;--brand:#46B97A;--brand-on:#05200F;--brand-t:#6FCF98;--brand-soft:#163524;--brand-deep:#0B5A31;--accent:#F0954A;--accent-soft:#3A2614;--accent-t:#F6B47C;--good:#4FC285;--good-soft:#14341F;--good-t:#7CD8A5;--warn:#E2A93B;--warn-soft:#382B10;--warn-t:#F0C467;--risk:#E07C72;--risk-soft:#3C1E1B;--risk-t:#F29C93;--cream:#3A3020;--shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.28);--scrim:rgba(0,0,0,.6)}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink)}
+body:has(> x-dc > div:first-of-type){padding:0}
+body{font-family:Manrope,system-ui,sans-serif;font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;overscroll-behavior-y:contain}
+i{font-family:'Material Symbols Rounded';font-style:normal;font-weight:normal;line-height:1;font-size:22px;display:inline-block;font-feature-settings:'liga';-webkit-font-feature-settings:'liga';user-select:none;flex:none;letter-spacing:normal;text-transform:none;white-space:nowrap;direction:ltr}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:var(--brand-t)}a:hover{color:var(--ink)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+input[type=range]{accent-color:var(--brand)}
+@keyframes pp-spin{to{transform:rotate(360deg)}}
+@keyframes pp-shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+@keyframes pp-wave{0%,100%{transform:scaleY(.3)}50%{transform:scaleY(1)}}
+@keyframes pp-pulse{0%{box-shadow:0 0 0 0 rgba(233,130,42,.55)}100%{box-shadow:0 0 0 18px rgba(233,130,42,0)}}
+@keyframes pp-up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes pp-sheet{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+@keyframes pp-dots{0%,80%,100%{opacity:.25}40%{opacity:1}}
+@media (prefers-reduced-motion: reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important;transition:none!important}}
+</style>
+</helmet>
+<div style="display:flex;flex-direction:column;gap:16px">
+  <sc-if value="{{ st.error }}" hint-placeholder-val="{{ false }}">
+    <div role="alert" style="display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap;padding:14px 16px;border-radius:16px;background:var(--warn-soft);color:var(--ink)">
+      <i style="color:var(--warn-t)">sync_problem</i>
+      <div style="flex:1;min-width:200px"><div style="font-weight:800">Não conseguimos atualizar o cartão XP</div><div style="font-size:14px;color:var(--ink2);margin-top:2px">Os números abaixo podem estar até 2 dias atrasados. Seus dados estão seguros.</div></div>
+      <button onClick="{{ retry }}" style="min-height:44px;padding:0 16px;border-radius:12px;border:1px solid var(--warn-t);background:none;color:var(--warn-t);font-weight:800">Tentar de novo</button>
+    </div>
+  </sc-if>
+  <sc-if value="{{ st.loading }}" hint-placeholder-val="{{ false }}">
+    <div aria-busy="true" aria-label="Carregando seu mês" style="display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:16px">
+      <sc-for list="{{ skel }}" as="s" hint-placeholder-count="4">
+        <div style="grid-column:span {{ s.span }};height:{{ s.h }}px;border-radius:20px;background:linear-gradient(90deg,var(--surface) 25%,var(--surface2) 50%,var(--surface) 75%);background-size:200% 100%;animation:pp-shimmer 1.4s linear infinite;border:1px solid var(--line)"></div>
+      </sc-for>
+    </div>
+  </sc-if>
+  <sc-if value="{{ st.empty }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;padding:48px 20px;border-radius:24px;background:var(--surface);border:1px solid var(--line)">
+      <div style="width:120px;height:120px;border-radius:32px;background:#0B6B3A url(assets/logo.png) 50% 20%/150% no-repeat"></div>
+      <h2 style="margin:6px 0 0;font-family:Nunito,sans-serif;font-weight:800;font-size:24px">Seu mês aparece aqui</h2>
+      <p style="margin:0;max-width:380px;color:var(--ink2);line-height:1.5;text-wrap:pretty">Conecte um banco ou envie um extrato. Em poucos minutos mostramos para onde o dinheiro vai — sem julgamento.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
+        <button onClick="{{ goConnect }}" style="min-height:48px;padding:0 20px;border-radius:14px;border:0;background:var(--brand);color:var(--brand-on);font-weight:800">Conectar via Open Finance</button>
+        <button onClick="{{ goUpload }}" style="min-height:48px;padding:0 20px;border-radius:14px;border:1px solid var(--line);background:var(--surface);font-weight:700">Enviar extratos</button>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ st.show }}" hint-placeholder-val="{{ true }}">
+    <div style="display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:16px;align-items:start">
+      <section aria-labelledby="h-resumo" style="grid-column:span {{ sp.resumo }};background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:22px;display:flex;flex-direction:column;gap:18px">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+          <h2 id="h-resumo" style="margin:0;font-size:15px;font-weight:800">Resumo de outubro</h2>
+          <span style="font-size:13px;color:var(--ink3);font-weight:600">Dia 15 de 31</span>
+        </div>
+        <div role="img" aria-label="48% do mês já passou" style="height:6px;border-radius:3px;background:var(--surface2);overflow:hidden"><div style="width:48%;height:100%;background:var(--ink3);border-radius:3px"></div></div>
+        <div>
+          <div style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:var(--warn-soft);color:var(--warn-t);font-size:13px;font-weight:800"><i style="font-size:18px">info</i>Ainda não fecha</div>
+          <div style="margin-top:10px;font-family:Nunito,sans-serif;font-weight:900;font-size:{{ bigSize }};line-height:1.05;letter-spacing:-.02em">Faltam R$ 8.400</div>
+          <div style="font-size:17px;color:var(--ink2);margin-top:4px;font-weight:600">para fechar outubro. Veja 3 formas de cobrir.</div>
+        </div>
+        <div style="padding:14px;border-radius:16px;background:var(--good-soft)">
+          <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:14px"><span style="font-weight:800;color:var(--good-t);display:flex;align-items:center;gap:6px"><i style="font-size:18px">trending_down</i>O buraco já diminuiu</span><span style="color:var(--ink2)">era R$ 12.500 no dia 1º</span></div>
+          <div role="img" aria-label="Você já cobriu R$ 4.100 de R$ 12.500, 33%" style="margin-top:10px;height:10px;border-radius:5px;background:var(--surface);overflow:hidden"><div style="width:33%;height:100%;background:var(--good);border-radius:5px"></div></div>
+          <div style="font-size:13px;color:var(--ink2);margin-top:6px">Você já cobriu R$ 4.100 cortando e adiando sem custo.</div>
+        </div>
+        <div role="img" aria-label="Renda prevista R$ 34.000 contra compromissos de R$ 42.400" style="display:grid;gap:10px">
+          <div style="display:grid;grid-template-columns:110px minmax(0,1fr) auto;gap:10px;align-items:center;font-size:14px"><span style="color:var(--ink2)">Renda prevista</span><div style="height:12px;border-radius:6px;background:var(--surface2)"><div style="width:80%;height:100%;border-radius:6px;background:var(--brand)"></div></div><b>R$ 34.000</b></div>
+          <div style="display:grid;grid-template-columns:110px minmax(0,1fr) auto;gap:10px;align-items:center;font-size:14px"><span style="color:var(--ink2)">Compromissos</span><div style="height:12px;border-radius:6px;background:var(--surface2)"><div style="width:100%;height:100%;border-radius:6px;background:var(--accent)"></div></div><b>R$ 42.400</b></div>
+          <div style="font-size:12px;color:var(--ink3)">De R$ 46.500 previstos, R$ 4.100 já foram cortados ou adiados.</div>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button onClick="{{ goPrior }}" style="flex:1 1 200px;min-height:50px;padding:0 18px;border-radius:14px;border:0;background:var(--brand);color:var(--brand-on);font-weight:800;font-size:15px;display:flex;align-items:center;justify-content:center;gap:8px">Ver 3 formas de cobrir<i style="font-size:20px">arrow_forward</i></button>
+          <button onClick="{{ goChat }}" style="flex:1 1 160px;min-height:50px;padding:0 18px;border-radius:14px;border:1px solid var(--line);background:var(--surface);font-weight:700;font-size:15px">Perguntar ao assistente</button>
+        </div>
+      </section>
+      <section aria-labelledby="h-agora" style="grid-column:span {{ sp.acoes }};display:flex;flex-direction:column;gap:12px">
+        <h2 id="h-agora" style="margin:4px 4px 0;font-size:15px;font-weight:800">O que fazer agora</h2>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px">
+          <sc-for list="{{ acoes }}" as="a" hint-placeholder-count="3">
+            <article style="background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:10px">
+              <div style="display:flex;gap:12px;align-items:flex-start">
+                <span style="width:44px;height:44px;border-radius:14px;background:{{ a.bg }};color:{{ a.fg }};display:flex;align-items:center;justify-content:center;flex:none"><i>{{ a.icon }}</i></span>
+                <div style="min-width:0">
+                  <div style="font-size:12px;font-weight:800;color:{{ a.fg }};text-transform:uppercase;letter-spacing:.05em">{{ a.tag }}</div>
+                  <div style="font-weight:800;font-size:16px;line-height:1.3;margin-top:2px;text-wrap:pretty">{{ a.title }}</div>
+                </div>
+              </div>
+              <div style="font-size:14px;color:var(--ink2);line-height:1.45">{{ a.meta }}</div>
+              <button onClick="{{ a.on }}" style="align-self:flex-start;min-height:44px;padding:0 14px;border-radius:12px;border:0;background:var(--surface2);font-weight:800;font-size:14px;display:flex;align-items:center;gap:6px">{{ a.cta }}<i style="font-size:18px">chevron_right</i></button>
+            </article>
+          </sc-for>
+        </div>
+      </section>
+      <section aria-labelledby="h-tetos" style="grid-column:span {{ sp.tetos }};background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:20px;display:flex;flex-direction:column;gap:16px">
+        <div style="display:flex;justify-content:space-between;align-items:center"><h2 id="h-tetos" style="margin:0;font-size:15px;font-weight:800">Tetos em risco</h2><button onClick="{{ goTetos }}" style="min-height:44px;border:0;background:none;color:var(--brand-t);font-weight:800;font-size:14px">Ver todos</button></div>
+        <sc-for list="{{ tetos }}" as="t" hint-placeholder-count="3">
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline"><span style="display:flex;align-items:center;gap:8px;font-weight:700"><i style="font-size:20px;color:var(--ink3)">{{ t.icon }}</i>{{ t.name }}</span><span style="font-size:14px"><b>{{ t.spentTxt }}</b> <span style="color:var(--ink3)">de {{ t.limTxt }}</span></span></div>
+            <div role="img" aria-label="{{ t.aria }}" style="position:relative;height:12px;border-radius:6px;background:var(--surface2)">
+              <div style="width:{{ t.pct }}%;height:100%;border-radius:6px;background:var(--warn)"></div>
+              <div title="Ritmo esperado para hoje" style="position:absolute;left:48.4%;top:-4px;bottom:-4px;width:3px;border-radius:2px;background:var(--ink)"></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--warn-t);font-weight:700"><i style="font-size:16px">trending_up</i>{{ t.projTxt }}</div>
+          </div>
+        </sc-for>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink3)"><span style="width:3px;height:12px;background:var(--ink);border-radius:2px"></span>Marcador = ritmo esperado para o dia 15</div>
+      </section>
+      <section aria-labelledby="h-plano" style="grid-column:span {{ sp.plano }};background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:20px;display:flex;flex-direction:column;gap:16px">
+        <div style="display:flex;justify-content:space-between;align-items:center"><h2 id="h-plano" style="margin:0;font-size:15px;font-weight:800">Progresso do plano</h2><button onClick="{{ goQuit }}" style="min-height:44px;border:0;background:none;color:var(--brand-t);font-weight:800;font-size:14px">Ver plano</button></div>
+        <ol aria-label="Jornada em 4 fases, fase atual: Fechar o mês" style="list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px">
+          <sc-for list="{{ fases }}" as="f" hint-placeholder-count="4">
+            <li style="display:flex;flex-direction:column;gap:8px;align-items:flex-start">
+              <div style="display:flex;align-items:center;width:100%;gap:4px"><span style="width:28px;height:28px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;background:{{ f.bg }};color:{{ f.fg }};border:2px solid {{ f.bd }}">{{ f.n }}</span><span style="flex:1;height:3px;border-radius:2px;background:var(--line)"></span></div>
+              <span style="font-size:12px;font-weight:{{ f.w }};line-height:1.25;color:{{ f.tc }}">{{ f.label }}</span>
+            </li>
+          </sc-for>
+        </ol>
+        <div style="padding:14px;border-radius:16px;background:var(--brand-soft)"><div style="font-weight:800;color:var(--brand-t)">Fase 1 · Fechar o mês</div><div style="font-size:14px;color:var(--ink2);margin-top:4px;line-height:1.45">Fazer outubro caber na renda sem pegar dívida cara nova.</div></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div><div style="font-size:13px;color:var(--ink3)">Dívida total</div><div style="font-size:22px;font-weight:800">R$ 54.700</div><div style="font-size:13px;color:var(--good-t);font-weight:700;display:flex;gap:4px;align-items:center"><i style="font-size:16px">south</i>R$ 2.310 desde set</div></div>
+          <div><div style="font-size:13px;color:var(--ink3)">Quitação prevista</div><div style="font-size:22px;font-weight:800">set 2028</div><div style="font-size:13px;color:var(--good-t);font-weight:700;display:flex;gap:4px;align-items:center"><i style="font-size:16px">event_available</i>2 meses antes</div></div>
+        </div>
+      </section>
+      <section aria-labelledby="h-venc" style="grid-column:span {{ sp.venc }};background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:20px;display:flex;flex-direction:column;gap:16px">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><h2 id="h-venc" style="margin:0;font-size:15px;font-weight:800">Próximos vencimentos · 14 dias</h2><span style="font-size:13px;color:var(--ink3)">R$ 23.528 até 28 out</span></div>
+        <div role="img" aria-label="Linha do tempo de 15 a 28 de outubro. Maior vencimento: fatura Itaú de R$ 8.900 no dia 27." style="display:grid;grid-template-columns:repeat(14,minmax(0,1fr));gap:3px;align-items:end">
+          <sc-for list="{{ strip }}" as="d" hint-placeholder-count="14">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+              <div style="height:56px;width:100%;display:flex;align-items:flex-end;justify-content:center"><div style="width:min(14px,70%);height:{{ d.h }}px;border-radius:4px;background:{{ d.c }}"></div></div>
+              <span style="font-size:10px;color:var(--ink3);font-weight:700">{{ d.wd }}</span>
+              <span style="width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;background:{{ d.bg }};color:{{ d.fg }}">{{ d.d }}</span>
+            </div>
+          </sc-for>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:4px 20px">
+          <sc-for list="{{ venc }}" as="v" hint-placeholder-count="6">
+            <div style="display:flex;align-items:center;gap:12px;min-height:52px;border-bottom:1px solid var(--line)">
+              <span style="width:44px;flex:none;text-align:center;font-size:13px;font-weight:800;color:var(--ink2)">{{ v.date }}</span>
+              <div style="flex:1;min-width:0"><div style="font-weight:700;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ v.name }}</div><sc-if value="{{ v.tag }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:800;color:{{ v.tfg }}"><i style="font-size:14px">{{ v.ticon }}</i>{{ v.tag }}</span></sc-if></div>
+              <span style="font-weight:800">{{ v.amt }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </section>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { retrying: false, fixed: false };
+  renderVals() {
+    const bp = this.props.bp || 'mobile', go = this.props.go || (() => {});
+    let hs = ['carregando', 'vazio', 'erro'].includes(this.props.demo) ? this.props.demo : (this.props.homeState || 'normal');
+    if (this.state.fixed && hs === 'erro') hs = 'normal';
+    const loading = hs === 'carregando' || this.state.retrying;
+    const st = { loading, empty: !loading && hs === 'vazio', error: !loading && hs === 'erro', show: !loading && hs !== 'vazio' };
+    const sp = bp === 'desktop' ? { resumo: 7, acoes: 5, tetos: 6, plano: 6, venc: 12 } : bp === 'tablet' ? { resumo: 12, acoes: 12, tetos: 6, plano: 6, venc: 12 } : { resumo: 12, acoes: 12, tetos: 12, plano: 12, venc: 12 };
+    const brl = v => 'R$ ' + v.toLocaleString('pt-BR');
+    const tetos = [['Uber', 'local_taxi', 990, 1000], ['Restaurantes', 'restaurant', 1380, 1800], ['Mercado', 'shopping_cart', 1640, 3000]].map(([name, icon, s, l]) => {
+      const proj = Math.round(s / 15 * 31);
+      return { name, icon, spentTxt: brl(s), limTxt: brl(l), pct: Math.min(100, s / l * 100).toFixed(1), projTxt: `No ritmo atual: ${brl(proj)} até o dia 31`, aria: `${name}: ${brl(s)} de ${brl(l)}, ${Math.round(s / l * 100)}% usado. Projeção ${brl(proj)}.` };
+    });
+    const fases = ['Fechar o mês', 'Estabilizar', 'Quitar', 'Gerar sobra'].map((label, i) => ({ label, n: i + 1, bg: i === 0 ? 'var(--brand)' : 'var(--surface)', fg: i === 0 ? 'var(--brand-on)' : 'var(--ink3)', bd: i === 0 ? 'var(--brand)' : 'var(--line)', w: i === 0 ? 800 : 600, tc: i === 0 ? 'var(--ink)' : 'var(--ink3)' }));
+    const V = [[15, 'Fatura Santander', 3100, 'hoje'], [17, 'Parcela empréstimo Santander', 1690, '3d'], [18, 'Escola das crianças', 4200, '3d'], [20, 'Condomínio', 1450], [20, 'Impostos da empresa · 18/48', 890], [22, 'Plano de saúde', 2650], [25, 'Fechamento do cartão XP', 0], [27, 'Fatura Itaú', 8900], [28, 'Luz, água e gás', 648]];
+    const venc = V.map(([d, name, v, k]) => ({
+      date: d === 15 ? 'Hoje' : d + ' out', name, amt: v ? brl(v) : '—',
+      tag: k === 'hoje' ? 'Vence hoje' : k === '3d' ? 'Em até 3 dias' : (v === 0 ? 'Compras depois daqui vão para dezembro' : ''),
+      tfg: k === 'hoje' ? 'var(--risk-t)' : k === '3d' ? 'var(--warn-t)' : 'var(--ink3)', ticon: k === 'hoje' ? 'error' : k === '3d' ? 'schedule' : 'event',
+    }));
+    const WD = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
+    const strip = Array.from({ length: 14 }, (_, i) => {
+      const d = 15 + i, tot = V.filter(x => x[0] === d).reduce((a, x) => a + x[2], 0), ev = V.some(x => x[0] === d);
+      return { d, wd: WD[new Date(2026, 9, d).getDay()], h: tot ? Math.max(6, Math.round(tot / 8900 * 52)) : (ev ? 4 : 0), c: d === 15 ? 'var(--risk)' : d <= 18 ? 'var(--warn)' : 'var(--brand)', bg: d === 15 ? 'var(--ink)' : 'transparent', fg: d === 15 ? 'var(--bg)' : 'var(--ink2)' };
+    });
+    return {
+      st, sp, tetos, fases, venc, strip,
+      bigSize: bp === 'mobile' ? '40px' : '52px',
+      skel: [{ span: bp === 'desktop' ? 7 : 12, h: 360 }, { span: bp === 'desktop' ? 5 : 12, h: 360 }, { span: bp === 'mobile' ? 12 : 6, h: 240 }, { span: bp === 'mobile' ? 12 : 6, h: 240 }],
+      acoes: [
+        { icon: 'event', fg: 'var(--risk-t)', bg: 'var(--risk-soft)', tag: 'Vence hoje', title: 'Fatura Santander vence hoje', meta: 'R$ 3.100 · atrasar custa R$ 210 em juros e pode negativar seu nome.', cta: 'Ver nas prioridades', on: () => go('plano', 'prioridades') },
+        { icon: 'savings', fg: 'var(--good-t)', bg: 'var(--good-soft)', tag: 'Economia', title: 'Você pode economizar R$ 480/mês cancelando 4 assinaturas', meta: 'Inclui um serviço de música repetido em outro cartão.', cta: 'Revisar assinaturas', on: () => go('gastos', 'vazamentos') },
+        { icon: 'speed', fg: 'var(--warn-t)', bg: 'var(--warn-soft)', tag: 'Atenção', title: 'Teto de Uber em 99% e ainda é dia 15', meta: 'Restam R$ 10 até o dia 31. No ritmo atual, o mês fecha em R$ 2.046.', cta: 'Ver teto', on: () => go('gastos', 'tetos') },
+      ],
+      retry: () => { this.setState({ retrying: true }); setTimeout(() => this.setState({ retrying: false, fixed: true }), 1200); },
+      goPrior: () => go('plano', 'prioridades'), goChat: () => go('assistente'), goTetos: () => go('gastos', 'tetos'), goQuit: () => go('plano', 'quitacao'),
+      goConnect: () => go('onb', 'banco'), goUpload: () => go('onb', 'upload'),
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0B6B3A">
+<link rel="icon" href="assets/logo.png">
+<link rel="apple-touch-icon" href="assets/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Nunito:wght@700;800;900&amp;display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,300..600,0..1,0&amp;display=block">
+<style>
+:root,[data-theme="claro"]{color-scheme:light;--bg:#F5F2EA;--surface:#FFFFFF;--surface2:#EEEAE0;--line:#E2DDD1;--ink:#16211B;--ink2:#46534B;--ink3:#626D66;--brand:#0B6B3A;--brand-on:#FFFFFF;--brand-t:#0B6B3A;--brand-soft:#E1EFE5;--brand-deep:#0A4F2C;--accent:#E9822A;--accent-soft:#FCEBD6;--accent-t:#9C4B0B;--good:#1E8C4E;--good-soft:#DCF2E3;--good-t:#16703D;--warn:#C98A0B;--warn-soft:#FBEFD2;--warn-t:#7F5300;--risk:#BF4A41;--risk-soft:#F8E3E0;--risk-t:#A03830;--cream:#FCE7C3;--shadow:0 1px 2px rgba(22,33,27,.06),0 6px 20px rgba(22,33,27,.07);--scrim:rgba(14,21,17,.42)}
+[data-theme="escuro"]{color-scheme:dark;--bg:#0D1410;--surface:#151F19;--surface2:#1D2922;--line:#2B3931;--ink:#ECF1ED;--ink2:#B4C0B8;--ink3:#93A097;--brand:#46B97A;--brand-on:#05200F;--brand-t:#6FCF98;--brand-soft:#163524;--brand-deep:#0B5A31;--accent:#F0954A;--accent-soft:#3A2614;--accent-t:#F6B47C;--good:#4FC285;--good-soft:#14341F;--good-t:#7CD8A5;--warn:#E2A93B;--warn-soft:#382B10;--warn-t:#F0C467;--risk:#E07C72;--risk-soft:#3C1E1B;--risk-t:#F29C93;--cream:#3A3020;--shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.28);--scrim:rgba(0,0,0,.6)}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink)}
+body{font-family:Manrope,system-ui,sans-serif;font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;overscroll-behavior-y:contain}
+i{font-family:'Material Symbols Rounded';font-style:normal;font-weight:normal;line-height:1;font-size:22px;display:inline-block;font-feature-settings:'liga';-webkit-font-feature-settings:'liga';user-select:none;flex:none;letter-spacing:normal;text-transform:none;white-space:nowrap;direction:ltr}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:var(--brand-t)}a:hover{color:var(--ink)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+input[type=range]{accent-color:var(--brand)}
+@keyframes pp-spin{to{transform:rotate(360deg)}}
+@keyframes pp-shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+@keyframes pp-wave{0%,100%{transform:scaleY(.3)}50%{transform:scaleY(1)}}
+@keyframes pp-pulse{0%{box-shadow:0 0 0 0 rgba(233,130,42,.55)}100%{box-shadow:0 0 0 18px rgba(233,130,42,0)}}
+@keyframes pp-up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes pp-sheet{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+@keyframes pp-dots{0%,80%,100%{opacity:.25}40%{opacity:1}}
+@media (prefers-reduced-motion: reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important;transition:none!important}}
+</style>
+</helmet>
+<div data-theme="{{ theme }}" style="min-height:100vh;background:var(--bg);color:var(--ink);font-family:Manrope,system-ui,sans-serif">
+  <sc-if value="{{ isOnb }}" hint-placeholder-val="{{ false }}">
+    <dc-import name="Onboarding" bp="{{ bp }}" sub="{{ sub }}" go="{{ go }}" hint-size="100%,100vh"></dc-import>
+  </sc-if>
+  <sc-if value="{{ isApp }}" hint-placeholder-val="{{ true }}">
+    <div style="display:flex;align-items:flex-start;min-height:100vh">
+      <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+        <nav aria-label="Navegação principal" style="position:sticky;top:0;height:100vh;width:236px;flex:none;display:flex;flex-direction:column;gap:4px;padding:20px 14px;border-right:1px solid var(--line);background:var(--surface);overflow-y:auto">
+          <button onClick="{{ goInicio }}" style="display:flex;align-items:center;gap:10px;padding:4px 8px 18px;border:0;background:none;text-align:left">
+            <span style="width:40px;height:40px;border-radius:12px;background:#0B6B3A url(assets/logo.png) 50% 18%/155% no-repeat;flex:none"></span>
+            <span style="font-family:Nunito,sans-serif;font-weight:900;font-size:22px;letter-spacing:-.01em">PayPilot</span>
+          </button>
+          <sc-for list="{{ nav }}" as="n" hint-placeholder-count="5">
+            <button onClick="{{ n.onClick }}" aria-current="{{ n.current }}" style="display:flex;align-items:center;gap:12px;min-height:44px;padding:0 12px;border:0;border-radius:12px;background:{{ n.bg }};color:{{ n.fg }};font-weight:{{ n.weight }};font-size:15px;text-align:left">
+              <i style="font-variation-settings:{{ n.fill }}">{{ n.icon }}</i>{{ n.label }}
+            </button>
+          </sc-for>
+          <div style="height:1px;background:var(--line);margin:10px 8px"></div>
+          <button onClick="{{ togglePanel }}" style="display:flex;align-items:center;gap:12px;min-height:44px;padding:0 12px;border:0;border-radius:12px;background:{{ panelBtnBg }};color:var(--ink2);font-weight:600;font-size:15px;text-align:left">
+            <i>forum</i>Assistente<span style="margin-left:auto;font-size:12px;color:var(--ink3)">{{ panelLabel }}</span>
+          </button>
+          <sc-for list="{{ nav2 }}" as="n" hint-placeholder-count="2">
+            <button onClick="{{ n.onClick }}" aria-current="{{ n.current }}" style="display:flex;align-items:center;gap:12px;min-height:44px;padding:0 12px;border:0;border-radius:12px;background:{{ n.bg }};color:{{ n.fg }};font-weight:{{ n.weight }};font-size:15px;text-align:left">
+              <i>{{ n.icon }}</i>{{ n.label }}
+            </button>
+          </sc-for>
+          <div style="margin-top:auto;display:flex;flex-direction:column;gap:10px;padding-top:16px">
+            <div style="padding:14px;border-radius:16px;background:var(--brand-soft)">
+              <div style="font-size:12px;font-weight:700;color:var(--brand-t);text-transform:uppercase;letter-spacing:.06em">Plano {{ plan }}</div>
+              <div style="font-size:13px;color:var(--ink2);margin-top:4px;line-height:1.4">Fase 1 de 4 · Fechar o mês</div>
+            </div>
+            <button onClick="{{ goPerfil }}" style="display:flex;align-items:center;gap:10px;padding:8px;border:0;border-radius:12px;background:none;text-align:left">
+              <span style="width:36px;height:36px;border-radius:50%;background:var(--accent-soft);color:var(--accent-t);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px">MR</span>
+              <span style="display:flex;flex-direction:column"><span style="font-weight:700;font-size:14px">Marcos Ribeiro</span><span style="font-size:12px;color:var(--ink3)">Perfil e configurações</span></span>
+            </button>
+          </div>
+        </nav>
+      </sc-if>
+      <sc-if value="{{ isTablet }}" hint-placeholder-val="{{ false }}">
+        <nav aria-label="Navegação principal" style="position:sticky;top:0;height:100vh;width:80px;flex:none;display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px 8px;border-right:1px solid var(--line);background:var(--surface)">
+          <button onClick="{{ goInicio }}" aria-label="PayPilot, início" style="width:44px;height:44px;border-radius:12px;border:0;background:#0B6B3A url(assets/logo.png) 50% 18%/155% no-repeat;margin-bottom:12px"></button>
+          <sc-for list="{{ nav }}" as="n" hint-placeholder-count="5">
+            <button onClick="{{ n.onClick }}" aria-label="{{ n.label }}" aria-current="{{ n.current }}" style="width:60px;min-height:52px;border:0;border-radius:14px;background:{{ n.bg }};color:{{ n.fg }};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:11px;font-weight:700">
+              <i style="font-variation-settings:{{ n.fill }}">{{ n.icon }}</i>{{ n.label }}
+            </button>
+          </sc-for>
+          <button onClick="{{ openDrawer }}" aria-label="Abrir assistente" style="width:52px;height:52px;border-radius:50%;border:0;background:var(--brand);color:var(--brand-on);margin-top:10px;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow)"><i>forum</i></button>
+          <button onClick="{{ goPerfil }}" aria-label="Perfil" style="margin-top:auto;width:44px;height:44px;border-radius:50%;border:0;background:var(--accent-soft);color:var(--accent-t);font-weight:800;font-size:14px">MR</button>
+        </nav>
+      </sc-if>
+      <main style="flex:1;min-width:0;min-height:100vh;display:flex;flex-direction:column">
+        <sc-if value="{{ showPull }}" hint-placeholder-val="{{ false }}">
+          <div style="height:{{ pullH }}px;overflow:hidden;display:flex;align-items:center;justify-content:center;gap:8px;color:var(--brand-t);font-size:13px;font-weight:700;padding-top:env(safe-area-inset-top)">{{ spinner }}{{ pullText }}</div>
+        </sc-if>
+        <sc-if value="{{ showHeader }}" hint-placeholder-val="{{ true }}">
+          <header style="{{ headerBox }}">
+            <div style="display:flex;align-items:center;gap:12px;min-width:0">
+              <sc-if value="{{ showMark }}" hint-placeholder-val="{{ false }}">
+                <span style="width:40px;height:40px;border-radius:12px;background:#0B6B3A url(assets/logo.png) 50% 18%/155% no-repeat;flex:none"></span>
+              </sc-if>
+              <div style="min-width:0">
+                <div style="font-size:13px;color:var(--ink3);font-weight:600;white-space:nowrap">{{ kicker }}</div>
+                <h1 style="margin:0;font-family:Nunito,sans-serif;font-weight:800;font-size:{{ h1 }};letter-spacing:-.01em;line-height:1.15">{{ title }}</h1>
+              </div>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;flex:none">
+              <button onClick="{{ toggleTheme }}" aria-label="Alternar modo claro e escuro" style="width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--surface);display:flex;align-items:center;justify-content:center"><i>{{ themeIcon }}</i></button>
+              <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+                <button onClick="{{ goPerfil }}" aria-label="Perfil e configurações" style="width:44px;height:44px;border-radius:50%;border:0;background:var(--accent-soft);color:var(--accent-t);font-weight:800;font-size:14px">MR</button>
+              </sc-if>
+            </div>
+          </header>
+        </sc-if>
+        <div style="{{ contentBox }}">
+          <sc-if value="{{ r.inicio }}" hint-placeholder-val="{{ false }}"><dc-import name="Inicio" bp="{{ bp }}" go="{{ go }}" plan="{{ plan }}" demo="{{ demo }}" home-state="{{ homeState }}" hint-size="100%,900px"></dc-import></sc-if>
+          <sc-if value="{{ r.gastos }}" hint-placeholder-val="{{ false }}"><dc-import name="Gastos" bp="{{ bp }}" sub="{{ sub }}" demo="{{ demo }}" go="{{ go }}" plan="{{ plan }}" hint-size="100%,900px"></dc-import></sc-if>
+          <sc-if value="{{ r.plano }}" hint-placeholder-val="{{ false }}"><dc-import name="Plano" bp="{{ bp }}" sub="{{ sub }}" demo="{{ demo }}" go="{{ go }}" plan="{{ plan }}" hint-size="100%,900px"></dc-import></sc-if>
+          <sc-if value="{{ r.metas }}" hint-placeholder-val="{{ false }}"><dc-import name="Metas" bp="{{ bp }}" sub="{{ sub }}" go="{{ go }}" plan="{{ plan }}" hint-size="100%,900px"></dc-import></sc-if>
+          <sc-if value="{{ r.contas }}" hint-placeholder-val="{{ false }}"><dc-import name="Contas" bp="{{ bp }}" sub="{{ sub }}" go="{{ go }}" plan="{{ plan }}" hint-size="100%,900px"></dc-import></sc-if>
+          <sc-if value="{{ r.assistente }}" hint-placeholder-val="{{ false }}"><dc-import name="Assistente" mode="full" bp="{{ bp }}" sub="{{ sub }}" demo="{{ demo }}" go="{{ go }}" plan="{{ plan }}" hint-size="100%,100vh"></dc-import></sc-if>
+          <sc-if value="{{ r.perfil }}" hint-placeholder-val="{{ false }}"><dc-import name="Perfil" bp="{{ bp }}" sub="{{ sub }}" go="{{ go }}" plan="{{ plan }}" set-plan="{{ setPlan }}" theme="{{ themePref }}" set-theme="{{ setTheme }}" hint-size="100%,900px"></dc-import></sc-if>
+        </div>
+      </main>
+      <sc-if value="{{ showPanel }}" hint-placeholder-val="{{ false }}">
+        <aside aria-label="Assistente" style="position:sticky;top:0;height:100vh;width:368px;flex:none;border-left:1px solid var(--line);background:var(--surface)">
+          <dc-import name="Assistente" mode="panel" bp="{{ bp }}" go="{{ go }}" plan="{{ plan }}" on-close="{{ closePanel }}" hint-size="100%,100vh"></dc-import>
+        </aside>
+      </sc-if>
+    </div>
+    <sc-if value="{{ showFab }}" hint-placeholder-val="{{ false }}">
+      <button onClick="{{ togglePanel }}" style="position:fixed;right:24px;bottom:24px;z-index:45;display:flex;align-items:center;gap:8px;height:52px;padding:0 20px 0 16px;border:0;border-radius:26px;background:var(--brand);color:var(--brand-on);font-weight:800;font-size:15px;box-shadow:var(--shadow)"><i>forum</i>Assistente</button>
+    </sc-if>
+    <sc-if value="{{ showBottom }}" hint-placeholder-val="{{ false }}">
+      <nav aria-label="Navegação principal" style="position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--surface);border-top:1px solid var(--line);padding:6px 6px calc(6px + env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(2,minmax(0,1fr)) 72px repeat(3,minmax(0,1fr));align-items:center">
+        <sc-for list="{{ navL }}" as="n" hint-placeholder-count="2">
+          <button onClick="{{ n.onClick }}" aria-current="{{ n.current }}" style="min-height:52px;border:0;background:none;color:{{ n.fg }};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11px;font-weight:{{ n.weight }}">
+            <span style="width:52px;height:28px;border-radius:14px;background:{{ n.bg }};display:flex;align-items:center;justify-content:center"><i style="font-variation-settings:{{ n.fill }}">{{ n.icon }}</i></span>{{ n.label }}
+          </button>
+        </sc-for>
+        <button onClick="{{ goChat }}" aria-label="Abrir assistente" style="justify-self:center;width:58px;height:58px;margin-top:-26px;border-radius:50%;border:4px solid var(--bg);background:var(--brand);color:var(--brand-on);display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow)"><i style="font-size:26px">forum</i></button>
+        <sc-for list="{{ navR }}" as="n" hint-placeholder-count="3">
+          <button onClick="{{ n.onClick }}" aria-current="{{ n.current }}" style="min-height:52px;border:0;background:none;color:{{ n.fg }};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11px;font-weight:{{ n.weight }}">
+            <span style="width:52px;height:28px;border-radius:14px;background:{{ n.bg }};display:flex;align-items:center;justify-content:center"><i style="font-variation-settings:{{ n.fill }}">{{ n.icon }}</i></span>{{ n.label }}
+          </button>
+        </sc-for>
+      </nav>
+    </sc-if>
+    <sc-if value="{{ drawerOpen }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ closeDrawer }}" style="position:fixed;inset:0;background:var(--scrim);z-index:60"></div>
+      <aside aria-label="Assistente" style="position:fixed;top:0;right:0;bottom:0;width:min(400px,100vw);z-index:61;background:var(--surface);box-shadow:var(--shadow);animation:pp-up .2s ease">
+        <dc-import name="Assistente" mode="panel" bp="{{ bp }}" go="{{ go }}" plan="{{ plan }}" on-close="{{ closeDrawer }}" hint-size="100%,100vh"></dc-import>
+      </aside>
+    </sc-if>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;claro&quot;,&quot;escuro&quot;,&quot;sistema&quot;],&quot;default&quot;:&quot;claro&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;plan&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Grátis&quot;,&quot;Plus&quot;,&quot;Pilot&quot;],&quot;default&quot;:&quot;Pilot&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Simulação&quot;},&quot;homeState&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;normal&quot;,&quot;carregando&quot;,&quot;vazio&quot;,&quot;erro&quot;],&quot;default&quot;:&quot;normal&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Simulação&quot;}}">
+class Component extends DCLogic {
+  state = Object.assign({ w: window.innerWidth, panel: null, drawer: false, pull: 0, refreshing: false, plan: null, themeSel: null }, this.parse(true));
+  parse(init) {
+    let h = decodeURIComponent(location.hash.slice(1)), theme = null;
+    if (!h && init) { try { h = localStorage.getItem('pp-route') || ''; } catch (e) {} }
+    if (h.includes('~')) { const p = h.split('~'); h = p[0]; theme = p[1]; }
+    const [route, sub = '', demo = ''] = (h || 'onb/boasvindas').split('/');
+    const o = { route: route || 'inicio', sub, demo };
+    if (theme) o.themeSel = theme;
+    return o;
+  }
+  componentDidMount() {
+    this.onR = () => this.setState({ w: window.innerWidth });
+    this.onH = () => this.setState(this.parse(false));
+    window.addEventListener('resize', this.onR);
+    window.addEventListener('hashchange', this.onH);
+    this.ts = e => { this.y0 = (window.scrollY <= 0 && this.bp() === 'mobile' && !['assistente', 'onb'].includes(this.state.route)) ? e.touches[0].clientY : null; };
+    this.tm = e => { if (this.y0 == null || this.state.refreshing) return; const d = e.touches[0].clientY - this.y0; if (d > 0) this.setState({ pull: Math.min(84, d * 0.45) }); };
+    this.te = () => { if (this.y0 == null) return; this.y0 = null; if (this.state.pull >= 56) { this.setState({ refreshing: true, pull: 52 }); setTimeout(() => this.setState({ refreshing: false, pull: 0 }), 1300); } else this.setState({ pull: 0 }); };
+    window.addEventListener('touchstart', this.ts, { passive: true });
+    window.addEventListener('touchmove', this.tm, { passive: true });
+    window.addEventListener('touchend', this.te);
+    this.applyTheme();
+  }
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.onR); window.removeEventListener('hashchange', this.onH);
+    window.removeEventListener('touchstart', this.ts); window.removeEventListener('touchmove', this.tm); window.removeEventListener('touchend', this.te);
+  }
+  componentDidUpdate() { this.applyTheme(); }
+  themePref() { return this.state.themeSel || this.props.theme || 'claro'; }
+  themeName() { const t = this.themePref(); if (t === 'sistema') return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'escuro' : 'claro'; return t; }
+  applyTheme() { document.documentElement.setAttribute('data-theme', this.themeName()); }
+  bp() { const w = this.state.w; return w < 600 ? 'mobile' : w < 1024 ? 'tablet' : 'desktop'; }
+  go = (route, sub = '', demo = '') => {
+    const h = [route, sub].filter(Boolean).join('/');
+    try { history.replaceState(null, '', '#' + h); localStorage.setItem('pp-route', h); } catch (e) {}
+    this.setState({ route, sub: sub || '', demo: demo || '', drawer: false });
+    window.scrollTo(0, 0);
+  };
+  renderVals() {
+    const bp = this.bp(), route = this.state.route, sub = this.state.sub;
+    const isD = bp === 'desktop', isT = bp === 'tablet', isM = bp === 'mobile';
+    const plan = this.state.plan || this.props.plan || 'Pilot';
+    const panelOpen = this.state.panel ?? (this.state.w >= 1280);
+    const isOnb = route === 'onb';
+    const mk = n => {
+      const on = route === n.id;
+      return { ...n, onClick: () => this.go(n.id), current: on ? 'page' : undefined, bg: on ? 'var(--brand-soft)' : 'transparent', fg: on ? 'var(--brand-t)' : 'var(--ink2)', weight: on ? 800 : 600, fill: on ? "'FILL' 1" : "'FILL' 0" };
+    };
+    const NAV = [
+      { id: 'inicio', label: 'Início', icon: 'home' },
+      { id: 'gastos', label: 'Gastos', icon: 'receipt_long' },
+      { id: 'plano', label: 'Plano', icon: 'route' },
+      { id: 'metas', label: 'Metas', icon: 'flag' },
+      { id: 'contas', label: 'Contas', icon: 'account_balance' },
+    ].map(mk);
+    const nav2 = [{ id: 'perfil', label: 'Planos', icon: 'workspace_premium', s: 'planos' }, { id: 'perfil', label: 'Configurações', icon: 'settings', s: '' }].map(n => {
+      const on = route === 'perfil' && sub === n.s;
+      return { ...n, onClick: () => this.go('perfil', n.s), current: on ? 'page' : undefined, bg: on ? 'var(--brand-soft)' : 'transparent', fg: on ? 'var(--brand-t)' : 'var(--ink2)', weight: on ? 800 : 600 };
+    });
+    const TITLES = {
+      inicio: ['Quinta, 15 de outubro', 'Olá, Marcos'], gastos: ['Outubro de 2026', 'Gastos'], plano: ['Outubro de 2026', 'Plano'],
+      metas: ['Seus objetivos', 'Metas'], contas: ['Dados, cartões e dívidas', 'Contas'], assistente: ['Responde só sobre as suas finanças', 'Assistente'],
+      perfil: sub === 'planos' ? ['Assinatura', 'Planos'] : ['Marcos Ribeiro', 'Perfil e configurações'],
+    };
+    const t = TITLES[route] || TITLES.inicio;
+    const chatFull = route === 'assistente';
+    const headerBox = isM
+      ? { position: 'sticky', top: 0, zIndex: 40, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, padding: 'calc(10px + env(safe-area-inset-top)) 16px 10px', background: 'color-mix(in oklab, var(--bg) 90%, transparent)', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)' }
+      : { display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, padding: isT ? '22px 28px 6px' : '28px 36px 6px', maxWidth: 1240, width: '100%', margin: '0 auto' };
+    const contentBox = isM
+      ? (chatFull ? { padding: 0 } : { padding: '8px 16px calc(112px + env(safe-area-inset-bottom))' })
+      : isT ? { padding: '16px 28px 48px', width: '100%' } : { padding: '18px 36px 56px', maxWidth: 1240, width: '100%', margin: '0 auto' };
+    const themeName = this.themeName();
+    return {
+      theme: themeName, themePref: this.themePref(), bp, sub, demo: this.state.demo, plan,
+      homeState: this.props.homeState || 'normal',
+      isOnb, isApp: !isOnb, isDesktop: isD, isTablet: isT, isMobile: isM,
+      nav: NAV, nav2, navL: NAV.slice(0, 2), navR: NAV.slice(2),
+      r: { inicio: route === 'inicio', gastos: route === 'gastos', plano: route === 'plano', metas: route === 'metas', contas: route === 'contas', assistente: chatFull, perfil: route === 'perfil' },
+      showHeader: !(isM && chatFull), showMark: isM && route === 'inicio', kicker: t[0], title: t[1],
+      h1: isD ? '32px' : isM ? (route === 'inicio' ? '22px' : '26px') : '28px',
+      headerBox, contentBox,
+      showPanel: isD && panelOpen && !chatFull, showFab: isD && !panelOpen && !chatFull,
+      panelBtnBg: isD && panelOpen ? 'var(--surface2)' : 'transparent', panelLabel: panelOpen ? 'aberto' : 'fechado',
+      showBottom: isM && !chatFull, drawerOpen: isT && this.state.drawer,
+      showPull: isM && this.state.pull > 0, pullH: this.state.pull,
+      pullText: this.state.refreshing ? 'Atualizando suas contas…' : (this.state.pull >= 56 ? 'Solte para atualizar' : 'Puxe para atualizar'),
+      spinner: React.createElement('i', { style: { animation: this.state.refreshing ? 'pp-spin 1s linear infinite' : 'none', transform: this.state.refreshing ? undefined : `rotate(${this.state.pull * 4}deg)` } }, 'progress_activity'),
+      themeIcon: themeName === 'escuro' ? 'light_mode' : 'dark_mode',
+      go: this.go,
+      goInicio: () => this.go('inicio'), goPerfil: () => this.go('perfil'), goChat: () => this.go('assistente'),
+      togglePanel: () => this.setState({ panel: !panelOpen }), closePanel: () => this.setState({ panel: false }),
+      openDrawer: () => this.setState({ drawer: true }), closeDrawer: () => this.setState({ drawer: false }),
+      toggleTheme: () => this.setState({ themeSel: themeName === 'escuro' ? 'claro' : 'escuro' }),
+      setTheme: v => this.setState({ themeSel: v }), setPlan: v => this.setState({ plan: v }),
+    };
+  }
+}
+</script>
+</body>
+</html>

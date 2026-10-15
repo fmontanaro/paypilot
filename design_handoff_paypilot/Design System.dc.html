@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Nunito:wght@700;800;900&amp;display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,300..600,0..1,0&amp;display=block">
+<style>
+:root,[data-theme="claro"]{color-scheme:light;--bg:#F5F2EA;--surface:#FFFFFF;--surface2:#EEEAE0;--line:#E2DDD1;--ink:#16211B;--ink2:#46534B;--ink3:#626D66;--brand:#0B6B3A;--brand-on:#FFFFFF;--brand-t:#0B6B3A;--brand-soft:#E1EFE5;--brand-deep:#0A4F2C;--accent:#E9822A;--accent-soft:#FCEBD6;--accent-t:#9C4B0B;--good:#1E8C4E;--good-soft:#DCF2E3;--good-t:#16703D;--warn:#C98A0B;--warn-soft:#FBEFD2;--warn-t:#7F5300;--risk:#BF4A41;--risk-soft:#F8E3E0;--risk-t:#A03830;--shadow:0 1px 2px rgba(22,33,27,.06),0 6px 20px rgba(22,33,27,.07)}
+[data-theme="escuro"]{color-scheme:dark;--bg:#0D1410;--surface:#151F19;--surface2:#1D2922;--line:#2B3931;--ink:#ECF1ED;--ink2:#B4C0B8;--ink3:#93A097;--brand:#46B97A;--brand-on:#05200F;--brand-t:#6FCF98;--brand-soft:#163524;--brand-deep:#0B5A31;--accent:#F0954A;--accent-soft:#3A2614;--accent-t:#F6B47C;--good:#4FC285;--good-soft:#14341F;--good-t:#7CD8A5;--warn:#E2A93B;--warn-soft:#382B10;--warn-t:#F0C467;--risk:#E07C72;--risk-soft:#3C1E1B;--risk-t:#F29C93;--shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.28)}
+*{box-sizing:border-box}
+html,body{margin:0;background:#F5F2EA}
+body{font-family:Manrope,system-ui,sans-serif;font-variant-numeric:tabular-nums;color:#16211B;-webkit-font-smoothing:antialiased}
+i{font-family:'Material Symbols Rounded';font-style:normal;font-weight:normal;line-height:1;font-size:22px;display:inline-block;font-feature-settings:'liga';flex:none;white-space:nowrap}
+button,input{font:inherit;color:inherit}
+a{color:#0B6B3A}a:hover{color:#16211B}
+@keyframes pp-shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+@keyframes pp-pulse{0%{box-shadow:0 0 0 0 rgba(233,130,42,.55)}100%{box-shadow:0 0 0 18px rgba(233,130,42,0)}}
+</style>
+</helmet>
+<div data-theme="claro" style="background:var(--bg);color:var(--ink);min-height:100vh;padding:40px clamp(16px,4vw,56px) 80px;display:flex;flex-direction:column;gap:56px">
+  <header style="display:flex;gap:20px;align-items:center;flex-wrap:wrap">
+    <img src="assets/logo.png" alt="Ícone do app PayPilot" style="width:96px;height:96px;border-radius:24px;box-shadow:var(--shadow)">
+    <div><div style="font-size:14px;font-weight:700;color:var(--ink3)">PayPilot · versão 1.0 · outubro 2026</div><h1 style="margin:0;font-family:Nunito,sans-serif;font-weight:900;font-size:clamp(32px,5vw,48px);letter-spacing:-.01em">Design system</h1><div style="color:var(--ink2);max-width:640px;line-height:1.5">Calma, controle e progresso. Confiável como um banco, humano como um amigo. Um sistema para web, iOS e Android, em modo claro e escuro. <a href="PayPilot.dc.html">Abrir o app</a> · <a href="Telas.dc.html">Ver todas as telas</a></div></div>
+  </header>
+
+  <section style="display:flex;flex-direction:column;gap:24px">
+    <h2 style="margin:0;font-family:Nunito,sans-serif;font-weight:900;font-size:28px">1 · Direção visual</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px">
+      <div style="background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:20px;display:flex;flex-direction:column;gap:14px">
+        <div style="font-weight:800">Marca e ícone do app</div>
+        <div style="display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap">
+          <img src="assets/logo.png" alt="Ícone 1024" style="width:120px;height:120px;border-radius:28px">
+          <img src="assets/logo.png" alt="Ícone 60" style="width:60px;height:60px;border-radius:14px">
+          <span style="width:40px;height:40px;border-radius:12px;background:#0B6B3A url(assets/logo.png) 50% 18%/155% no-repeat"></span>
+          <span style="display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:14px;background:#0D1410"><span style="width:32px;height:32px;border-radius:9px;background:#0B6B3A url(assets/logo.png) 50% 18%/155% no-repeat"></span><span style="font-family:Nunito,sans-serif;font-weight:900;color:#FCE7C3">PayPilot</span></span>
+        </div>
+        <div style="font-size:14px;color:var(--ink2);line-height:1.5">O ícone completo (com nome) é o ícone do app e da tela de boas-vindas. Dentro do app usamos só o mascote, recortado em quadrado arredondado sobre o verde da marca.</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:20px;display:flex;flex-direction:column;gap:12px">
+        <div style="font-weight:800">Tipografia</div>
+        <div style="font-family:Nunito,sans-serif;font-weight:900;font-size:44px;line-height:1">R$ 8.400</div>
+        <div style="font-size:13px;color:var(--ink3)">Nunito 900 — números de destaque e títulos. Ecoa as formas arredondadas do logo.</div>
+        <div style="font-size:17px;font-weight:700">Manrope — interface, textos e valores</div>
+        <div style="font-size:15px;color:var(--ink2)">Algarismos tabulares sempre: 1.234,56 · 9.876,10</div>
+        <div style="display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:13px;color:var(--ink2)"><b>Display</b><span>Nunito 900 · 40–52 px</span><b>Título</b><span>Nunito 800 · 22–32 px</span><b>Corpo</b><span>Manrope 500 · 15–17 px</span><b>Rótulo</b><span>Manrope 700 · 12–14 px</span></div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:20px;display:flex;flex-direction:column;gap:12px">
+        <div style="font-weight:800">Ícones e ilustração</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          <sc-for list="{{ icons }}" as="ic" hint-placeholder-count="12"><span style="width:44px;height:44px;border-radius:12px;background:var(--surface2);display:flex;align-items:center;justify-content:center"><i>{{ ic }}</i></span></sc-for>
+        </div>
+        <div style="font-size:14px;color:var(--ink2);line-height:1.5">Material Symbols Rounded, peso 400, preenchido só no item ativo da navegação. Ilustrações: o esquilo do logo, contornos grossos verde-escuros e laranja — só em momentos de acolhimento (boas-vindas, estados vazios, conquistas), nunca ao lado de um problema.</div>
+      </div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:20px;display:flex;flex-direction:column;gap:14px">
+      <div style="font-weight:800">Cores com significado · claro / escuro</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px">
+        <sc-for list="{{ palette }}" as="c" hint-placeholder-count="8">
+          <div style="border:1px solid var(--line);border-radius:16px;overflow:hidden">
+            <div style="display:grid;grid-template-columns:1fr 1fr;height:64px"><div style="background:{{ c.l }}"></div><div style="background:{{ c.d }}"></div></div>
+            <div style="padding:10px 12px"><div style="font-weight:800;font-size:14px">{{ c.n }}</div><div style="font-size:12px;color:var(--ink3);font-family:ui-monospace,monospace">{{ c.l }} · {{ c.d }}</div><div style="font-size:13px;color:var(--ink2);margin-top:4px;line-height:1.4">{{ c.u }}</div></div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px">
+      <div style="background:var(--good-soft);border-radius:24px;padding:20px;display:flex;flex-direction:column;gap:10px"><div style="font-weight:800;color:var(--good-t);display:flex;gap:6px;align-items:center"><i>check</i>Assim falamos</div><div style="line-height:1.5">“Faltam R$ 8.400 para fechar outubro. Veja 3 formas de cobrir.”</div><div style="line-height:1.5">“Adiar custa R$ 210 em juros e pode negativar seu nome.”</div><div style="line-height:1.5">“O buraco já diminuiu: era R$ 12.500 no dia 1º.”</div></div>
+      <div style="background:var(--surface2);border-radius:24px;padding:20px;display:flex;flex-direction:column;gap:10px"><div style="font-weight:800;color:var(--ink2);display:flex;gap:6px;align-items:center"><i>close</i>Assim não</div><div style="line-height:1.5;color:var(--ink2)">“Você está no vermelho! Gastou demais.”</div><div style="line-height:1.5;color:var(--ink2)">“ALERTA: conta atrasada!”</div><div style="line-height:1.5;color:var(--ink2)">“Invista sua sobra em…” (nunca recomendamos investimentos)</div></div>
+    </div>
+  </section>
+
+  <section style="display:flex;flex-direction:column;gap:24px">
+    <h2 style="margin:0;font-family:Nunito,sans-serif;font-weight:900;font-size:28px">2 · Componentes</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,520px),1fr));gap:24px">
+      <sc-for list="{{ themes }}" as="th" hint-placeholder-count="2">
+        <div data-theme="{{ th.id }}" style="background:var(--bg);color:var(--ink);border-radius:28px;padding:20px;display:flex;flex-direction:column;gap:16px;border:1px solid var(--line)">
+          <div style="font-size:13px;font-weight:800;color:var(--ink3);text-transform:uppercase;letter-spacing:.08em">Modo {{ th.label }}</div>
+
+          <div style="font-size:12px;font-weight:800;color:var(--ink3)">Card de resumo</div>
+          <div style="background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:16px"><div style="font-size:13px;color:var(--ink3);font-weight:700">Dívida total</div><div style="font-family:Nunito,sans-serif;font-size:32px;font-weight:900">R$ 54.700</div><div style="font-size:13px;color:var(--good-t);font-weight:800;display:flex;align-items:center;gap:4px"><i style="font-size:16px">south</i>R$ 2.310 desde setembro</div></div>
+
+          <div style="font-size:12px;font-weight:800;color:var(--ink3)">Barra de teto com ritmo esperado</div>
+          <div style="background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:8px"><div style="display:flex;justify-content:space-between"><b>Uber</b><span><b>R$ 990</b> <span style="color:var(--ink3)">de R$ 1.000</span></span></div><div style="position:relative;height:12px;border-radius:6px;background:var(--surface2)"><div style="width:99%;height:100%;border-radius:6px;background:var(--warn)"></div><div style="position:absolute;left:48.4%;top:-4px;bottom:-4px;width:3px;background:var(--ink);border-radius:2px"></div></div><div style="font-size:13px;color:var(--warn-t);font-weight:700">No ritmo atual: R$ 2.046 até o dia 31</div></div>
+
+          <div style="font-size:12px;font-weight:800;color:var(--ink3)">Card de ação</div>
+          <div style="background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:16px;display:flex;gap:12px"><span style="width:44px;height:44px;border-radius:14px;background:var(--good-soft);color:var(--good-t);display:flex;align-items:center;justify-content:center"><i>savings</i></span><div style="flex:1"><div style="font-size:12px;font-weight:800;color:var(--good-t)">ECONOMIA</div><div style="font-weight:800">Cancele 4 assinaturas e economize R$ 480/mês</div><button style="margin-top:8px;min-height:44px;padding:0 14px;border-radius:12px;border:0;background:var(--surface2);font-weight:800">Revisar</button></div></div>
+
+          <div style="font-size:12px;font-weight:800;color:var(--ink3)">Itens de transação e de conta</div>
+          <div style="background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:4px 14px">
+            <div style="display:grid;grid-template-columns:40px 1fr auto;gap:12px;align-items:center;min-height:64px;border-bottom:1px solid var(--line)"><span style="width:40px;height:40px;border-radius:12px;background:oklch(0.6 0.13 30 / .16);color:oklch(0.6 0.13 30);display:flex;align-items:center;justify-content:center"><i style="font-size:20px">restaurant</i></span><div><div style="font-weight:800">iFood</div><div style="font-size:13px;color:var(--ink3)">Restaurantes · Itaú</div></div><b>R$ 86,40</b></div>
+            <div style="display:grid;grid-template-columns:40px 1fr auto;gap:12px;align-items:center;min-height:64px"><span style="width:40px;height:40px;border-radius:12px;background:#820AD1;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px">Nu</span><div><div style="font-weight:800">Nubank</div><div style="font-size:13px;color:var(--good-t);font-weight:700">Sincronizado há 12 min</div></div><b>R$ 1.100 livre</b></div>
+          </div>
+
+          <div style="font-size:12px;font-weight:800;color:var(--ink3)">Chips de categoria e badges de prioridade</div>
+          <div style="display:flex;flex-wrap:wrap;gap:8px">
+            <sc-for list="{{ chips }}" as="c" hint-placeholder-count="4"><span style="display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 12px;border-radius:999px;background:{{ c.soft }};font-size:13px;font-weight:700"><i style="font-size:16px;color:{{ c.col }}">{{ c.i }}</i>{{ c.n }}</span></sc-for>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:8px">
+            <span style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:999px;background:var(--brand-soft);color:var(--brand-t);font-size:13px;font-weight:800"><i style="font-size:16px">priority_high</i>Pagar agora</span>
+            <span style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:999px;background:var(--accent-soft);color:var(--accent-t);font-size:13px;font-weight:800"><i style="font-size:16px">calendar_view_month</i>Parcelar</span>
+            <span style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:999px;background:var(--warn-soft);color:var(--warn-t);font-size:13px;font-weight:800"><i style="font-size:16px">handshake</i>Negociar/Esperar</span>
+            <span style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:999px;background:var(--surface2);color:var(--ink2);font-size:13px;font-weight:800"><i style="font-size:16px">content_cut</i>Cortar</span>
+            <span style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:999px;background:var(--risk-soft);color:var(--risk-t);font-size:13px;font-weight:800"><i style="font-size:16px">error</i>Vence hoje</span>
+          </div>
+
+          <div style="font-size:12px;font-weight:800;color:var(--ink3)">Comparador de rotas</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div style="background:var(--surface);border:2px solid var(--good);border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:6px"><span style="font-size:11px;font-weight:800;color:var(--good-t)">MAIS BARATA COM SAÍDA</span><b>Parcelar em 6x</b><span style="font-size:13px">Custo <b>R$ 1.020</b></span><span style="font-size:13px">Fôlego <b>150 dias</b></span></div>
+            <div style="background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:6px"><span style="font-size:11px;font-weight:800;color:var(--ink3)">ROTA B</span><b>Limite do XP</b><span style="font-size:13px">Custo <b>R$ 0 agora</b></span><span style="font-size:13px;color:var(--warn-t);font-weight:700">Só empurra a conta</span></div>
+          </div>
+
+          <div style="font-size:12px;font-weight:800;color:var(--ink3)">Linha do tempo e fases da jornada</div>
+          <div style="background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:14px">
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px"><sc-for list="{{ phases }}" as="p" hint-placeholder-count="4"><div style="display:flex;flex-direction:column;gap:6px"><div style="display:flex;align-items:center;gap:4px"><span style="width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;background:{{ p.bg }};color:{{ p.fg }};border:2px solid {{ p.bd }}">{{ p.n }}</span><span style="flex:1;height:3px;background:var(--line)"></span></div><span style="font-size:12px;font-weight:700">{{ p.l }}</span></div></sc-for></div>
+            <div style="display:flex;flex-direction:column;gap:0">
+              <div style="display:grid;grid-template-columns:52px 16px 1fr auto;gap:10px;align-items:center;min-height:44px"><b style="font-size:13px">Hoje</b><span style="width:12px;height:12px;border-radius:50%;background:var(--risk)"></span><span>Fatura Santander</span><b>R$ 3.100</b></div>
+              <div style="display:grid;grid-template-columns:52px 16px 1fr auto;gap:10px;align-items:center;min-height:44px"><b style="font-size:13px">18 out</b><span style="width:12px;height:12px;border-radius:50%;background:var(--warn)"></span><span>Escola</span><b>R$ 4.200</b></div>
+              <div style="display:grid;grid-template-columns:52px 16px 1fr auto;gap:10px;align-items:center;min-height:44px"><b style="font-size:13px">27 out</b><span style="width:12px;height:12px;border-radius:50%;background:var(--brand)"></span><span>Fatura Itaú</span><b>R$ 8.900</b></div>
+            </div>
+          </div>
+
+          <div style="font-size:12px;font-weight:800;color:var(--ink3)">Chat: bolhas, card rico e áudio</div>
+          <div style="background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:14px;display:flex;flex-direction:column;gap:10px">
+            <div style="align-self:flex-end;padding:10px 14px;border-radius:18px 18px 6px 18px;background:var(--brand);color:var(--brand-on)">Comprei um suco de R$ 12,90</div>
+            <div style="align-self:flex-start;width:min(280px,100%);padding:12px;border-radius:18px 18px 18px 6px;border:1px solid var(--line);background:var(--surface);box-shadow:var(--shadow);display:flex;flex-direction:column;gap:8px"><span style="font-size:11px;font-weight:800;color:var(--ink3)">REGISTRAR ESTE GASTO?</span><div style="display:flex;justify-content:space-between;align-items:center"><b style="font-size:22px">R$ 12,90</b><span style="padding:4px 10px;border-radius:999px;background:oklch(0.6 0.13 30 / .16);font-size:12px;font-weight:800">Restaurantes</span></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px"><button style="min-height:44px;border-radius:12px;border:0;background:var(--brand);color:var(--brand-on);font-weight:800">Confirmar</button><button style="min-height:44px;border-radius:12px;border:1px solid var(--line);background:var(--surface);font-weight:700;font-size:13px">Mudar categoria</button></div></div>
+            <div style="display:flex;gap:10px;align-items:center"><button aria-label="Gravar" style="width:56px;height:56px;border-radius:50%;border:0;background:var(--accent);color:#fff"><i style="font-size:26px">mic</i></button><span style="font-size:13px;color:var(--ink2)">Repouso</span><button aria-label="Gravando" style="width:56px;height:56px;border-radius:50%;border:0;background:var(--accent);color:#fff;animation:pp-pulse 1.2s ease-out infinite"><i>send</i></button><span style="font-size:13px;color:var(--ink2)">Gravando</span></div>
+          </div>
+
+          <div style="font-size:12px;font-weight:800;color:var(--ink3)">Área de upload</div>
+          <div style="min-height:130px;border-radius:20px;border:2px dashed var(--line);background:var(--surface);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px"><i style="font-size:32px;color:var(--brand-t)">upload_file</i><b>Arraste OFX, CSV ou PDF</b><span style="font-size:13px;color:var(--ink3)">ou toque para escolher</span></div>
+
+          <div style="font-size:12px;font-weight:800;color:var(--ink3)">Estados: vazio, carregando, erro</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px">
+            <div style="background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:14px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px"><span style="width:56px;height:56px;border-radius:16px;background:#0B6B3A url(assets/logo.png) 50% 20%/150% no-repeat"></span><b style="font-size:14px">Nenhuma meta ainda</b><span style="font-size:12px;color:var(--ink3)">A primeira pode ser pequena.</span></div>
+            <div style="background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:8px"><div style="height:14px;width:60%;border-radius:7px;background:linear-gradient(90deg,var(--surface2) 25%,var(--line) 50%,var(--surface2) 75%);background-size:200% 100%;animation:pp-shimmer 1.4s linear infinite"></div><div style="height:28px;border-radius:8px;background:linear-gradient(90deg,var(--surface2) 25%,var(--line) 50%,var(--surface2) 75%);background-size:200% 100%;animation:pp-shimmer 1.4s linear infinite"></div><div style="height:10px;width:80%;border-radius:5px;background:var(--surface2)"></div></div>
+            <div style="background:var(--warn-soft);border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:8px"><i style="color:var(--warn-t)">sync_problem</i><b style="font-size:14px">Não conseguimos atualizar o XP</b><button style="min-height:44px;border-radius:12px;border:1px solid var(--warn-t);background:none;color:var(--warn-t);font-weight:800">Tentar de novo</button></div>
+          </div>
+
+          <div style="font-size:12px;font-weight:800;color:var(--ink3)">Bottom sheet (mobile) e painel lateral (desktop)</div>
+          <div style="display:grid;grid-template-columns:1fr 1.4fr;gap:10px;height:180px">
+            <div style="position:relative;border-radius:18px;background:var(--surface2);overflow:hidden"><div style="position:absolute;left:0;right:0;bottom:0;height:62%;background:var(--surface);border-radius:18px 18px 0 0;padding:8px 12px;box-shadow:var(--shadow)"><div style="width:32px;height:4px;border-radius:2px;background:var(--line);margin:0 auto 10px"></div><b style="font-size:13px">Mover para</b><div style="height:10px;margin-top:8px;border-radius:5px;background:var(--surface2)"></div><div style="height:10px;width:70%;margin-top:6px;border-radius:5px;background:var(--surface2)"></div></div></div>
+            <div style="position:relative;border-radius:18px;background:var(--surface2);overflow:hidden"><div style="position:absolute;top:0;right:0;bottom:0;width:48%;background:var(--surface);border-left:1px solid var(--line);padding:12px;box-shadow:var(--shadow)"><b style="font-size:13px">Mover para</b><div style="height:10px;margin-top:8px;border-radius:5px;background:var(--surface2)"></div><div style="height:10px;width:70%;margin-top:6px;border-radius:5px;background:var(--surface2)"></div></div></div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <section style="display:flex;flex-direction:column;gap:16px">
+    <h2 style="margin:0;font-family:Nunito,sans-serif;font-weight:900;font-size:28px">3 · Layout e acessibilidade</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px">
+      <sc-for list="{{ rules }}" as="r" hint-placeholder-count="6"><div style="background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:18px"><div style="display:flex;gap:8px;align-items:center;font-weight:800"><i style="color:var(--brand-t)">{{ r.i }}</i>{{ r.t }}</div><div style="font-size:14px;color:var(--ink2);line-height:1.5;margin-top:6px">{{ r.d }}</div></div></sc-for>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      icons: ['home', 'receipt_long', 'route', 'flag', 'account_balance', 'forum', 'mic', 'photo_camera', 'savings', 'speed', 'water_drop', 'handshake'],
+      palette: [
+        { n: 'Verde PayPilot', l: '#0B6B3A', d: '#46B97A', u: 'Marca, botões principais, item ativo. Confiança e calma.' },
+        { n: 'Laranja esquilo', l: '#E9822A', d: '#F0954A', u: 'Calor da marca: áudio, destaques do Pilot, mascote. Nunca alerta.' },
+        { n: 'Progresso', l: '#1E8C4E', d: '#4FC285', u: 'Economia, dívida caindo, metas, “cabe”.' },
+        { n: 'Atenção', l: '#C98A0B', d: '#E2A93B', u: 'Teto perto do limite, “não cabe ainda”, custo de adiar.' },
+        { n: 'Risco real', l: '#BF4A41', d: '#E07C72', u: 'Só negativação e vencimento hoje. Sempre com ícone e texto.' },
+        { n: 'Fundo', l: '#F5F2EA', d: '#0D1410', u: 'Papel quente no claro; verde quase preto no escuro.' },
+        { n: 'Superfície', l: '#FFFFFF', d: '#151F19', u: 'Cards, folhas e painéis.' },
+        { n: 'Tinta', l: '#16211B', d: '#ECF1ED', u: 'Texto principal. Contraste AA em todas as combinações.' },
+      ],
+      themes: [{ id: 'claro', label: 'claro' }, { id: 'escuro', label: 'escuro' }],
+      chips: [['Mercado', 'shopping_cart', 145], ['Transporte', 'local_taxi', 70], ['Restaurantes', 'restaurant', 30], ['Minha empresa', 'business_center', 285], ['Assinaturas', 'subscriptions', 315]].map(([n, i, h]) => ({ n, i, col: `oklch(0.6 0.13 ${h})`, soft: `oklch(0.6 0.13 ${h} / .16)` })),
+      phases: ['Fechar o mês', 'Estabilizar', 'Quitar', 'Gerar sobra'].map((l, k) => ({ l, n: k + 1, bg: k === 0 ? 'var(--brand)' : 'var(--surface)', fg: k === 0 ? 'var(--brand-on)' : 'var(--ink3)', bd: k === 0 ? 'var(--brand)' : 'var(--line)' })),
+      rules: [
+        { i: 'smartphone', t: 'Mobile · até 599 px', d: 'Barra inferior com 5 abas e botão central de chat. Uma coluna, cards empilhados. Safe areas respeitadas.' },
+        { i: 'tablet', t: 'Tablet · 600 a 1023 px', d: 'Barra lateral só com ícones; chat em painel deslizante. Duas colunas quando ajuda.' },
+        { i: 'desktop_windows', t: 'Desktop · 1024 px ou mais', d: 'Barra lateral completa e chat fixo à direita. Grade de 12 colunas; prioridades em quadro kanban.' },
+        { i: 'touch_app', t: 'Toque', d: 'Alvos de no mínimo 44 × 44 px. Deslizar itens, puxar para atualizar, arrastar entre colunas.' },
+        { i: 'contrast', t: 'Contraste e cor', d: 'WCAG AA nos dois modos. Cor nunca sozinha: sempre ícone ou texto junto.' },
+        { i: 'record_voice_over', t: 'Leitores de tela', d: 'Gráficos com resumo textual do dado principal; avisos ao vivo quando o total do mês muda.' },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

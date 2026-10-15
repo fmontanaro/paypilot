@@ -1,15 +1,50 @@
-import { Pool, neonConfig } from '@neondatabase/serverless';
-import { drizzle } from 'drizzle-orm/neon-serverless';
-import ws from "ws";
+// Conexão com o banco. Com DATABASE_URL usa Postgres (Neon/Replit); sem ela, PGlite em .data/
+// para desenvolvimento local. As migrações de migrations/ são aplicadas na subida.
+import path from "path";
+import fs from "fs";
 import * as schema from "@shared/schema";
+import type { NeonDatabase } from "drizzle-orm/neon-serverless";
 
-neonConfig.webSocketConstructor = ws;
+export type DB = NeonDatabase<typeof schema>;
 
-if (!process.env.DATABASE_URL) {
-  throw new Error(
-    "DATABASE_URL must be set. Did you forget to provision a database?",
-  );
+const migrationsFolder = path.resolve(import.meta.dirname, "..", "migrations");
+
+async function connect(): Promise<{ db: DB; kind: "postgres" | "pglite" }> {
+  if (process.env.DATABASE_URL) {
+    const { Pool, neonConfig } = await import("@neondatabase/serverless");
+    const { drizzle } = await import("drizzle-orm/neon-serverless");
+    const { migrate } = await import("drizzle-orm/neon-serverless/migrator");
+    const ws = (await import("ws")).default;
+    neonConfig.webSocketConstructor = ws;
+    const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+    const db = drizzle({ client: pool, schema });
+    await migrate(db, { migrationsFolder });
+    return { db, kind: "postgres" };
+  }
+  const { PGlite } = await import("@electric-sql/pglite");
+  const { drizzle } = await import("drizzle-orm/pglite");
+  const { migrate } = await import("drizzle-orm/pglite/migrator");
+  const dir = process.env.PGLITE_DIR || path.resolve(import.meta.dirname, "..", ".data", "pglite");
+  if (dir !== "memory://") fs.mkdirSync(dir, { recursive: true });
+  const client = new PGlite(dir);
+  const db = drizzle({ client, schema });
+  await migrate(db, { migrationsFolder });
+  return { db: db as unknown as DB, kind: "pglite" };
 }
 
-export const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-export const db = drizzle({ client: pool, schema });
+let instance: DB | null = null;
+export let dbKind: "postgres" | "pglite" = "pglite";
+
+export async function initDb(): Promise<DB> {
+  if (instance) return instance;
+  const c = await connect();
+  instance = c.db;
+  dbKind = c.kind;
+  return instance;
+}
+
+/** Banco já inicializado (initDb roda na subida do servidor). */
+export function db(): DB {
+  if (!instance) throw new Error("Banco ainda não inicializado");
+  return instance;
+}
