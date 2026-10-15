@@ -1,3 +1,4 @@
 - [Replit Git backup recovery](replit-git-backup-recovery.md) — inspect GitSafe backup refs before reconciling a force-reset remote that no longer contains the app.
 - [Post-merge database safety](post-merge-database-safety.md) — task merges must not implicitly apply historical migrations to the existing financial database.
 - [Limites das metas](goal-history-boundaries.md) — valores são registros manuais; proprietário não pode corrigir a participação de outra pessoa.
+- [Análises de metas](goal-analytics-boundaries.md) — preservar contagens agregadas sem correlação pessoal; não inferir abandono exato por subtração.

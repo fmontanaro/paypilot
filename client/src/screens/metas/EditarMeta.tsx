@@ -3,6 +3,7 @@ import type { Goal, GoalMember } from "@shared/schema";
 import { goalView } from "@shared/engine";
 import { brl, monthYear } from "@shared/format";
 import { api, useAction } from "@/lib/api";
+import { trackEvent } from "@/lib/analytics";
 import { useApp } from "@/lib/app";
 import { btnPrimary, btnSecondary, CloseBtn, I, input, labelCol, Sheet } from "@/ui";
 import { createGoalEditDraft, parseGoalTarget, validateGoalEdit, type GoalEditDraft, type GoalEditPayload } from "./editDraft";
@@ -62,10 +63,12 @@ export function EditarMeta({
     setDraft(createGoalEditDraft(goal));
     setAttempted(false);
     setOpen(true);
+    trackEvent("goal_edit_opened");
   }
 
   function closeEditor() {
     if (saveAction.isPending || submittingRef.current) return;
+    trackEvent("goal_edit_cancelled");
     setOpen(false);
     setDraft(createGoalEditDraft(goal));
     setAttempted(false);
@@ -77,6 +80,7 @@ export function EditarMeta({
     setAttempted(true);
     if (saveAction.isPending || submittingRef.current) return;
     if (!validation.payload) {
+      trackEvent("goal_edit_failed", { reason: "validation" });
       const firstInvalid = (["name", "target", "deadline"] as const).find((key) => validation.errors[key]);
       if (firstInvalid === "name") nameRef.current?.focus();
       else document.getElementById(fieldId(firstInvalid || "name"))?.focus();
@@ -85,11 +89,13 @@ export function EditarMeta({
     submittingRef.current = true;
     try {
       await saveAction.mutateAsync(validation.payload);
+      trackEvent("goal_edit_saved");
       toast(`Meta “${validation.payload.name}” atualizada`);
       setOpen(false);
       setAttempted(false);
       requestAnimationFrame(() => triggerRef.current?.focus());
     } catch {
+      trackEvent("goal_edit_failed", { reason: "request" });
       // O erro da API fica visível no formulário para permitir corrigir ou tentar novamente.
     } finally {
       submittingRef.current = false;

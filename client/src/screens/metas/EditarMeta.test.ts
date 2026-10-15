@@ -19,12 +19,15 @@ let container: HTMLDivElement;
 let root: Root;
 let client: QueryClient;
 let fetchMock: ReturnType<typeof vi.fn>;
+let track: ReturnType<typeof vi.fn<NonNullable<Window["umami"]>["track"]>>;
 
 beforeEach(async () => {
   vi.stubGlobal("IS_REACT_ACT_ENVIRONMENT", true);
   fetchMock = vi.fn();
   vi.stubGlobal("fetch", fetchMock);
   toast.mockReset();
+  track = vi.fn();
+  window.umami = { track };
   container = document.createElement("div");
   document.body.append(container);
   root = createRoot(container);
@@ -40,6 +43,7 @@ afterEach(async () => {
   await act(async () => root.unmount());
   client.clear();
   container.remove();
+  delete window.umami;
   vi.unstubAllGlobals();
 });
 
@@ -59,6 +63,7 @@ const settle = () => act(async () => { await new Promise((resolve) => setTimeout
 
 describe("formulário de edição da meta", () => {
   it("abre preenchido, cancela sem chamar a API e descarta o rascunho ao reabrir", async () => {
+    expect(track).not.toHaveBeenCalled();
     await click("Editar meta");
     expect(field("name").value).toBe("Viagem");
     expect(field("target").value).toBe("2.400,29");
@@ -73,6 +78,11 @@ describe("formulário de edição da meta", () => {
     expect(field("name").value).toBe(goal.name);
     expect(field("target").value).toBe("2.400,29");
     expect(field("deadline").value).toBe("2026-06");
+    expect(track.mock.calls).toEqual([
+      ["goal_edit_opened", undefined],
+      ["goal_edit_cancelled", undefined],
+      ["goal_edit_opened", undefined],
+    ]);
   });
 
   it("impede envio inválido e mostra o erro sem chamar a API", async () => {
@@ -85,6 +95,10 @@ describe("formulário de edição da meta", () => {
     expect(container.textContent).toContain("Informe o nome da meta.");
     expect(field("target").getAttribute("aria-invalid")).toBe("true");
     expect(field("deadline").getAttribute("aria-invalid")).toBe("true");
+    expect(track.mock.calls).toEqual([
+      ["goal_edit_opened", undefined],
+      ["goal_edit_failed", { reason: "validation" }],
+    ]);
   });
 
   it("envia apenas os detalhes, impede duplicação, atualiza o snapshot e fecha após salvar", async () => {
@@ -102,6 +116,7 @@ describe("formulário de edição da meta", () => {
     await click("Cancelar");
     expect(container.querySelector('[role="dialog"]')).not.toBeNull();
     expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(track.mock.calls).toEqual([["goal_edit_opened", undefined]]);
     const [url, request] = fetchMock.mock.calls[0];
     expect(url).toBe("/api/goals/edit-ui");
     expect(request.method).toBe("PATCH");
@@ -111,6 +126,10 @@ describe("formulário de edição da meta", () => {
     expect(invalidate).toHaveBeenCalledWith({ queryKey: ["snapshot"] });
     expect(container.querySelector('[role="dialog"]')).toBeNull();
     expect(toast).toHaveBeenCalledWith("Meta “Computador” atualizada");
+    expect(track.mock.calls).toEqual([
+      ["goal_edit_opened", undefined],
+      ["goal_edit_saved", undefined],
+    ]);
   });
 
   it("mantém as alterações e permite tentar novamente após erro do servidor", async () => {
@@ -127,6 +146,55 @@ describe("formulário de edição da meta", () => {
     await submit();
     await settle();
     expect(container.querySelector('[role="dialog"]')).toBeNull();
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(track.mock.calls).toEqual([
+      ["goal_edit_opened", undefined],
+      ["goal_edit_failed", { reason: "request" }],
+      ["goal_edit_saved", undefined],
+    ]);
+  });
+
+  it.each(["fechar", "escape", "fundo"])("registra cancelamento por %s uma única vez", async (method) => {
+    await click("Editar meta");
+    await act(async () => {
+      if (method === "escape") window.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
+      else if (method === "fechar") container.querySelector<HTMLButtonElement>('[aria-label="Fechar"]')!.click();
+      else (container.querySelector('[role="dialog"]')!.previousElementSibling as HTMLElement).click();
+    });
+    expect(container.querySelector('[role="dialog"]')).toBeNull();
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(track.mock.calls).toEqual([
+      ["goal_edit_opened", undefined],
+      ["goal_edit_cancelled", undefined],
+    ]);
+  });
+
+  it.each(["ausente", "exceção", "rejeição"])("mantém o formulário funcional com rastreador: %s", async (mode) => {
+    if (mode === "ausente") delete window.umami;
+    else track.mockImplementation(() => {
+      if (mode === "exceção") throw new Error("falha de analytics");
+      return Promise.reject(new Error("falha de analytics"));
+    });
+    await click("Editar meta");
+    await change("name", "Rascunho descartado");
+    await click("Cancelar");
+    await click("Editar meta");
+    expect(field("name").value).toBe(goal.name);
+    await change("name", "");
+    await submit();
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(container.textContent).toContain("Informe o nome da meta.");
+    await change("name", "Nome preservado");
+    fetchMock.mockRejectedValueOnce(new Error("sem conexão"));
+    await submit();
+    await settle();
+    expect(field("name").value).toBe("Nome preservado");
+    expect(container.querySelector('[role="alert"]')?.textContent).toContain("sem conexão");
+    fetchMock.mockResolvedValueOnce(new Response(JSON.stringify(goal), { status: 200 }));
+    await submit();
+    await settle();
+    expect(container.querySelector('[role="dialog"]')).toBeNull();
+    expect(toast).toHaveBeenCalledWith("Meta “Nome preservado” atualizada");
     expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 
