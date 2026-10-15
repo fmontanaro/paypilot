@@ -140,3 +140,4 @@ A cobrança pelas lojas (Apple e Google) ou pelo site ainda não existe. Enquant
 | `OPENAI_API_KEY` | Opcional. Liga a IA para interpretar pedidos livres, transcrever áudio e ler PDF ou foto de fatura. |
 | `WHATSAPP_TOKEN`, `WHATSAPP_PHONE_ID`, `WHATSAPP_VERIFY_TOKEN` | Opcionais. Cloud API da Meta. |
 | `ALLOW_PLAN_SWITCH` | `true` permite trocar de plano sem cobrança (padrão: `true` fora de produção). |
+| `COMPLIMENTARY_PILOT_USER_IDS` | IDs de contas existentes com acesso de cortesia ao Pilot, separados por vírgula. Configuração exclusiva do servidor; não habilita upgrades para outras contas e não altera cobranças. |

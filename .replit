@@ -40,3 +40,8 @@ waitForPort = 5000
 
 [agent]
 integrations = ["javascript_database:1.0.0", "javascript_openai_ai_integrations:1.0.0"]
+
+[userenv]
+
+[userenv.production]
+COMPLIMENTARY_PILOT_USER_IDS = "4dffd0f4-30b1-40de-ba42-f80628460c6f"

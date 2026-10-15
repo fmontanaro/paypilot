@@ -5,15 +5,16 @@ import type { PublicUser, Section, User } from "@shared/schema";
 import type { AppData } from "@shared/engine";
 import { isoDate, monthKey } from "@shared/format";
 import { db } from "./db";
+import { applyComplimentaryPlan } from "./entitlements";
 
 export function publicUser(u: User): PublicUser {
-  const { passwordHash: _ph, ...rest } = u;
+  const { passwordHash: _ph, ...rest } = applyComplimentaryPlan(u);
   return { ...rest, name: rest.name || "" };
 }
 
 export async function getUser(id: string): Promise<User | undefined> {
   const [u] = await db().select().from(S.users).where(eq(S.users.id, id));
-  return u;
+  return u ? applyComplimentaryPlan(u) : undefined;
 }
 
 export async function findUserByIdent(ident: string): Promise<User | undefined> {
@@ -22,7 +23,7 @@ export async function findUserByIdent(ident: string): Promise<User | undefined> 
     .select()
     .from(S.users)
     .where(isEmail ? eq(S.users.email, ident.toLowerCase()) : eq(S.users.phone, ident));
-  return u;
+  return u ? applyComplimentaryPlan(u) : undefined;
 }
 
 /** Hoje no fuso de São Paulo, sem horário. */
