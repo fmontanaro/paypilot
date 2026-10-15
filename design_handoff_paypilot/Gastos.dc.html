@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0B6B3A">
+<link rel="icon" href="assets/logo.png">
+<link rel="apple-touch-icon" href="assets/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Nunito:wght@700;800;900&amp;display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,300..600,0..1,0&amp;display=block">
+<style>
+:root,[data-theme="claro"]{color-scheme:light;--bg:#F5F2EA;--surface:#FFFFFF;--surface2:#EEEAE0;--line:#E2DDD1;--ink:#16211B;--ink2:#46534B;--ink3:#626D66;--brand:#0B6B3A;--brand-on:#FFFFFF;--brand-t:#0B6B3A;--brand-soft:#E1EFE5;--brand-deep:#0A4F2C;--accent:#E9822A;--accent-soft:#FCEBD6;--accent-t:#9C4B0B;--good:#1E8C4E;--good-soft:#DCF2E3;--good-t:#16703D;--warn:#C98A0B;--warn-soft:#FBEFD2;--warn-t:#7F5300;--risk:#BF4A41;--risk-soft:#F8E3E0;--risk-t:#A03830;--cream:#FCE7C3;--shadow:0 1px 2px rgba(22,33,27,.06),0 6px 20px rgba(22,33,27,.07);--scrim:rgba(14,21,17,.42)}
+[data-theme="escuro"]{color-scheme:dark;--bg:#0D1410;--surface:#151F19;--surface2:#1D2922;--line:#2B3931;--ink:#ECF1ED;--ink2:#B4C0B8;--ink3:#93A097;--brand:#46B97A;--brand-on:#05200F;--brand-t:#6FCF98;--brand-soft:#163524;--brand-deep:#0B5A31;--accent:#F0954A;--accent-soft:#3A2614;--accent-t:#F6B47C;--good:#4FC285;--good-soft:#14341F;--good-t:#7CD8A5;--warn:#E2A93B;--warn-soft:#382B10;--warn-t:#F0C467;--risk:#E07C72;--risk-soft:#3C1E1B;--risk-t:#F29C93;--cream:#3A3020;--shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.28);--scrim:rgba(0,0,0,.6)}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink)}
+body:has(> x-dc > div:first-of-type){padding:0}
+body{font-family:Manrope,system-ui,sans-serif;font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;overscroll-behavior-y:contain}
+i{font-family:'Material Symbols Rounded';font-style:normal;font-weight:normal;line-height:1;font-size:22px;display:inline-block;font-feature-settings:'liga';-webkit-font-feature-settings:'liga';user-select:none;flex:none;letter-spacing:normal;text-transform:none;white-space:nowrap;direction:ltr}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:var(--brand-t)}a:hover{color:var(--ink)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+input[type=range]{accent-color:var(--brand)}
+@keyframes pp-spin{to{transform:rotate(360deg)}}
+@keyframes pp-shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+@keyframes pp-wave{0%,100%{transform:scaleY(.3)}50%{transform:scaleY(1)}}
+@keyframes pp-pulse{0%{box-shadow:0 0 0 0 rgba(233,130,42,.55)}100%{box-shadow:0 0 0 18px rgba(233,130,42,0)}}
+@keyframes pp-up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes pp-sheet{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+@keyframes pp-dots{0%,80%,100%{opacity:.25}40%{opacity:1}}
+@media (prefers-reduced-motion: reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important;transition:none!important}}
+</style>
+</helmet>
+<div style="display:flex;flex-direction:column;gap:16px">
+  <div role="tablist" aria-label="Seções de gastos" style="display:flex;gap:8px;overflow-x:auto;padding:2px;scrollbar-width:none">
+    <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="5">
+      <button role="tab" aria-selected="{{ t.sel }}" onClick="{{ t.on }}" style="flex:none;min-height:44px;padding:0 16px;border-radius:999px;border:1px solid {{ t.bd }};background:{{ t.bg }};color:{{ t.fg }};font-weight:700;font-size:14px;white-space:nowrap;display:flex;align-items:center;gap:6px"><i style="font-size:18px">{{ t.icon }}</i>{{ t.label }}</button>
+    </sc-for>
+  </div>
+
+  <sc-if value="{{ v.categorias }}" hint-placeholder-val="{{ true }}">
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+      <sc-for list="{{ typeF }}" as="f" hint-placeholder-count="5">
+        <button onClick="{{ f.on }}" aria-pressed="{{ f.sel }}" style="min-height:40px;padding:0 14px;border-radius:999px;border:1px solid {{ f.bd }};background:{{ f.bg }};color:{{ f.fg }};font-weight:700;font-size:13px">{{ f.label }}</button>
+      </sc-for>
+      <select aria-label="Conta ou cartão" value="{{ src }}" onChange="{{ setSrc }}" style="min-height:40px;border-radius:999px;border:1px solid var(--line);background:var(--surface);padding:0 12px;font-weight:700;font-size:13px">
+        <option value="todas">Todas as contas</option><option value="Nubank">Nubank</option><option value="Itaú">Itaú</option><option value="Santander">Santander</option><option value="XP">XP</option><option value="Helena">Cartão da Helena</option>
+      </select>
+      <select aria-label="Grupo de despesa" value="{{ grp }}" onChange="{{ setGrp }}" style="min-height:40px;border-radius:999px;border:1px solid var(--line);background:var(--surface);padding:0 12px;font-weight:700;font-size:13px">
+        <option value="todos">Todos os grupos</option><option value="pessoal">Pessoal</option><option value="empresa">Minha empresa</option>
+      </select>
+    </div>
+    <div style="display:grid;grid-template-columns:{{ catCols }};gap:16px;align-items:start">
+      <section style="background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:20px;display:flex;flex-direction:column;align-items:center;gap:14px">
+        <div role="img" aria-label="{{ donutAria }}" style="position:relative;width:200px;height:200px;border-radius:50%;background:{{ donut }}">
+          <div style="position:absolute;inset:30px;border-radius:50%;background:var(--surface);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
+            <span style="font-size:12px;color:var(--ink3);font-weight:700">Até 15 out</span><span style="font-family:Nunito,sans-serif;font-size:26px;font-weight:900">{{ catTotal }}</span><span style="font-size:12px;color:var(--ink3)">{{ catPct }} da renda</span>
+          </div>
+        </div>
+        <div style="font-size:13px;color:var(--ink2);text-align:center;line-height:1.45">Maior categoria: <b>{{ topCat }}</b></div>
+      </section>
+      <section aria-label="Categorias" style="background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:8px 16px">
+        <sc-for list="{{ cats }}" as="c" hint-placeholder-count="8">
+          <div style="display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:12px;align-items:center;min-height:64px;border-bottom:1px solid var(--line)">
+            <span style="width:40px;height:40px;border-radius:12px;background:{{ c.soft }};color:{{ c.col }};display:flex;align-items:center;justify-content:center"><i style="font-size:20px">{{ c.icon }}</i></span>
+            <div style="min-width:0"><div style="font-weight:800;font-size:15px">{{ c.name }}</div><div style="font-size:13px;color:var(--ink3)">{{ c.pct }} da renda · {{ c.tags }}</div></div>
+            <div style="text-align:right"><div style="font-weight:800">{{ c.val }}</div><div style="font-size:12px;font-weight:800;color:{{ c.vc }};display:flex;align-items:center;justify-content:flex-end;gap:2px"><i style="font-size:14px">{{ c.vi }}</i>{{ c.var }} vs set</div></div>
+          </div>
+        </sc-for>
+        <sc-if value="{{ catEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:32px 8px;text-align:center;color:var(--ink3)">Nenhuma categoria com esses filtros.</div></sc-if>
+      </section>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ v.transacoes }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <label style="flex:1 1 240px;display:flex;align-items:center;gap:8px;min-height:48px;padding:0 14px;border-radius:14px;border:1px solid var(--line);background:var(--surface)"><i style="color:var(--ink3)">search</i><input value="{{ q }}" onInput="{{ setQ }}" placeholder="Buscar estabelecimento" aria-label="Buscar transações" style="flex:1;min-width:0;border:0;background:none;outline:none;font-size:15px"></label>
+      <select aria-label="Filtrar por conta" value="{{ src }}" onChange="{{ setSrc }}" style="min-height:48px;border-radius:14px;border:1px solid var(--line);background:var(--surface);padding:0 12px;font-weight:700">
+        <option value="todas">Todas as contas</option><option value="Nubank">Nubank</option><option value="Itaú">Itaú</option><option value="Santander">Santander</option><option value="XP">XP</option>
+      </select>
+    </div>
+    <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ true }}"><div style="font-size:13px;color:var(--ink3);display:flex;align-items:center;gap:6px"><i style="font-size:18px">swipe_left</i>Deslize um item para recategorizar ou marcar para cancelar.</div></sc-if>
+    <sc-for list="{{ days }}" as="d" hint-placeholder-count="3">
+      <section aria-label="{{ d.label }}" style="display:flex;flex-direction:column;gap:6px">
+        <div style="display:flex;justify-content:space-between;padding:0 4px;font-size:13px;font-weight:800;color:var(--ink3)"><span>{{ d.label }}</span><span>{{ d.total }}</span></div>
+        <div style="background:var(--surface);border:1px solid var(--line);border-radius:20px;overflow:hidden">
+          <sc-for list="{{ d.items }}" as="t" hint-placeholder-count="4">
+            <div style="position:relative;overflow:hidden;border-bottom:1px solid var(--line)">
+              <div aria-hidden="{{ t.hideAct }}" style="position:absolute;top:0;right:0;bottom:0;display:flex">
+                <button onClick="{{ t.onOpen }}" style="width:84px;border:0;background:var(--brand);color:var(--brand-on);font-weight:800;font-size:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px"><i>sell</i>Categoria</button>
+                <button onClick="{{ t.onCancel }}" style="width:84px;border:0;background:var(--accent);color:#fff;font-weight:800;font-size:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px"><i>block</i>Cancelar</button>
+              </div>
+              <div onTouchStart="{{ t.ts }}" onTouchMove="{{ t.tm }}" onTouchEnd="{{ t.te }}" style="position:relative;background:var(--surface);transform:translateX({{ t.x }}px);transition:{{ t.tr }};display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:12px;align-items:center;min-height:68px;padding:8px 14px">
+                <span style="width:40px;height:40px;border-radius:12px;background:{{ t.soft }};color:{{ t.col }};display:flex;align-items:center;justify-content:center"><i style="font-size:20px">{{ t.icon }}</i></span>
+                <button onClick="{{ t.onOpen }}" style="min-width:0;border:0;background:none;text-align:left;padding:0">
+                  <div style="font-weight:800;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.m }}</div>
+                  <div style="font-size:13px;color:var(--ink3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.catName }} · {{ t.src }}</div>
+                  <sc-if value="{{ t.flag }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;font-weight:800;color:{{ t.flagC }};display:flex;gap:4px;align-items:center;margin-top:2px"><i style="font-size:14px">{{ t.flagI }}</i>{{ t.flag }}</div></sc-if>
+                </button>
+                <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+                  <span style="font-weight:800">{{ t.val }}</span>
+                  <sc-if value="{{ notMobile }}" hint-placeholder-val="{{ false }}">
+                    <select aria-label="Mudar categoria de {{ t.m }}" value="{{ t.cat }}" onChange="{{ t.onCat }}" style="max-width:150px;min-height:32px;border-radius:8px;border:1px solid var(--line);background:var(--surface2);font-size:12px;font-weight:700;padding:0 6px">
+                      <sc-for list="{{ catOpts }}" as="o" hint-placeholder-count="6"><option value="{{ o.id }}">{{ o.name }}</option></sc-for>
+                    </select>
+                  </sc-if>
+                </div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </section>
+    </sc-for>
+    <sc-if value="{{ txEmpty }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:40px 16px;text-align:center;display:flex;flex-direction:column;gap:8px;align-items:center;background:var(--surface);border:1px dashed var(--line);border-radius:20px"><i style="font-size:36px;color:var(--ink3)">search_off</i><b>Nada encontrado</b><span style="color:var(--ink3);font-size:14px">Tente outro nome ou limpe os filtros.</span></div>
+    </sc-if>
+  </sc-if>
+
+  <sc-if value="{{ v.tetos }}" hint-placeholder-val="{{ false }}">
+    <sc-if value="{{ lockPlus }}" hint-placeholder-val="{{ false }}"><dc-import name="Paywall" need="Plus" headline="Seu gasto com Uber vai fechar o mês em R$ 2.046" detail="Com tetos e alertas, você sabe no dia 15 o que vai acontecer no dia 31." go="{{ go }}" hint-size="100%,540px"></dc-import></sc-if>
+    <sc-if value="{{ showTetos }}" hint-placeholder-val="{{ true }}">
+      <section style="background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:16px;display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end">
+        <label style="flex:1 1 160px;display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:700;color:var(--ink2)">Categoria
+          <select value="{{ newCat }}" onChange="{{ setNewCat }}" style="min-height:48px;border-radius:12px;border:1px solid var(--line);background:var(--surface2);padding:0 12px;font-weight:700;color:var(--ink)"><option value="compras">Compras</option><option value="saude">Saúde e farmácia</option><option value="lazer">Lazer e passeios</option></select>
+        </label>
+        <label style="flex:1 1 140px;display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:700;color:var(--ink2)">Limite por mês
+          <input inputmode="numeric" value="{{ newVal }}" onInput="{{ setNewVal }}" placeholder="R$ 1.500" style="min-height:48px;border-radius:12px;border:1px solid var(--line);background:var(--surface2);padding:0 12px;font-weight:700;color:var(--ink)">
+        </label>
+        <button onClick="{{ addTeto }}" style="flex:none;min-height:48px;padding:0 18px;border-radius:12px;border:0;background:var(--brand);color:var(--brand-on);font-weight:800">Criar teto</button>
+      </section>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px">
+        <sc-for list="{{ tetos }}" as="t" hint-placeholder-count="5">
+          <article style="background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+              <span style="display:flex;align-items:center;gap:10px;font-weight:800"><span style="width:36px;height:36px;border-radius:10px;background:{{ t.soft }};color:{{ t.col }};display:flex;align-items:center;justify-content:center"><i style="font-size:20px">{{ t.icon }}</i></span>{{ t.name }}</span>
+              <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:999px;background:{{ t.sbg }};color:{{ t.sfg }};font-size:12px;font-weight:800"><i style="font-size:14px">{{ t.si }}</i>{{ t.status }}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:22px;font-weight:900">{{ t.spent }}</span>
+              <sc-if value="{{ t.editing }}" hint-placeholder-val="{{ false }}"><span style="display:flex;gap:6px;align-items:center"><input aria-label="Novo limite" inputmode="numeric" value="{{ t.edVal }}" onInput="{{ t.onEdVal }}" style="width:90px;min-height:40px;border-radius:10px;border:1px solid var(--line);background:var(--surface2);padding:0 8px;font-weight:700"><button onClick="{{ t.onSave }}" style="min-height:40px;padding:0 12px;border-radius:10px;border:0;background:var(--brand);color:var(--brand-on);font-weight:800">Salvar</button></span></sc-if>
+              <sc-if value="{{ t.notEditing }}" hint-placeholder-val="{{ true }}"><button onClick="{{ t.onEdit }}" style="min-height:44px;border:0;background:none;color:var(--ink2);font-weight:700;display:flex;align-items:center;gap:4px">de {{ t.lim }}<i style="font-size:16px">edit</i></button></sc-if>
+            </div>
+            <div role="img" aria-label="{{ t.aria }}" style="position:relative;height:12px;border-radius:6px;background:var(--surface2)"><div style="width:{{ t.pct }}%;height:100%;border-radius:6px;background:{{ t.bar }}"></div><div title="Ritmo esperado para hoje" style="position:absolute;left:48.4%;top:-4px;bottom:-4px;width:3px;border-radius:2px;background:var(--ink)"></div></div>
+            <div style="font-size:13px;color:var(--ink2)">{{ t.proj }}</div>
+          </article>
+        </sc-for>
+      </div>
+      <div style="font-size:12px;color:var(--ink3);display:flex;align-items:center;gap:6px"><span style="width:3px;height:12px;background:var(--ink);border-radius:2px"></span>Marcador = ritmo esperado para o dia 15 de 31</div>
+    </sc-if>
+  </sc-if>
+
+  <sc-if value="{{ v.vazamentos }}" hint-placeholder-val="{{ false }}">
+    <section style="background:var(--brand-deep);color:#fff;border-radius:24px;padding:22px;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;align-items:center">
+      <div>
+        <div style="font-size:13px;font-weight:700;color:#FCE7C3">Desperdício encontrado</div>
+        <div style="font-family:Nunito,sans-serif;font-size:44px;font-weight:900;line-height:1.05">{{ leakTotal }}<span style="font-size:18px">/mês</span></div>
+        <div style="font-size:14px;color:#E6F2EA;margin-top:4px">≈ {{ leakYear }} por ano · mais {{ dupTxt }} cobrados em dobro</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <sc-if value="{{ hasSaved }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.12);font-weight:800"><i style="color:#9BE0B5">savings</i>Você já recuperou {{ savedTxt }}/mês</div></sc-if>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;font-size:13px;font-weight:700">
+          <span style="padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.12)">{{ cnt.sub }} assinaturas</span><span style="padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.12)">{{ cnt.tar }} tarifas</span><span style="padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.12)">{{ cnt.seg }} seguros</span><span style="padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.12)">{{ cnt.dup }} duplicada</span>
+        </div>
+      </div>
+    </section>
+    <sc-if value="{{ lockPlus }}" hint-placeholder-val="{{ false }}"><dc-import name="Paywall" need="Plus" headline="Encontramos R$ 638 por mês que você pode recuperar" detail="No plano Grátis você vê o resumo. No Plus, cada item vem com o passo a passo para cancelar." go="{{ go }}" hint-size="100%,540px"></dc-import></sc-if>
+    <sc-if value="{{ showLeaks }}" hint-placeholder-val="{{ true }}">
+      <div role="note" style="display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:18px;background:var(--warn-soft)"><i style="color:var(--warn-t)">library_music</i><div style="font-size:14px;line-height:1.45"><b>Você paga 2 serviços de música</b> em cartões diferentes: Spotify (Nubank) e Deezer (Itaú). Ficar com um economiza R$ 22,90/mês.</div></div>
+      <sc-for list="{{ leakSecs }}" as="s" hint-placeholder-count="4">
+        <section aria-label="{{ s.title }}" style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;justify-content:space-between;padding:0 4px;align-items:baseline"><h2 style="margin:0;font-size:15px;font-weight:800;display:flex;align-items:center;gap:8px"><i style="font-size:20px;color:var(--ink3)">{{ s.icon }}</i>{{ s.title }}</h2><span style="font-size:14px;font-weight:800">{{ s.total }}</span></div>
+          <sc-for list="{{ s.items }}" as="l" hint-placeholder-count="2">
+            <article style="background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:10px;animation:pp-up .2s ease">
+              <div style="display:flex;gap:12px;align-items:flex-start">
+                <span aria-hidden="true" style="width:40px;height:40px;border-radius:12px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px;flex:none">{{ l.m }}</span>
+                <div style="flex:1;min-width:0"><div style="display:flex;justify-content:space-between;gap:8px"><span style="font-weight:800">{{ l.name }}</span><span style="font-weight:800;white-space:nowrap">{{ l.val }}</span></div><div style="font-size:13px;color:var(--ink3)">{{ l.src }}</div><div style="font-size:13px;color:var(--warn-t);font-weight:700;margin-top:4px">{{ l.why }}</div></div>
+              </div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <button onClick="{{ l.onUse }}" style="flex:1 1 90px;min-height:44px;border-radius:12px;border:1px solid var(--line);background:var(--surface);font-weight:700;font-size:14px">{{ l.useTxt }}</button>
+                <button onClick="{{ l.onCancel }}" style="flex:1 1 120px;min-height:44px;border-radius:12px;border:0;background:var(--brand);color:var(--brand-on);font-weight:800;font-size:14px">{{ l.cancelTxt }}</button>
+                <button onClick="{{ l.onIgnore }}" style="flex:0 1 80px;min-height:44px;border-radius:12px;border:0;background:none;color:var(--ink3);font-weight:700;font-size:14px">Ignorar</button>
+              </div>
+            </article>
+          </sc-for>
+          <sc-if value="{{ s.done }}" hint-placeholder-val="{{ false }}"><div style="padding:16px;border-radius:18px;border:1px dashed var(--line);text-align:center;color:var(--good-t);font-weight:700;display:flex;gap:6px;justify-content:center;align-items:center"><i>task_alt</i>Tudo revisado nesta seção</div></sc-if>
+        </section>
+      </sc-for>
+      <button onClick="{{ toggleInUse }}" style="min-height:48px;border-radius:14px;border:1px solid var(--line);background:var(--surface);font-weight:700;display:flex;align-items:center;justify-content:center;gap:6px">{{ inUseTxt }}<i style="font-size:18px">{{ inUseIcon }}</i></button>
+      <sc-if value="{{ showInUse }}" hint-placeholder-val="{{ false }}">
+        <div style="background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:4px 14px">
+          <sc-for list="{{ inUse }}" as="u" hint-placeholder-count="7"><div style="display:flex;justify-content:space-between;gap:8px;min-height:48px;align-items:center;border-bottom:1px solid var(--line);font-size:14px"><span><b>{{ u.n }}</b> <span style="color:var(--ink3)">· {{ u.s }}</span></span><span style="font-weight:800">{{ u.v }}</span></div></sc-for>
+        </div>
+      </sc-if>
+    </sc-if>
+  </sc-if>
+
+  <sc-if value="{{ v.checkin }}" hint-placeholder-val="{{ false }}">
+    <sc-if value="{{ lockPlus }}" hint-placeholder-val="{{ false }}"><dc-import name="Paywall" need="Plus" headline="6 assinaturas esperando seu check-in" detail="Leva menos de um minuto e costuma achar pelo menos uma que você esqueceu." go="{{ go }}" hint-size="100%,540px"></dc-import></sc-if>
+    <sc-if value="{{ ciActive }}" hint-placeholder-val="{{ true }}">
+      <div style="max-width:440px;width:100%;margin:0 auto;display:flex;flex-direction:column;gap:16px">
+        <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-weight:800">Check-in de assinaturas</span><span style="font-size:14px;color:var(--ink3);font-weight:700">{{ ciPos }}</span></div>
+        <div role="progressbar" aria-valuenow="{{ ciIdx }}" aria-valuemin="0" aria-valuemax="6" style="height:6px;border-radius:3px;background:var(--surface2)"><div style="width:{{ ciPct }}%;height:100%;border-radius:3px;background:var(--brand);transition:width .3s"></div></div>
+        <div style="position:relative;height:380px">
+          <div style="position:absolute;inset:24px 24px -8px;border-radius:28px;background:var(--surface2);border:1px solid var(--line)"></div>
+          <div style="position:absolute;inset:12px 12px 4px;border-radius:28px;background:var(--surface);border:1px solid var(--line);opacity:.8"></div>
+          <article onTouchStart="{{ ci.ts }}" onTouchMove="{{ ci.tm }}" onTouchEnd="{{ ci.te }}" style="position:absolute;inset:0 0 16px;border-radius:28px;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);padding:24px;display:flex;flex-direction:column;gap:14px;transform:translateX({{ ci.x }}px) rotate({{ ci.rot }}deg);transition:{{ ci.tr }}">
+            <span aria-hidden="true" style="width:64px;height:64px;border-radius:18px;background:var(--accent-soft);color:var(--accent-t);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:22px">{{ ci.m }}</span>
+            <div><div style="font-family:Nunito,sans-serif;font-size:28px;font-weight:900">{{ ci.name }}</div><div style="color:var(--ink2)">{{ ci.val }}/mês · {{ ci.src }}</div></div>
+            <div style="padding:12px;border-radius:14px;background:var(--surface2);font-size:14px;line-height:1.45;display:flex;gap:8px"><i style="font-size:20px;color:var(--ink3)">{{ ci.si }}</i><span>{{ ci.sig }}</span></div>
+            <div style="margin-top:auto;font-size:15px;font-weight:700">Você usou isso no último mês?</div>
+          </article>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <button onClick="{{ ciNo }}" style="min-height:56px;border-radius:16px;border:1px solid var(--line);background:var(--surface);font-weight:800;font-size:16px;display:flex;align-items:center;justify-content:center;gap:6px"><i>close</i>Não usei</button>
+          <button onClick="{{ ciYes }}" style="min-height:56px;border-radius:16px;border:0;background:var(--brand);color:var(--brand-on);font-weight:800;font-size:16px;display:flex;align-items:center;justify-content:center;gap:6px"><i>check</i>Usei este mês</button>
+        </div>
+        <div style="font-size:13px;color:var(--ink3);text-align:center">Também dá para deslizar: direita = usei, esquerda = não usei.</div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ ciDone }}" hint-placeholder-val="{{ false }}">
+      <div style="max-width:440px;width:100%;margin:0 auto;padding:28px;border-radius:24px;background:var(--surface);border:1px solid var(--line);display:flex;flex-direction:column;gap:12px;align-items:center;text-align:center">
+        <span style="width:64px;height:64px;border-radius:50%;background:var(--good-soft);color:var(--good-t);display:flex;align-items:center;justify-content:center"><i style="font-size:32px">task_alt</i></span>
+        <h2 style="margin:0;font-family:Nunito,sans-serif;font-weight:900;font-size:24px">Check-in feito</h2>
+        <p style="margin:0;color:var(--ink2);line-height:1.5">{{ ciSummary }}</p>
+        <button onClick="{{ goLeaks }}" style="min-height:48px;padding:0 20px;border-radius:14px;border:0;background:var(--brand);color:var(--brand-on);font-weight:800">Ver no caçador de vazamentos</button>
+        <button onClick="{{ ciReset }}" style="min-height:44px;border:0;background:none;color:var(--brand-t);font-weight:800">Refazer check-in</button>
+      </div>
+    </sc-if>
+  </sc-if>
+
+  <sc-if value="{{ sheetOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeSheet }}" style="position:fixed;inset:0;background:var(--scrim);z-index:60"></div>
+    <div role="dialog" aria-modal="true" aria-label="{{ sheetLabel }}" style="{{ sheetBox }}">
+      <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ true }}"><div style="width:40px;height:5px;border-radius:3px;background:var(--line);margin:4px auto 12px"></div></sc-if>
+      <sc-if value="{{ det.open }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start">
+          <div><div style="font-size:13px;color:var(--ink3);font-weight:700">{{ det.when }} · {{ det.src }}</div><div style="font-family:Nunito,sans-serif;font-weight:900;font-size:22px">{{ det.m }}</div><div style="font-size:28px;font-weight:900">{{ det.val }}</div></div>
+          <button onClick="{{ closeSheet }}" aria-label="Fechar" style="width:44px;height:44px;border-radius:50%;border:0;background:var(--surface2);flex:none"><i>close</i></button>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:18px;margin-top:18px">
+          <div><div style="font-weight:800;margin-bottom:8px">Categoria</div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px">
+              <sc-for list="{{ det.cats }}" as="c" hint-placeholder-count="8"><button onClick="{{ c.on }}" aria-pressed="{{ c.sel }}" style="min-height:40px;padding:0 12px;border-radius:999px;border:2px solid {{ c.bd }};background:{{ c.soft }};font-weight:700;font-size:13px;display:flex;align-items:center;gap:6px"><i style="font-size:16px;color:{{ c.col }}">{{ c.icon }}</i>{{ c.name }}</button></sc-for>
+            </div>
+          </div>
+          <label style="display:flex;flex-direction:column;gap:6px;font-weight:800">Grupo de despesa
+            <select value="{{ det.grp }}" onChange="{{ setDetGrp }}" style="min-height:48px;border-radius:12px;border:1px solid var(--line);background:var(--surface2);padding:0 12px;font-weight:700"><option value="pessoal">Pessoal</option><option value="empresa">Minha empresa</option></select>
+          </label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-weight:800">Notas
+            <textarea rows="2" value="{{ det.note }}" onInput="{{ setNote }}" placeholder="Ex.: jantar de aniversário" style="border-radius:12px;border:1px solid var(--line);background:var(--surface2);padding:10px 12px;font-weight:500;resize:vertical"></textarea>
+          </label>
+          <div style="padding:14px;border-radius:16px;border:1px solid var(--line);display:flex;flex-direction:column;gap:10px">
+            <label style="display:flex;justify-content:space-between;align-items:center;gap:12px;font-weight:800;min-height:44px">Dividir esta transação<input type="checkbox" checked="{{ det.split }}" onChange="{{ toggleSplit }}" style="width:24px;height:24px;accent-color:var(--brand)"></label>
+            <sc-if value="{{ det.split }}" hint-placeholder-val="{{ false }}">
+              <div style="display:grid;grid-template-columns:minmax(0,1fr) 110px;gap:8px;align-items:center;font-size:14px">
+                <span>Pagamento da fatura · Cartão da Helena</span><input aria-label="Valor para fatura" inputmode="decimal" value="{{ det.s1 }}" onInput="{{ setS1 }}" style="min-height:44px;border-radius:10px;border:1px solid var(--line);background:var(--surface2);padding:0 10px;font-weight:700;text-align:right">
+                <span>Abatimento · Dívida com Paulo</span><span style="min-height:44px;display:flex;align-items:center;justify-content:flex-end;padding:0 10px;font-weight:800">{{ det.s2 }}</span>
+              </div>
+              <div style="font-size:12px;color:var(--ink3)">Cada parte abate o lugar certo e o gasto não conta duas vezes.</div>
+            </sc-if>
+          </div>
+          <label style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px;border-radius:16px;border:1px solid var(--line);min-height:44px">
+            <span><span style="display:block;font-weight:800">Criar regra para casos parecidos</span><span style="display:block;font-size:13px;color:var(--ink2);margin-top:2px">{{ det.ruleTxt }}</span></span>
+            <input type="checkbox" checked="{{ det.rule }}" onChange="{{ toggleRule }}" style="width:24px;height:24px;accent-color:var(--brand);flex:none">
+          </label>
+          <button onClick="{{ saveDet }}" style="min-height:52px;border-radius:14px;border:0;background:var(--brand);color:var(--brand-on);font-weight:800;font-size:16px">Salvar</button>
+        </div>
+      </sc-if>
+      <sc-if value="{{ cx.open }}" hint-placeholder-val="{{ false }}">
+        <sc-if value="{{ cx.steps }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start">
+            <div><div style="font-size:13px;color:var(--ink3);font-weight:700">Passo a passo para cancelar</div><div style="font-family:Nunito,sans-serif;font-weight:900;font-size:22px">{{ cx.name }}</div><div style="color:var(--ink2)">{{ cx.val }}/mês · {{ cx.src }}</div></div>
+            <button onClick="{{ closeSheet }}" aria-label="Fechar" style="width:44px;height:44px;border-radius:50%;border:0;background:var(--surface2);flex:none"><i>close</i></button>
+          </div>
+          <ol style="list-style:none;margin:18px 0 0;padding:0;display:flex;flex-direction:column;gap:10px">
+            <sc-for list="{{ cx.list }}" as="s" hint-placeholder-count="3">
+              <li><button onClick="{{ s.on }}" aria-pressed="{{ s.done }}" style="width:100%;text-align:left;display:flex;gap:12px;align-items:flex-start;padding:14px;border-radius:16px;border:1px solid {{ s.bd }};background:{{ s.bg }};min-height:56px">
+                <span style="width:28px;height:28px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px;background:{{ s.cbg }};color:{{ s.cfg }}">{{ s.mark }}</span>
+                <span style="font-size:15px;line-height:1.45">{{ s.t }}</span>
+              </button></li>
+            </sc-for>
+          </ol>
+          <label style="display:flex;flex-direction:column;gap:6px;font-weight:800;margin-top:14px">Número de protocolo (opcional)
+            <input value="{{ cx.proto }}" onInput="{{ setProto }}" placeholder="Ex.: 2026101512345" style="min-height:48px;border-radius:12px;border:1px solid var(--line);background:var(--surface2);padding:0 12px;font-weight:600">
+          </label>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-top:16px">
+            <button onClick="{{ confirmCancel }}" style="min-height:52px;border-radius:14px;border:0;background:var(--brand);color:var(--brand-on);font-weight:800;font-size:16px">Marcar como cancelada</button>
+            <button onClick="{{ askHelp }}" style="min-height:44px;border-radius:14px;border:0;background:none;color:var(--brand-t);font-weight:800">Pedir ajuda ao assistente</button>
+          </div>
+        </sc-if>
+        <sc-if value="{{ cx.done }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;align-items:center;text-align:center;gap:12px;padding:12px 0">
+            <span style="width:72px;height:72px;border-radius:50%;background:var(--good-soft);color:var(--good-t);display:flex;align-items:center;justify-content:center"><i style="font-size:36px">savings</i></span>
+            <h2 style="margin:0;font-family:Nunito,sans-serif;font-weight:900;font-size:24px">Pronto! {{ cx.val }}/mês de volta</h2>
+            <p style="margin:0;color:var(--ink2);line-height:1.5;text-wrap:pretty">{{ cx.name }} sai do seu plano a partir de novembro. Vamos conferir na próxima fatura se a cobrança parou de vir.</p>
+            <div style="width:100%;padding:14px;border-radius:16px;background:var(--surface2);display:flex;justify-content:space-between;font-size:14px"><span>Recuperado no total</span><b style="color:var(--good-t)">{{ savedTxt }}/mês</b></div>
+            <button onClick="{{ closeSheet }}" style="width:100%;min-height:52px;border-radius:14px;border:0;background:var(--brand);color:var(--brand-on);font-weight:800;font-size:16px">Continuar revisando</button>
+          </div>
+        </sc-if>
+      </sc-if>
+    </div>
+  </sc-if>
+  <sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
+    <div role="status" style="position:fixed;left:50%;transform:translateX(-50%);bottom:{{ toastBottom }};z-index:70;max-width:min(92vw,460px);padding:12px 16px;border-radius:14px;background:var(--ink);color:var(--bg);font-weight:700;font-size:14px;box-shadow:var(--shadow);display:flex;gap:8px;align-items:center;animation:pp-up .2s ease"><i style="font-size:20px">check_circle</i>{{ toast }}</div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  CM = {
+    moradia: ['Moradia', 'home', 250], juros: ['Juros e tarifas', 'percent', 210], mercado: ['Mercado', 'shopping_cart', 145], restaurantes: ['Restaurantes', 'restaurant', 30],
+    empresa: ['Minha empresa', 'business_center', 285], transporte: ['Transporte e Uber', 'local_taxi', 70], compras: ['Compras', 'shopping_bag', 345], assinaturas: ['Assinaturas', 'subscriptions', 315],
+    saude: ['Saúde e farmácia', 'medical_services', 185], lazer: ['Lazer e passeios', 'attractions', 10], transferencia: ['Transferência', 'sync_alt', 110],
+  };
+  CATS = [['moradia', 9250, 9250, 1, 1], ['juros', 1987, 2258, 1, 0], ['mercado', 1640, 1745, 0, 1], ['restaurantes', 1380, 1266, 0, 0], ['empresa', 1340, 1340, 1, 1], ['transporte', 1290, 1057, 0, 1], ['compras', 1120, 1366, 0, 0], ['assinaturas', 612, 588, 1, 0], ['saude', 430, 417, 0, 1]];
+  SRCF = { Nubank: [0, .18, .3, .35, 0, .5, .4, .45, .3], 'Itaú': [.2, .55, .2, .45, 1, .1, .2, .3, .2], Santander: [.15, .3, .1, .05, 0, .3, .1, .05, .5], XP: [0, 0, .4, .15, 0, .1, .3, .2, 0], Helena: [0, 0, 0, 0, 0, 0, 0, 0, 0] };
+  TX = [
+    ['t1', 0, 'Uber *Trip', 'transporte', 'Nubank', 38.90], ['t2', 0, 'Suco Natural Casa', 'restaurantes', 'Nubank', 12.90], ['t3', 0, 'iFood', 'restaurantes', 'Itaú', 86.40], ['t4', 0, 'Pix para Helena Ribeiro', 'transferencia', 'Conta Itaú', 2340],
+    ['t5', 1, 'Pão de Açúcar', 'mercado', 'XP', 286.40], ['t6', 1, 'Posto Shell', 'transporte', 'Santander', 287.40, 'dup'], ['t7', 1, 'Posto Shell', 'transporte', 'Santander', 287.40, 'dup'], ['t8', 1, 'Spotify', 'assinaturas', 'Nubank', 21.90, 'music'], ['t9', 1, 'Deezer', 'assinaturas', 'Itaú', 22.90, 'music'],
+    ['t10', 2, 'Uber *Trip', 'transporte', 'Nubank', 52.30], ['t11', 2, 'Drogasil', 'saude', 'Santander', 64.80], ['t12', 2, 'Outback', 'restaurantes', 'Itaú', 412.00], ['t13', 2, 'Tarifa cesta de serviços', 'juros', 'Conta Itaú', 64.90, 'fee'], ['t14', 2, 'DARF · parcelamento 18/48', 'empresa', 'Conta Itaú', 890.00],
+  ];
+  LEAKS = [
+    ['deezer', 'sub', 'Deezer', 'Dz', 'Itaú', 22.90, 'Serviço de música repetido — você também paga Spotify no Nubank', 'o app ou site do Deezer'],
+    ['smartfit', 'sub', 'Smart Fit Black', 'SF', 'Santander', 149.90, 'Sem check-in na academia desde agosto', 'o app Smart Fit'],
+    ['vinho', 'sub', 'Clube de vinhos', 'CV', 'XP', 219.90, 'O preço subiu 18% em setembro', 'o site do clube'],
+    ['globo', 'sub', 'Globoplay + canais', 'Gp', 'Nubank', 87.30, 'Era teste grátis até 30 set e virou cobrança', 'o site do Globoplay'],
+    ['cesta', 'tar', 'Cesta de serviços Itaú', 'It', 'Conta Itaú', 64.90, 'Você usa só serviços que são gratuitos por norma do Banco Central', 'o app Itaú'],
+    ['anuid', 'tar', 'Anuidade Santander', 'S', 'Cartão Santander', 42.00, 'Cobrada em 12x; dá para pedir isenção', 'o app Santander'],
+    ['prest', 'seg', 'Seguro prestamista', 'S', 'Empréstimo Santander', 38.50, 'Embutido na parcela do empréstimo; é opcional', 'a central do Santander'],
+    ['perda', 'seg', 'Seguro perda e roubo', 'XP', 'Cartão XP', 12.90, 'O cartão já tem proteção do emissor', 'o app XP'],
+    ['shell', 'dup', 'Posto Shell · 14 out', 'Sh', 'Cartão Santander', 287.40, 'Mesmo valor, mesmo minuto, cobrado 2 vezes', 'o app Santander'],
+  ];
+  CI = [['Deezer', 'Dz', 22.90, 'Itaú', 'No Android: você não abre o Deezer há 47 dias', 'phone_android'], ['Smart Fit Black', 'SF', 149.90, 'Santander', 'Último check-in na academia: 12 de agosto', 'fitness_center'], ['Netflix', 'N', 20.90, 'Nubank', 'Usado nesta semana no app da TV', 'tv'], ['Globoplay + canais', 'Gp', 87.30, 'Nubank', 'Teste grátis virou cobrança em 1º de outubro', 'event'], ['Disney+', 'D+', 27.90, 'Itaú', 'No Android: aberto há 3 dias', 'phone_android'], ['Clube de vinhos', 'CV', 219.90, 'XP', 'O preço subiu 18% em setembro', 'trending_up']];
+  state = { typeF: 'todos', src: 'todas', grp: 'todos', q: '', sw: {}, drag: null, cats: {}, detId: null, detGrp: 'pessoal', note: '', split: false, s1: '', rule: false, leak: {}, cxId: null, cxSteps: {}, cxDone: false, proto: '', showInUse: false, ci: 0, ciAns: [], ciDrag: null, tetos: null, edit: null, edVal: '', newCat: 'compras', newVal: '', toast: '' };
+  componentDidMount() {
+    const d = this.props.demo;
+    if (d === 'detalhe') this.setState({ detId: 't4', split: true, s1: '1840' });
+    if (d === 'cancelar') this.setState({ cxId: 'smartfit', cxSteps: { 0: true } });
+    if (d === 'cancelado') this.setState({ cxId: 'smartfit', cxDone: true, leak: { smartfit: 'cancelado' } });
+  }
+  brl(v, c) { return 'R$ ' + v.toLocaleString('pt-BR', { minimumFractionDigits: c ? 2 : 0, maximumFractionDigits: c ? 2 : 0 }); }
+  col(h) { return `oklch(0.6 0.13 ${h})`; }
+  soft(h) { return `oklch(0.6 0.13 ${h} / 0.16)`; }
+  flash(t) { this.setState({ toast: t }); clearTimeout(this.tt); this.tt = setTimeout(() => this.setState({ toast: '' }), 2800); }
+  steps(l) {
+    const [id, kind, name, , , , , where] = l;
+    if (kind === 'dup') return ['Abra o app Santander e vá em Cartões › Fatura atual', 'Toque na segunda cobrança do Posto Shell de R$ 287,40 e escolha “Contestar compra”', 'Guarde o protocolo; o estorno costuma sair em até 2 faturas'];
+    if (kind === 'tar') return [`Abra ${where} e procure “Pacote de serviços” ou “Anuidade”`, id === 'cesta' ? 'Peça a troca para os serviços essenciais gratuitos' : 'Peça a isenção da anuidade pelo seu volume de gastos', 'Confirme e anote o número de protocolo'];
+    if (kind === 'seg') return [`Fale com ${where} pelo app ou telefone`, `Peça o cancelamento do ${name.toLowerCase()}`, 'Confira na próxima parcela se o valor foi retirado'];
+    return [`Abra ${where} e entre em Conta ou Perfil`, 'Procure “Assinatura” ou “Plano” e toque em Cancelar', 'Confirme e anote o número de protocolo'];
+  }
+  tetoList() {
+    return this.state.tetos || [['transporte', 'Uber', 990, 1000], ['restaurantes', 'Restaurantes', 1380, 1800], ['mercado', 'Mercado', 1640, 3000], ['compras', 'Compras', 1120, 1500], ['assinaturas', 'Assinaturas', 612, 650]];
+  }
+  renderVals() {
+    const bp = this.props.bp || 'mobile', go = this.props.go || (() => {}), isM = bp === 'mobile';
+    const rank = { 'Grátis': 0, Plus: 1, Pilot: 2 }[this.props.plan || 'Pilot'] ?? 2;
+    const tab = ['categorias', 'transacoes', 'tetos', 'vazamentos', 'checkin'].includes(this.props.sub) ? this.props.sub : 'categorias';
+    const T = [['categorias', 'Por categoria', 'donut_large'], ['transacoes', 'Transações', 'list'], ['tetos', 'Tetos', 'speed'], ['vazamentos', 'Caçador de vazamentos', 'water_drop'], ['checkin', 'Check-in', 'style']];
+    const tabs = T.map(([id, label, icon]) => ({ label, icon, sel: tab === id, on: () => go('gastos', id), bg: tab === id ? 'var(--ink)' : 'var(--surface)', fg: tab === id ? 'var(--bg)' : 'var(--ink2)', bd: tab === id ? 'var(--ink)' : 'var(--line)' }));
+    const brl = (v, c) => this.brl(v, c), CM = this.CM;
+    // categorias
+    const tf = this.state.typeF;
+    const typeF = [['todos', 'Todos'], ['fixo', 'Fixo'], ['variavel', 'Variável'], ['essencial', 'Essencial'], ['superfluo', 'Supérfluo']].map(([id, label]) => ({ label, sel: tf === id, on: () => this.setState({ typeF: id }), bg: tf === id ? 'var(--brand-soft)' : 'var(--surface)', fg: tf === id ? 'var(--brand-t)' : 'var(--ink2)', bd: tf === id ? 'var(--brand-t)' : 'var(--line)' }));
+    let cl = this.CATS.map((c, k) => { const f = this.state.src === 'todas' ? 1 : this.SRCF[this.state.src][k]; return { id: c[0], v: Math.round(c[1] * f), prev: Math.round(c[2] * f), fixo: c[3], ess: c[4] }; })
+      .filter(c => c.v > 0 && (tf === 'todos' || (tf === 'fixo' && c.fixo) || (tf === 'variavel' && !c.fixo) || (tf === 'essencial' && c.ess) || (tf === 'superfluo' && !c.ess)) && (this.state.grp === 'todos' || (this.state.grp === 'empresa' ? c.id === 'empresa' : c.id !== 'empresa')));
+    const tot = cl.reduce((a, c) => a + c.v, 0);
+    let acc = 0;
+    const segs = cl.map(c => { const a = acc / tot * 360; acc += c.v; return `${this.col(CM[c.id][2])} ${a.toFixed(1)}deg ${(acc / tot * 360 - 1.2).toFixed(1)}deg, var(--surface) ${(acc / tot * 360 - 1.2).toFixed(1)}deg ${(acc / tot * 360).toFixed(1)}deg`; });
+    const cats = cl.map(c => { const d = c.prev ? (c.v - c.prev) / c.prev : 0, m = CM[c.id]; return { name: m[0], icon: m[1], col: this.col(m[2]), soft: this.soft(m[2]), val: brl(c.v), pct: (c.v / 34000 * 100).toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + '%', tags: (c.fixo ? 'Fixo' : 'Variável') + ' · ' + (c.ess ? 'Essencial' : 'Supérfluo'), var: (d > 0 ? '+' : '') + Math.round(d * 100) + '%', vi: d > 0.005 ? 'north_east' : d < -0.005 ? 'south_east' : 'east', vc: d < -0.005 ? 'var(--good-t)' : 'var(--ink2)' }; });
+    // transações
+    const DAYS = ['Hoje, 15 out', 'Ontem, 14 out', 'Segunda, 13 out'];
+    const q = this.state.q.trim().toLowerCase();
+    const catOf = t => this.state.cats[t[0]] || t[3];
+    const txs = this.TX.filter(t => (!q || t[2].toLowerCase().includes(q)) && (this.state.src === 'todas' || t[4].includes(this.state.src)));
+    const mkTx = t => {
+      const c = catOf(t), m = CM[c], open = !!this.state.sw[t[0]], dr = this.state.drag && this.state.drag.id === t[0] ? this.state.drag.dx : null;
+      const x = dr != null ? Math.max(-168, Math.min(0, (open ? -168 : 0) + dr)) : (open ? -168 : 0);
+      const fl = t[6] === 'dup' ? ['Possível cobrança duplicada', 'var(--warn-t)', 'content_copy'] : t[6] === 'music' ? ['2º serviço de música', 'var(--warn-t)', 'library_music'] : t[6] === 'fee' ? ['Tarifa evitável', 'var(--warn-t)', 'water_drop'] : ['', '', ''];
+      return { m: t[2], cat: c, catName: m[0], icon: m[1], col: this.col(m[2]), soft: this.soft(m[2]), src: t[4], val: brl(t[5], true), flag: fl[0], flagC: fl[1], flagI: fl[2], x, tr: dr != null ? 'none' : 'transform .2s ease', hideAct: open ? 'false' : 'true',
+        onOpen: () => this.setState({ detId: t[0], sw: {}, detGrp: c === 'empresa' ? 'empresa' : 'pessoal', note: '', split: false, s1: String(Math.round(t[5] * 0.8)), rule: false }),
+        onCancel: () => { this.setState({ sw: {} }); if (c === 'assinaturas') go('gastos', 'vazamentos'); else this.flash(`${t[2]} marcado para cancelar`); },
+        onCat: e => { this.setState({ cats: { ...this.state.cats, [t[0]]: e.target.value } }); this.flash('Categoria atualizada'); },
+        ts: e => { this.x0 = e.touches[0].clientX; this.setState({ drag: { id: t[0], dx: 0 } }); },
+        tm: e => { if (this.x0 == null) return; this.setState({ drag: { id: t[0], dx: e.touches[0].clientX - this.x0 } }); },
+        te: () => { const dx = this.state.drag ? this.state.drag.dx : 0; this.x0 = null; const sw = {}; if (dx < -50 || (open && dx < 40)) sw[t[0]] = true; this.setState({ drag: null, sw }); },
+      };
+    };
+    const days = DAYS.map((label, k) => { const its = txs.filter(t => t[1] === k); return { label, total: brl(its.reduce((a, t) => a + t[5], 0), true), items: its.map(mkTx) }; }).filter(d => d.items.length);
+    const catOpts = Object.keys(CM).map(id => ({ id, name: CM[id][0] }));
+    // detalhe
+    const dt = this.TX.find(t => t[0] === this.state.detId);
+    let det = { open: false, cats: [] };
+    if (dt) {
+      const c = catOf(dt), s1 = parseFloat(String(this.state.s1).replace(/\./g, '').replace(',', '.')) || 0;
+      det = { open: true, m: dt[2], when: DAYS[dt[1]], src: dt[4], val: brl(dt[5], true), grp: this.state.detGrp, note: this.state.note, split: this.state.split, s1: this.state.s1, s2: brl(Math.max(0, dt[5] - s1), true), rule: this.state.rule,
+        ruleTxt: `Sempre classificar “${dt[2]}” como ${CM[c][0]}`,
+        cats: ['moradia', 'mercado', 'restaurantes', 'transporte', 'assinaturas', 'compras', 'saude', 'lazer', 'empresa', 'transferencia'].map(id => ({ name: CM[id][0], icon: CM[id][1], col: this.col(CM[id][2]), soft: c === id ? this.soft(CM[id][2]) : 'var(--surface)', bd: c === id ? this.col(CM[id][2]) : 'var(--line)', sel: c === id, on: () => this.setState({ cats: { ...this.state.cats, [dt[0]]: id } }) })) };
+    }
+    // tetos
+    const tl = this.tetoList();
+    const tetos = tl.map(([cid, name, s, l], k) => {
+      const proj = Math.round(s / 15 * 31), m = CM[cid], over = proj > l, high = s / l >= 0.9;
+      const ed = this.state.edit === k;
+      return { name, icon: m[1], col: this.col(m[2]), soft: this.soft(m[2]), spent: brl(s), lim: brl(l), pct: Math.min(100, s / l * 100).toFixed(1), bar: over ? 'var(--warn)' : 'var(--good)',
+        status: high ? 'No limite' : over ? 'Acima do ritmo' : 'No ritmo', si: high || over ? 'warning' : 'check', sbg: high || over ? 'var(--warn-soft)' : 'var(--good-soft)', sfg: high || over ? 'var(--warn-t)' : 'var(--good-t)',
+        proj: over ? `No ritmo atual, ${brl(proj)} até o dia 31 (${brl(proj - l)} acima)` : `No ritmo atual, ${brl(proj)} até o dia 31. Dentro do teto.`,
+        aria: `${name}: ${brl(s)} de ${brl(l)}. Projeção ${brl(proj)}.`, editing: ed, notEditing: !ed, edVal: this.state.edVal,
+        onEdit: () => this.setState({ edit: k, edVal: String(l) }), onEdVal: e => this.setState({ edVal: e.target.value }),
+        onSave: () => { const v = parseInt(String(this.state.edVal).replace(/\D/g, ''), 10); if (v) { const n = tl.slice(); n[k] = [cid, name, s, v]; this.setState({ tetos: n, edit: null }); this.flash(`Teto de ${name} agora é ${brl(v)}`); } } };
+    });
+    // vazamentos
+    const st = id => this.state.leak[id] || 'open';
+    const open = this.LEAKS.filter(l => st(l[0]) === 'open');
+    const recurring = open.filter(l => l[1] !== 'dup');
+    const total = recurring.reduce((a, l) => a + l[5], 0);
+    const saved = this.LEAKS.filter(l => st(l[0]) === 'cancelado' && l[1] !== 'dup').reduce((a, l) => a + l[5], 0);
+    const SEC = [['sub', 'Assinaturas', 'subscriptions'], ['tar', 'Tarifas e anuidades', 'account_balance'], ['seg', 'Seguros embutidos', 'shield'], ['dup', 'Cobranças duplicadas', 'content_copy']];
+    const leakSecs = SEC.map(([k, title, icon]) => { const its = open.filter(l => l[1] === k); return { title, icon, total: k === 'dup' ? brl(its.reduce((a, l) => a + l[5], 0), true) + ' uma vez' : brl(its.reduce((a, l) => a + l[5], 0), true) + '/mês', done: !its.length, items: its.map(l => ({ name: l[2], m: l[3], src: l[4], val: brl(l[5], true) + (k === 'dup' ? '' : '/mês'), why: l[6], useTxt: k === 'dup' ? 'Foi certo' : 'Ainda uso', cancelTxt: k === 'dup' ? 'Contestar' : 'Quero cancelar',
+      onUse: () => { this.setState({ leak: { ...this.state.leak, [l[0]]: 'uso' } }); this.flash(`${l[2]} marcado como em uso`); },
+      onIgnore: () => { this.setState({ leak: { ...this.state.leak, [l[0]]: 'ignorado' } }); this.flash(`${l[2]} ignorado`); },
+      onCancel: () => this.setState({ cxId: l[0], cxSteps: {}, cxDone: false, proto: '' }) })) }; });
+    const cxL = this.LEAKS.find(l => l[0] === this.state.cxId);
+    let cx = { open: false, list: [] };
+    if (cxL) cx = { open: true, steps: !this.state.cxDone, done: this.state.cxDone, name: cxL[2], val: brl(cxL[5], true), src: cxL[4], proto: this.state.proto,
+      list: this.steps(cxL).map((t, k) => { const dn = !!this.state.cxSteps[k]; return { t, done: dn, mark: dn ? '✓' : k + 1, bg: dn ? 'var(--good-soft)' : 'var(--surface)', bd: dn ? 'var(--good)' : 'var(--line)', cbg: dn ? 'var(--good)' : 'var(--surface2)', cfg: dn ? '#fff' : 'var(--ink)', on: () => this.setState({ cxSteps: { ...this.state.cxSteps, [k]: !dn } }) }; }) };
+    const inUse = [['Netflix', 'Nubank', 20.90], ['Spotify', 'Nubank', 21.90], ['Amazon Prime', 'Itaú', 19.90], ['Disney+', 'Itaú', 27.90], ['iCloud+', 'Nubank', 14.90], ['Google One', 'XP', 9.90], ['Uber One', 'Nubank', 16.60]].map(([n, s, v]) => ({ n, s, v: brl(v, true) }));
+    // check-in
+    const ci = this.CI[this.state.ci];
+    const ciDx = this.state.ciDrag || 0;
+    const answer = used => { const ans = [...this.state.ciAns, used]; this.setState({ ciAns: ans, ci: this.state.ci + 1, ciDrag: null }); };
+    const notUsed = this.CI.filter((c, k) => this.state.ciAns[k] === false);
+    const sheetBox = isM
+      ? { position: 'fixed', left: 0, right: 0, bottom: 0, zIndex: 61, maxHeight: '92vh', overflowY: 'auto', background: 'var(--surface)', borderRadius: '24px 24px 0 0', padding: '8px 20px calc(24px + env(safe-area-inset-bottom))', boxShadow: 'var(--shadow)', animation: 'pp-sheet .22s ease' }
+      : { position: 'fixed', top: 0, right: 0, bottom: 0, zIndex: 61, width: 'min(460px,100vw)', overflowY: 'auto', background: 'var(--surface)', padding: '24px 28px', borderLeft: '1px solid var(--line)', boxShadow: 'var(--shadow)', animation: 'pp-up .2s ease' };
+    return {
+      go, tabs, isMobile: isM, notMobile: !isM,
+      v: { categorias: tab === 'categorias', transacoes: tab === 'transacoes', tetos: tab === 'tetos', vazamentos: tab === 'vazamentos', checkin: tab === 'checkin' },
+      lockPlus: rank < 1, showTetos: rank >= 1, showLeaks: rank >= 1,
+      typeF, src: this.state.src, grp: this.state.grp, setSrc: e => this.setState({ src: e.target.value }), setGrp: e => this.setState({ grp: e.target.value }),
+      catCols: bp === 'mobile' ? 'minmax(0,1fr)' : '260px minmax(0,1fr)', cats, catEmpty: !cats.length,
+      donut: tot ? `conic-gradient(${segs.join(',')})` : 'var(--surface2)', catTotal: brl(tot), catPct: Math.round(tot / 34000 * 100) + '%',
+      topCat: cl.length ? CM[cl.slice().sort((a, b) => b.v - a.v)[0].id][0] : '—',
+      donutAria: `Gráfico de rosca: ${brl(tot)} gastos até 15 de outubro. ` + cats.slice(0, 3).map(c => `${c.name} ${c.val}`).join(', ') + '.',
+      q: this.state.q, setQ: e => this.setState({ q: e.target.value }), days, txEmpty: !days.length, catOpts,
+      det, sheetOpen: det.open || cx.open, sheetLabel: det.open ? 'Detalhe da transação' : 'Cancelar assinatura', sheetBox,
+      closeSheet: () => this.setState({ detId: null, cxId: null, cxDone: false }),
+      setDetGrp: e => this.setState({ detGrp: e.target.value }), setNote: e => this.setState({ note: e.target.value }), toggleSplit: () => this.setState({ split: !this.state.split }), setS1: e => this.setState({ s1: e.target.value }), toggleRule: () => this.setState({ rule: !this.state.rule }),
+      saveDet: () => { this.setState({ detId: null }); this.flash(this.state.rule ? 'Salvo. Regra criada para casos parecidos' : 'Transação atualizada'); },
+      tetos, newCat: this.state.newCat, newVal: this.state.newVal, setNewCat: e => this.setState({ newCat: e.target.value }), setNewVal: e => this.setState({ newVal: e.target.value }),
+      addTeto: () => { const v = parseInt(String(this.state.newVal).replace(/\D/g, ''), 10); if (!v) return; const sp = { compras: 1120, saude: 430, lazer: 480 }[this.state.newCat]; const n = this.tetoList().filter(t => t[0] !== this.state.newCat); n.push([this.state.newCat, CM[this.state.newCat][0], sp, v]); this.setState({ tetos: n, newVal: '' }); this.flash(`Teto de ${CM[this.state.newCat][0]} criado`); },
+      leakTotal: brl(total, true), leakYear: brl(Math.round(total * 12)), dupTxt: st('shell') === 'open' ? 'R$ 287,40' : 'R$ 0', hasSaved: saved > 0, savedTxt: brl(saved, true),
+      cnt: { sub: open.filter(l => l[1] === 'sub').length, tar: open.filter(l => l[1] === 'tar').length, seg: open.filter(l => l[1] === 'seg').length, dup: open.filter(l => l[1] === 'dup').length },
+      leakSecs, cx, setProto: e => this.setState({ proto: e.target.value }),
+      confirmCancel: () => this.setState({ cxDone: true, leak: { ...this.state.leak, [this.state.cxId]: 'cancelado' } }),
+      askHelp: () => go('assistente'),
+      inUse, showInUse: this.state.showInUse, toggleInUse: () => this.setState({ showInUse: !this.state.showInUse }), inUseTxt: this.state.showInUse ? 'Esconder assinaturas em uso' : '7 assinaturas em uso · R$ 132/mês', inUseIcon: this.state.showInUse ? 'expand_less' : 'expand_more',
+      ciActive: rank >= 1 && !!ci, ciDone: rank >= 1 && !ci, ciIdx: this.state.ci, ciPos: `${Math.min(this.state.ci + 1, 6)} de 6`, ciPct: (this.state.ci / 6 * 100).toFixed(0),
+      ci: ci ? { name: ci[0], m: ci[1], val: brl(ci[2], true), src: ci[3], sig: ci[4], si: ci[5], x: ciDx, rot: (ciDx / 20).toFixed(1), tr: this.state.ciDrag == null ? 'transform .25s ease' : 'none',
+        ts: e => { this.cx0 = e.touches[0].clientX; this.setState({ ciDrag: 0 }); }, tm: e => this.setState({ ciDrag: e.touches[0].clientX - this.cx0 }),
+        te: () => { const d = this.state.ciDrag || 0; if (d > 90) answer(true); else if (d < -90) answer(false); else this.setState({ ciDrag: null }); } } : {},
+      ciYes: () => answer(true), ciNo: () => answer(false), ciReset: () => this.setState({ ci: 0, ciAns: [] }),
+      ciSummary: notUsed.length ? `Você marcou ${notUsed.length} como não usadas: ${notUsed.map(c => c[0]).join(', ')}. Somam ${brl(notUsed.reduce((a, c) => a + c[2], 0), true)}/mês.` : 'Você usa todas. Ótimo — fazemos de novo no mês que vem.',
+      goLeaks: () => go('gastos', 'vazamentos'),
+      toast: this.state.toast, toastBottom: isM ? 'calc(96px + env(safe-area-inset-bottom))' : '32px',
+    };
+  }
+}
+</script>
+</body>
+</html>

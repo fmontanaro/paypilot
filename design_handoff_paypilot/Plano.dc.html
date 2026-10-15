@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0B6B3A">
+<link rel="icon" href="assets/logo.png">
+<link rel="apple-touch-icon" href="assets/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Nunito:wght@700;800;900&amp;display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,300..600,0..1,0&amp;display=block">
+<style>
+:root,[data-theme="claro"]{color-scheme:light;--bg:#F5F2EA;--surface:#FFFFFF;--surface2:#EEEAE0;--line:#E2DDD1;--ink:#16211B;--ink2:#46534B;--ink3:#626D66;--brand:#0B6B3A;--brand-on:#FFFFFF;--brand-t:#0B6B3A;--brand-soft:#E1EFE5;--brand-deep:#0A4F2C;--accent:#E9822A;--accent-soft:#FCEBD6;--accent-t:#9C4B0B;--good:#1E8C4E;--good-soft:#DCF2E3;--good-t:#16703D;--warn:#C98A0B;--warn-soft:#FBEFD2;--warn-t:#7F5300;--risk:#BF4A41;--risk-soft:#F8E3E0;--risk-t:#A03830;--cream:#FCE7C3;--shadow:0 1px 2px rgba(22,33,27,.06),0 6px 20px rgba(22,33,27,.07);--scrim:rgba(14,21,17,.42)}
+[data-theme="escuro"]{color-scheme:dark;--bg:#0D1410;--surface:#151F19;--surface2:#1D2922;--line:#2B3931;--ink:#ECF1ED;--ink2:#B4C0B8;--ink3:#93A097;--brand:#46B97A;--brand-on:#05200F;--brand-t:#6FCF98;--brand-soft:#163524;--brand-deep:#0B5A31;--accent:#F0954A;--accent-soft:#3A2614;--accent-t:#F6B47C;--good:#4FC285;--good-soft:#14341F;--good-t:#7CD8A5;--warn:#E2A93B;--warn-soft:#382B10;--warn-t:#F0C467;--risk:#E07C72;--risk-soft:#3C1E1B;--risk-t:#F29C93;--cream:#3A3020;--shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.28);--scrim:rgba(0,0,0,.6)}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink)}
+body:has(> x-dc > div:first-of-type){padding:0}
+body{font-family:Manrope,system-ui,sans-serif;font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;overscroll-behavior-y:contain}
+i{font-family:'Material Symbols Rounded';font-style:normal;font-weight:normal;line-height:1;font-size:22px;display:inline-block;font-feature-settings:'liga';-webkit-font-feature-settings:'liga';user-select:none;flex:none;letter-spacing:normal;text-transform:none;white-space:nowrap;direction:ltr}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:var(--brand-t)}a:hover{color:var(--ink)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+input[type=range]{accent-color:var(--brand)}
+@keyframes pp-spin{to{transform:rotate(360deg)}}
+@keyframes pp-shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+@keyframes pp-wave{0%,100%{transform:scaleY(.3)}50%{transform:scaleY(1)}}
+@keyframes pp-pulse{0%{box-shadow:0 0 0 0 rgba(233,130,42,.55)}100%{box-shadow:0 0 0 18px rgba(233,130,42,0)}}
+@keyframes pp-up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes pp-sheet{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+@keyframes pp-dots{0%,80%,100%{opacity:.25}40%{opacity:1}}
+@media (prefers-reduced-motion: reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important;transition:none!important}}
+</style>
+</helmet>
+<div style="display:flex;flex-direction:column;gap:16px">
+  <div role="tablist" aria-label="Seções do plano" style="display:flex;gap:8px;overflow-x:auto;padding:2px;scrollbar-width:none">
+    <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="5">
+      <button role="tab" aria-selected="{{ t.sel }}" onClick="{{ t.on }}" style="flex:none;min-height:44px;padding:0 16px;border-radius:999px;border:1px solid {{ t.bd }};background:{{ t.bg }};color:{{ t.fg }};font-weight:700;font-size:14px;white-space:nowrap;display:flex;align-items:center;gap:6px"><i style="font-size:18px">{{ t.icon }}</i>{{ t.label }}</button>
+    </sc-for>
+  </div>
+  <sc-if value="{{ locked }}" hint-placeholder-val="{{ false }}">
+    <dc-import name="Paywall" need="Pilot" headline="{{ pw.h }}" detail="{{ pw.d }}" go="{{ go }}" hint-size="100%,540px"></dc-import>
+  </sc-if>
+
+  <sc-if value="{{ v.prioridades }}" hint-placeholder-val="{{ true }}">
+    <section aria-label="Resumo do mês" style="position:{{ sumPos }};top:{{ sumTop }};z-index:30;background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:18px;display:flex;flex-direction:column;gap:12px;box-shadow:var(--shadow)">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap">
+        <div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:700">Prioridades de outubro</div>
+          <div aria-live="polite" style="display:flex;align-items:center;gap:8px;margin-top:4px;font-family:Nunito,sans-serif;font-weight:900;font-size:26px;line-height:1.15;flex-wrap:wrap;color:{{ sum.fg }}"><i style="font-size:26px">{{ sum.icon }}</i>{{ sum.text }}</div>
+        </div>
+        <div style="display:flex;gap:18px;font-size:14px;flex-wrap:wrap">
+          <div style="white-space:nowrap"><div style="color:var(--ink3);font-size:12px">Renda prevista</div><b>R$ 34.000</b></div>
+          <div style="white-space:nowrap"><div style="color:var(--ink3);font-size:12px">A pagar no mês</div><b>{{ sum.month }}</b></div>
+          <div style="white-space:nowrap"><div style="color:var(--ink3);font-size:12px">Custo das escolhas</div><b>{{ sum.cost }}</b></div>
+        </div>
+      </div>
+      <div role="img" aria-label="{{ sum.aria }}" style="position:relative;height:14px;border-radius:7px;background:var(--surface2)">
+        <div style="width:{{ sum.w }}%;height:100%;border-radius:7px;background:{{ sum.bar }};transition:width .35s ease"></div>
+        <div style="position:absolute;left:{{ sum.inc }}%;top:-5px;bottom:-5px;width:3px;border-radius:2px;background:var(--ink)"></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ink3)"><span style="width:3px;height:12px;background:var(--ink);border-radius:2px"></span>Marcador = sua renda do mês</div>
+    </section>
+    <sc-if value="{{ hasSug }}" hint-placeholder-val="{{ true }}">
+      <section aria-labelledby="h-sug" style="display:flex;flex-direction:column;gap:10px">
+        <h2 id="h-sug" style="margin:4px 4px 0;font-size:15px;font-weight:800">{{ sugTitle }}</h2>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px">
+          <sc-for list="{{ sugs }}" as="s" hint-placeholder-count="3">
+            <button onClick="{{ s.on }}" style="text-align:left;padding:14px;border-radius:18px;border:1px dashed var(--brand-t);background:var(--brand-soft);display:flex;gap:10px;align-items:flex-start;min-height:44px">
+              <i style="color:var(--brand-t)">add_task</i>
+              <span style="display:flex;flex-direction:column;gap:2px"><span style="font-weight:800;font-size:15px">{{ s.t }}</span><span style="font-size:13px;color:var(--ink2)">{{ s.d }}</span></span>
+            </button>
+          </sc-for>
+        </div>
+      </section>
+    </sc-if>
+    <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ true }}">
+      <div role="tablist" aria-label="Seções de prioridade" style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;padding:4px;border-radius:16px;background:var(--surface2)">
+        <sc-for list="{{ secs }}" as="s" hint-placeholder-count="4">
+          <button role="tab" aria-selected="{{ s.sel }}" onClick="{{ s.onTab }}" style="min-height:56px;border:0;border-radius:12px;background:{{ s.tabBg }};box-shadow:{{ s.tabSh }};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:4px 2px">
+            <span style="font-size:12px;font-weight:800;line-height:1.15;text-align:center">{{ s.short }}</span><span style="font-size:11px;color:var(--ink3);font-weight:700">{{ s.count }} itens</span>
+          </button>
+        </sc-for>
+      </div>
+      <sc-for list="{{ mSecs }}" as="s" hint-placeholder-count="1">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:0 4px"><span style="display:flex;align-items:center;gap:8px;font-weight:800"><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:999px;background:{{ s.bg }};color:{{ s.fg }};font-size:13px"><i style="font-size:16px">{{ s.icon }}</i>{{ s.label }}</span></span><span style="font-size:14px;font-weight:800">{{ s.totalTxt }}</span></div>
+        <div style="font-size:13px;color:var(--ink3);padding:0 4px">{{ s.desc }}</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <sc-for list="{{ s.items }}" as="it" hint-placeholder-count="5">
+            <article style="background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:14px;display:flex;gap:12px;align-items:center">
+              <div style="flex:1;min-width:0">
+                <div style="display:flex;justify-content:space-between;gap:8px"><span style="font-weight:800;font-size:15px">{{ it.name }}</span><span style="font-weight:800;white-space:nowrap">{{ it.amt }}</span></div>
+                <div style="font-size:13px;color:var(--ink3);margin-top:2px">{{ it.due }}</div>
+                <div style="font-size:13px;color:{{ it.nc }};margin-top:4px;font-weight:700;display:flex;gap:4px;align-items:flex-start"><i style="font-size:16px">{{ it.ni }}</i><span>{{ it.note }}</span></div>
+              </div>
+              <sc-if value="{{ it.movable }}" hint-placeholder-val="{{ true }}"><button onClick="{{ it.onMove }}" aria-label="Mover {{ it.name }}" style="flex:none;min-width:44px;min-height:44px;border-radius:12px;border:1px solid var(--line);background:var(--surface2);display:flex;align-items:center;justify-content:center;gap:4px;font-weight:800;font-size:13px;padding:0 10px"><i style="font-size:20px">swap_vert</i>Mover</button></sc-if>
+            </article>
+          </sc-for>
+          <sc-if value="{{ s.empty }}" hint-placeholder-val="{{ false }}"><div style="padding:24px;text-align:center;color:var(--ink3);border:1px dashed var(--line);border-radius:18px">Nada aqui. Mova itens das outras seções.</div></sc-if>
+        </div>
+      </sc-for>
+    </sc-if>
+    <sc-if value="{{ isBoard }}" hint-placeholder-val="{{ false }}">
+      <div style="display:grid;grid-template-columns:{{ boardCols }};gap:12px;align-items:start">
+        <sc-for list="{{ secs }}" as="s" hint-placeholder-count="4">
+          <section aria-label="{{ s.label }}" onDragOver="{{ s.onOver }}" onDrop="{{ s.onDrop }}" style="background:{{ s.colBg }};border:2px dashed {{ s.colBd }};border-radius:20px;padding:12px;display:flex;flex-direction:column;gap:8px;min-height:240px">
+            <div style="display:flex;flex-direction:column;gap:2px;padding:2px 4px 6px">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px"><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:999px;background:{{ s.bg }};color:{{ s.fg }};font-size:13px;font-weight:800;white-space:nowrap"><i style="font-size:16px">{{ s.icon }}</i>{{ s.label }}</span><span style="font-size:12px;color:var(--ink3);font-weight:700">{{ s.count }}</span></div>
+              <div style="font-size:18px;font-weight:900;margin-top:6px">{{ s.totalTxt }}</div>
+              <div style="font-size:12px;color:var(--ink3)">{{ s.desc }}</div>
+            </div>
+            <sc-for list="{{ s.items }}" as="it" hint-placeholder-count="4">
+              <article draggable="{{ it.drag }}" onDragStart="{{ it.onDrag }}" onDragEnd="{{ it.onDragEnd }}" style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:4px;cursor:{{ it.cursor }};opacity:{{ it.op }}">
+                <div style="display:flex;justify-content:space-between;gap:6px;align-items:flex-start"><span style="font-weight:800;font-size:14px;line-height:1.3">{{ it.name }}</span><sc-if value="{{ it.movable }}" hint-placeholder-val="{{ true }}"><button onClick="{{ it.onMove }}" aria-label="Mover {{ it.name }}" style="flex:none;width:32px;height:32px;margin:-6px -6px 0 0;border:0;border-radius:8px;background:none;color:var(--ink3)"><i style="font-size:20px">more_horiz</i></button></sc-if></div>
+                <div style="font-weight:800;font-size:15px">{{ it.amt }}</div>
+                <div style="font-size:12px;color:var(--ink3)">{{ it.due }}</div>
+                <div style="font-size:12px;color:{{ it.nc }};font-weight:700;line-height:1.35">{{ it.note }}</div>
+              </article>
+            </sc-for>
+          </section>
+        </sc-for>
+      </div>
+      <div style="font-size:13px;color:var(--ink3);display:flex;align-items:center;gap:6px"><i style="font-size:18px">drag_pan</i>Arraste os cartões entre as colunas ou use o menu de cada item.</div>
+    </sc-if>
+  </sc-if>
+
+  <sc-if value="{{ v.credito }}" hint-placeholder-val="{{ false }}">
+    <section style="background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:18px;display:flex;flex-direction:column;gap:14px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap"><h2 style="margin:0;font-size:15px;font-weight:800">Datas de fechamento e vencimento</h2><span style="font-size:13px;color:var(--ink3);white-space:nowrap">Outubro · hoje é dia 15</span></div>
+      <div role="img" aria-label="Linha do tempo das datas de fechamento e vencimento de cada cartão em outubro" style="display:flex;flex-direction:column;gap:10px">
+        <sc-for list="{{ credTl }}" as="c" hint-placeholder-count="5">
+          <div style="display:grid;grid-template-columns:84px minmax(0,1fr);gap:10px;align-items:center">
+            <span style="font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.short }}</span>
+            <div style="position:relative;height:24px;border-radius:12px;background:var(--surface2)">
+              <div style="position:absolute;left:{{ c.fl }}%;width:{{ c.span }}%;top:10px;height:4px;background:var(--line)"></div>
+              <span title="Fechamento" style="position:absolute;left:{{ c.fl }}%;top:5px;width:14px;height:14px;margin-left:-7px;border-radius:50%;background:var(--ink2)"></span>
+              <span title="Vencimento" style="position:absolute;left:{{ c.vl }}%;top:4px;width:16px;height:16px;margin-left:-8px;border-radius:50%;border:3px solid var(--accent);background:var(--surface)"></span>
+              <span style="position:absolute;left:46.7%;top:-3px;bottom:-3px;width:2px;background:var(--brand)"></span>
+            </div>
+          </div>
+        </sc-for>
+        <div style="display:grid;grid-template-columns:84px minmax(0,1fr);gap:10px"><span></span><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--ink3);font-weight:700"><span>1</span><span>8</span><span>15</span><span>22</span><span>31</span></div></div>
+      </div>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--ink2)"><span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border-radius:50%;background:var(--ink2)"></span>Fechamento</span><span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border-radius:50%;border:3px solid var(--accent)"></span>Vencimento</span><span style="display:flex;align-items:center;gap:6px"><span style="width:2px;height:12px;background:var(--brand)"></span>Hoje</span></div>
+    </section>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px">
+      <sc-for list="{{ cred }}" as="c" hint-placeholder-count="6">
+        <article style="background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;gap:12px;align-items:center">
+            <span aria-hidden="true" style="width:44px;height:44px;border-radius:12px;background:{{ c.color }};color:{{ c.tc }};display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;flex:none">{{ c.m }}</span>
+            <div style="flex:1;min-width:0"><div style="font-weight:800">{{ c.name }}</div><div style="font-size:13px;color:var(--ink3)">{{ c.kind }}</div></div>
+            <span style="padding:4px 10px;border-radius:999px;background:{{ c.rbg }};color:{{ c.rfg }};font-size:13px;font-weight:800;white-space:nowrap">{{ c.rate }}</span>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--ink3)">Usado {{ c.usedTxt }}</span><span style="font-weight:800">{{ c.availTxt }} livre</span></div>
+            <div role="img" aria-label="{{ c.aria }}" style="margin-top:6px;height:10px;border-radius:5px;background:var(--surface2);overflow:hidden"><div style="width:{{ c.pct }}%;height:100%;background:var(--ink2);border-radius:5px"></div></div>
+            <div style="font-size:12px;color:var(--ink3);margin-top:4px">Limite {{ c.limTxt }}</div>
+          </div>
+          <div style="font-size:13px;color:var(--ink2);display:flex;gap:6px;align-items:center"><i style="font-size:18px">event</i>{{ c.dates }}</div>
+        </article>
+      </sc-for>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ v.rolagem }}" hint-placeholder-val="{{ false }}">
+    <div style="display:grid;grid-template-columns:{{ rolCols }};gap:16px;align-items:start">
+      <div style="display:flex;flex-direction:column;gap:14px;min-width:0">
+        <section style="background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:18px;display:flex;flex-direction:column;gap:12px">
+          <label for="rol-need" style="font-weight:800">O que você precisa pagar?</label>
+          <select id="rol-need" value="{{ need }}" onChange="{{ setNeed }}" style="min-height:48px;border-radius:14px;border:1px solid var(--line);background:var(--surface2);padding:0 14px;font-weight:700">
+            <option value="itau">Fatura Itaú · R$ 8.900 · vence 27 out</option>
+            <option value="xp">Fatura XP · R$ 4.300 · vence 2 nov</option>
+          </select>
+          <div style="font-size:14px;color:var(--ink2);line-height:1.45">Comparamos as saídas possíveis com o seu crédito atual. Os números saem do motor financeiro, não de estimativas da IA.</div>
+        </section>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px">
+          <sc-for list="{{ routes }}" as="r" hint-placeholder-count="3">
+            <article style="background:var(--surface);border:2px solid {{ r.bd }};border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:12px">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px"><span style="font-size:12px;font-weight:800;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap">Rota {{ r.letter }}</span><sc-if value="{{ r.best }}" hint-placeholder-val="{{ false }}"><span style="padding:3px 8px;border-radius:999px;background:var(--good-soft);color:var(--good-t);font-size:12px;font-weight:800;white-space:nowrap">Mais barata com saída</span></sc-if></div>
+              <div style="font-weight:800;font-size:16px;line-height:1.3">{{ r.name }}</div>
+              <dl style="margin:0;display:grid;gap:8px">
+                <div style="display:flex;justify-content:space-between;gap:8px;font-size:14px"><dt style="color:var(--ink3)">Custo total</dt><dd style="margin:0;font-weight:900">{{ r.cost }}</dd></div>
+                <div style="display:flex;justify-content:space-between;gap:8px;font-size:14px"><dt style="color:var(--ink3);white-space:nowrap">Fôlego ganho</dt><dd style="margin:0;font-weight:800;text-align:right">{{ r.days }}</dd></div>
+                <div style="display:flex;justify-content:space-between;gap:8px;font-size:14px"><dt style="color:var(--ink3)">Novembro</dt><dd style="margin:0;font-weight:800">{{ r.next }}</dd></div>
+              </dl>
+              <div style="font-size:13px;line-height:1.4;color:{{ r.wc }};font-weight:700;display:flex;gap:6px"><i style="font-size:18px">{{ r.wi }}</i><span>{{ r.warn }}</span></div>
+              <button onClick="{{ r.on }}" aria-pressed="{{ r.sel }}" style="margin-top:auto;min-height:46px;border-radius:12px;border:{{ r.btnBd }};background:{{ r.btnBg }};color:{{ r.btnFg }};font-weight:800">{{ r.btn }}</button>
+            </article>
+          </sc-for>
+        </div>
+        <sc-if value="{{ picked }}" hint-placeholder-val="{{ false }}">
+          <div role="status" style="padding:14px 16px;border-radius:16px;background:var(--brand-soft);display:flex;gap:10px;align-items:flex-start"><i style="color:var(--brand-t)">check_circle</i><div style="font-size:14px;line-height:1.45"><b>{{ pickedTxt }}</b> entrou no plano de outubro. A saída continua a mesma: o plano de quitação reduz a rolagem a zero até mar 2027.</div></div>
+        </sc-if>
+      </div>
+      <aside aria-label="Custo da rolagem" style="background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:18px;display:flex;flex-direction:column;gap:14px">
+        <div style="font-size:13px;color:var(--ink3);font-weight:700">Custo da rolagem em outubro</div>
+        <div style="font-family:Nunito,sans-serif;font-size:36px;font-weight:900;line-height:1">R$ 2.140</div>
+        <div style="display:inline-flex;align-self:flex-start;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;background:var(--good-soft);color:var(--good-t);font-weight:800;font-size:13px"><i style="font-size:18px">south</i>Encolheu R$ 470 (−18%) vs setembro</div>
+        <div role="img" aria-label="Custo da rolagem caindo de R$ 3.420 em maio para R$ 2.140 em outubro" style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;align-items:end;height:120px">
+          <sc-for list="{{ rolHist }}" as="h" hint-placeholder-count="6">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end"><div style="width:100%;max-width:28px;height:{{ h.h }}%;border-radius:6px 6px 2px 2px;background:{{ h.c }}"></div><span style="font-size:11px;color:var(--ink3);font-weight:700">{{ h.m }}</span></div>
+          </sc-for>
+        </div>
+        <div style="padding:12px;border-radius:14px;background:var(--surface2);font-size:14px;line-height:1.45;color:var(--ink2)">Rolar dívida compra tempo, mas custa. Use só para atravessar o mês enquanto o plano diminui o buraco.</div>
+        <button onClick="{{ goQuit }}" style="min-height:46px;border-radius:12px;border:0;background:var(--brand);color:var(--brand-on);font-weight:800;display:flex;align-items:center;justify-content:center;gap:6px">Ver a saída: plano de quitação<i style="font-size:18px">arrow_forward</i></button>
+      </aside>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ v.quitacao }}" hint-placeholder-val="{{ false }}">
+    <section style="background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:18px;display:flex;flex-direction:column;gap:16px">
+      <ol aria-label="Jornada em 4 fases, fase atual: Fechar o mês" style="list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px">
+        <sc-for list="{{ fases }}" as="f" hint-placeholder-count="4">
+          <li style="padding:12px;border-radius:16px;background:{{ f.bg }};border:2px solid {{ f.bd }};display:flex;flex-direction:column;gap:4px">
+            <span style="font-size:12px;font-weight:800;color:{{ f.kc }}">{{ f.k }}</span><span style="font-weight:800;font-size:14px;line-height:1.25">{{ f.label }}</span><span style="font-size:12px;color:var(--ink3)">{{ f.when }}</span>
+          </li>
+        </sc-for>
+      </ol>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px">
+        <div><div style="font-size:13px;color:var(--ink3)">Dívida total</div><div style="font-size:24px;font-weight:900">R$ 54.700</div></div>
+        <div><div style="font-size:13px;color:var(--ink3)">Juros até quitar</div><div style="font-size:24px;font-weight:900">R$ 14.860</div></div>
+        <div><div style="font-size:13px;color:var(--ink3)">Livre das dívidas</div><div style="font-size:24px;font-weight:900;color:var(--good-t)">set 2028</div></div>
+        <div><div style="font-size:13px;color:var(--ink3)">vs pagar só o mínimo</div><div style="font-size:24px;font-weight:900">−R$ 9.400</div></div>
+      </div>
+    </section>
+    <section aria-labelledby="h-quit" style="background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:18px;display:flex;flex-direction:column;gap:14px">
+      <h2 id="h-quit" style="margin:0;font-size:15px;font-weight:800">Da mais cara para a mais barata</h2>
+      <sc-for list="{{ debts }}" as="d" hint-placeholder-count="4">
+        <div style="display:flex;flex-direction:column;gap:8px;padding-bottom:14px;border-bottom:1px solid var(--line)">
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+            <span style="width:28px;height:28px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px">{{ d.n }}</span>
+            <span style="font-weight:800;flex:1;min-width:140px">{{ d.name }}</span>
+            <span style="font-size:13px;font-weight:800;padding:3px 8px;border-radius:999px;background:var(--surface2);white-space:nowrap">{{ d.rate }}</span>
+            <span style="font-weight:800;white-space:nowrap">{{ d.saldo }}</span>
+          </div>
+          <div role="img" aria-label="{{ d.aria }}" style="position:relative;height:16px;border-radius:8px;background:var(--surface2)"><div style="width:{{ d.w }}%;height:100%;border-radius:8px;background:{{ d.c }}"></div></div>
+          <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:13px;color:var(--ink2)"><span style="white-space:nowrap">Quitada em <b style="color:var(--ink)">{{ d.end }}</b></span><span style="white-space:nowrap">Juros pagos até lá: <b style="color:var(--ink)">{{ d.juros }}</b></span></div>
+        </div>
+      </sc-for>
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--ink3);font-weight:700"><span>out 26</span><span>abr 27</span><span>out 27</span><span>abr 28</span><span>set 28</span></div>
+    </section>
+  </sc-if>
+
+  <sc-if value="{{ v.renegociacao }}" hint-placeholder-val="{{ false }}">
+    <section style="background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:18px;display:flex;flex-direction:column;gap:16px">
+      <div style="font-weight:800">Escolha uma dívida</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <sc-for list="{{ rDebts }}" as="d" hint-placeholder-count="3">
+          <button onClick="{{ d.on }}" aria-pressed="{{ d.sel }}" style="min-height:44px;padding:0 14px;border-radius:999px;border:1px solid {{ d.bd }};background:{{ d.bg }};color:{{ d.fg }};font-weight:700;font-size:14px">{{ d.name }}</button>
+        </sc-for>
+      </div>
+      <div style="padding:16px;border-radius:18px;background:var(--brand-soft);display:flex;flex-direction:column;gap:4px">
+        <div style="font-size:13px;color:var(--brand-t);font-weight:800">Faixa sugerida para proposta à vista</div>
+        <div style="font-family:Nunito,sans-serif;font-size:30px;font-weight:900">{{ ren.faixa }}</div>
+        <div style="font-size:13px;color:var(--ink2)">Saldo atual {{ ren.saldo }} · desconto comum em acordos desse tipo</div>
+      </div>
+      <div>
+        <label for="ren-n" style="display:flex;justify-content:space-between;font-weight:800;gap:8px;white-space:nowrap"><span>Ou parcelar em</span><span>{{ ren.n }} meses</span></label>
+        <input id="ren-n" type="range" min="6" max="36" step="1" value="{{ ren.n }}" onInput="{{ setN }}" style="width:100%;height:44px">
+        <div style="font-size:13px;color:var(--ink3)">Taxa de referência {{ ren.novo }} ao mês</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div style="padding:14px;border-radius:16px;background:var(--surface2);display:flex;flex-direction:column;gap:8px">
+          <div style="font-size:12px;font-weight:800;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em">Antes</div>
+          <div><div style="font-size:12px;color:var(--ink3)">Parcela</div><div style="font-weight:800">{{ ren.aParc }}</div></div>
+          <div><div style="font-size:12px;color:var(--ink3)">Prazo</div><div style="font-weight:800">{{ ren.aPrazo }}</div></div>
+          <div><div style="font-size:12px;color:var(--ink3)">Total</div><div style="font-weight:800">{{ ren.aTotal }}</div></div>
+        </div>
+        <div style="padding:14px;border-radius:16px;background:var(--good-soft);display:flex;flex-direction:column;gap:8px">
+          <div style="font-size:12px;font-weight:800;color:var(--good-t);text-transform:uppercase;letter-spacing:.05em">Depois</div>
+          <div><div style="font-size:12px;color:var(--ink3)">Parcela</div><div style="font-weight:900">{{ ren.dParc }}</div></div>
+          <div><div style="font-size:12px;color:var(--ink3)">Prazo</div><div style="font-weight:800">{{ ren.n }} meses</div></div>
+          <div><div style="font-size:12px;color:var(--ink3)">Total</div><div style="font-weight:800">{{ ren.dTotal }}</div></div>
+        </div>
+      </div>
+      <div style="padding:14px;border-radius:16px;border:1px solid var(--line);display:flex;flex-direction:column;gap:8px">
+        <div style="font-weight:800;font-size:14px">Como pedir</div>
+        <p style="margin:0;font-size:14px;color:var(--ink2);line-height:1.5">{{ ren.script }}</p>
+        <button onClick="{{ copy }}" style="align-self:flex-start;min-height:44px;padding:0 14px;border-radius:12px;border:1px solid var(--line);background:var(--surface2);font-weight:800;display:flex;align-items:center;gap:6px"><i style="font-size:18px">content_copy</i>{{ copyTxt }}</button>
+      </div>
+      <div style="font-size:12px;color:var(--ink3);line-height:1.45">O PayPilot não indica bancos nem vende crédito. Leve esta proposta à instituição onde está a dívida.</div>
+    </section>
+  </sc-if>
+
+  <sc-if value="{{ moveOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeMove }}" style="position:fixed;inset:0;background:var(--scrim);z-index:60"></div>
+    <div role="dialog" aria-modal="true" aria-label="Mover item" style="{{ sheetBox }}">
+      <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ true }}"><div style="width:40px;height:5px;border-radius:3px;background:var(--line);margin:4px auto 12px"></div></sc-if>
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+        <div><div style="font-size:13px;color:var(--ink3);font-weight:700">Mover para</div><div style="font-family:Nunito,sans-serif;font-weight:900;font-size:22px">{{ mv.name }}</div><div style="color:var(--ink2);font-size:14px">{{ mv.amt }} · {{ mv.due }}</div></div>
+        <button onClick="{{ closeMove }}" aria-label="Fechar" style="width:44px;height:44px;border-radius:50%;border:0;background:var(--surface2);flex:none"><i>close</i></button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:16px">
+        <sc-for list="{{ mv.opts }}" as="o" hint-placeholder-count="4">
+          <button onClick="{{ o.on }}" disabled="{{ o.dis }}" aria-pressed="{{ o.sel }}" style="text-align:left;min-height:64px;padding:12px 14px;border-radius:16px;border:2px solid {{ o.bd }};background:var(--surface);opacity:{{ o.op }};display:flex;gap:12px;align-items:center">
+            <span style="width:40px;height:40px;border-radius:12px;background:{{ o.bg }};color:{{ o.fg }};display:flex;align-items:center;justify-content:center;flex:none"><i>{{ o.icon }}</i></span>
+            <span style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font-weight:800">{{ o.label }}</span><span style="font-size:13px;color:var(--ink2)">{{ o.impact }}</span><span style="font-size:13px;color:{{ o.cc }};font-weight:700">{{ o.cost }}</span></span>
+            <sc-if value="{{ o.sel }}" hint-placeholder-val="{{ false }}"><i style="color:var(--brand-t)">check_circle</i></sc-if>
+          </button>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
+    <div role="status" style="position:fixed;left:50%;transform:translateX(-50%);bottom:{{ toastBottom }};z-index:70;max-width:min(92vw,460px);padding:12px 16px;border-radius:14px;background:var(--ink);color:var(--bg);font-weight:700;font-size:14px;box-shadow:var(--shadow);display:flex;gap:8px;align-items:center;animation:pp-up .2s ease"><i style="font-size:20px">check_circle</i>{{ toast }}</div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { sec: null, mTab: 'pagar', moveId: null, dragId: null, need: 'itau', pick: null, debt: 'nubank', n: 12, copied: false, toast: '' };
+  ITEMS = [
+    { id: 'p1', name: 'Aluguel', due: 'Pago em 5 out', amount: 7800, paid: true },
+    { id: 'p2', name: 'Condomínio', due: 'Vence 20 out', amount: 1450, delay: [29, 'Multa de 2% e juros'] },
+    { id: 'p3', name: 'Escola das crianças', due: 'Vence 18 out', amount: 4200, delay: [84, 'Multa de 2%'] },
+    { id: 'p4', name: 'Luz, água e gás', due: 'Vence 28 out', amount: 648, delay: [13, 'Multa de 2%'] },
+    { id: 'p5', name: 'Plano de saúde', due: 'Vence 22 out', amount: 2650, delay: [53, 'Atraso acima de 60 dias pode suspender o plano'] },
+    { id: 'p6', name: 'Mercado', due: 'Teto do mês', amount: 3000 },
+    { id: 'p7', name: 'Parcela do empréstimo Santander', due: 'Vence 17 out', amount: 1690, delay: [95, 'Multa de 2% e pode negativar seu nome'] },
+    { id: 'p8', name: 'Fatura Santander', due: 'Vence hoje', amount: 3100, parcel: [4, 860, 340], delay: [210, 'pode negativar seu nome'] },
+    { id: 'p9', name: 'Impostos da empresa · 18/48', due: 'Vence 20 out', amount: 890, delay: [18, 'Atrasar 3 parcelas cancela o parcelamento'] },
+    { id: 'p10', name: 'Fatura Itaú', due: 'Vence 27 out', amount: 8900, parcel: [6, 1653, 1020], delay: [1290, 'Entra no rotativo de 13,9% ao mês'] },
+    { id: 'p11', name: 'Fatura XP', due: 'Vence 2 nov', amount: 4300, parcel: [3, 1530, 290], delay: [550, 'Entra no rotativo de 12,8% ao mês'] },
+    { id: 'p12', name: 'Cartão da Helena (mãe)', due: 'Transferir até 19 out', amount: 2340, delay: [0, 'Sem juros. Combine com ela.'] },
+    { id: 'p13', name: 'Uber e transporte', due: 'Teto do mês', amount: 1000 },
+    { id: 'p14', name: 'Seguro do carro', due: 'Vence 25 out', amount: 300, delay: [0, 'Cobertura segue por 30 dias'], cut: true },
+    { id: 'p15', name: 'Assinaturas em uso (7)', due: 'Ao longo do mês', amount: 132, cut: true },
+    { id: 'p16', name: 'Assinaturas sem uso (4)', due: 'Ao longo do mês', amount: 480, cut: true },
+    { id: 'p17', name: 'Empréstimo do Paulo (irmão)', due: 'Combinado para 30 out', amount: 1000, delay: [0, 'Sem juros. Avise o Paulo.'] },
+    { id: 'p18', name: 'Contabilidade da empresa', due: 'Vence 10 nov', amount: 450, delay: [0, 'Sem multa se avisar antes do dia 20'] },
+    { id: 'p19', name: 'Lazer e passeios', due: 'Ao longo do mês', amount: 2170, cut: true },
+  ];
+  DEF = { p16: 'cortar', p19: 'cortar', p17: 'negociar', p18: 'negociar' };
+  componentDidMount() {
+    const d = this.props.demo;
+    if (d === 'mover') this.setState({ moveId: 'p10' });
+    if (d === 'cabe') this.setState({ sec: { ...this.DEF, p10: 'parcelar', p11: 'parcelar' } });
+  }
+  brl(v) { return 'R$ ' + Math.round(v).toLocaleString('pt-BR'); }
+  secOf(id) { const s = this.state.sec || this.DEF; return s[id] || 'pagar'; }
+  impact(it, s) { return s === 'pagar' ? it.amount : s === 'parcelar' ? it.parcel[1] : 0; }
+  allowed(it) { if (it.paid) return []; const a = ['pagar']; if (it.parcel) a.push('parcelar'); if (it.delay) a.push('negociar'); if (it.cut) a.push('cortar'); return a; }
+  monthTotal(sec) { return this.ITEMS.reduce((t, it) => t + this.impact(it, (sec || this.state.sec || this.DEF)[it.id] || 'pagar'), 0); }
+  move(id, to) {
+    const it = this.ITEMS.find(x => x.id === id);
+    if (!it || !this.allowed(it).includes(to)) { this.setState({ moveId: null, dragId: null }); return; }
+    const sec = { ...(this.state.sec || this.DEF), [id]: to };
+    const diff = 34000 - this.monthTotal(sec);
+    const SN = { pagar: 'Pagar agora', parcelar: 'Parcelar', negociar: 'Negociar ou esperar', cortar: 'Cortar' };
+    const msg = `${it.name} → ${SN[to]}. ${diff >= 0 ? 'Agora cabe: sobram ' + this.brl(diff) : 'Agora faltam ' + this.brl(-diff)}`;
+    this.setState({ sec, moveId: null, dragId: null, toast: msg });
+    clearTimeout(this.tt); this.tt = setTimeout(() => this.setState({ toast: '' }), 3200);
+  }
+  note(it, s) {
+    if (it.paid) return ['Já pago', 'var(--good-t)', 'check_circle'];
+    if (s === 'pagar') return it.delay && it.delay[1].includes('negativar') ? ['Atrasar pode negativar seu nome', 'var(--risk-t)', 'error'] : ['Essencial ou com consequência se atrasar', 'var(--ink3)', 'info'];
+    if (s === 'parcelar') return [`${it.parcel[0]}x de ${this.brl(it.parcel[1])} · juros ${this.brl(it.parcel[2])}`, 'var(--accent-t)', 'calendar_view_month'];
+    if (s === 'negociar') { const [c, r] = it.delay; return c ? [`Adiar custa ${this.brl(c)} em juros e ${r}`, r.includes('negativar') ? 'var(--risk-t)' : 'var(--warn-t)', 'warning'] : [r, 'var(--good-t)', 'handshake']; }
+    return [`Economia de ${this.brl(it.amount)} neste mês`, 'var(--good-t)', 'savings'];
+  }
+  renderVals() {
+    const bp = this.props.bp || 'mobile', go = this.props.go || (() => {});
+    const isM = bp === 'mobile';
+    const tab = ['prioridades', 'credito', 'rolagem', 'quitacao', 'renegociacao'].includes(this.props.sub) ? this.props.sub : 'prioridades';
+    const locked = (this.props.plan && this.props.plan !== 'Pilot') || this.props.demo === 'bloqueado';
+    const TABS = [['prioridades', 'Prioridades do mês', 'checklist'], ['credito', 'Mapa de crédito', 'credit_card'], ['rolagem', 'Otimizador de rolagem', 'alt_route'], ['quitacao', 'Plano de quitação', 'flag_circle'], ['renegociacao', 'Renegociação', 'handshake']];
+    const tabs = TABS.map(([id, label, icon]) => ({ label, icon, sel: tab === id, on: () => go('plano', id), bg: tab === id ? 'var(--ink)' : 'var(--surface)', fg: tab === id ? 'var(--bg)' : 'var(--ink2)', bd: tab === id ? 'var(--ink)' : 'var(--line)' }));
+    const brl = v => this.brl(v);
+    const SECS = [
+      { id: 'pagar', label: 'Pagar agora', short: 'Pagar agora', icon: 'priority_high', desc: 'Essenciais e com consequência grave', fg: 'var(--brand-t)', bg: 'var(--brand-soft)' },
+      { id: 'parcelar', label: 'Parcelar', short: 'Parcelar', icon: 'calendar_view_month', desc: 'Entra só a parcela neste mês, com custo', fg: 'var(--accent-t)', bg: 'var(--accent-soft)' },
+      { id: 'negociar', label: 'Negociar ou esperar', short: 'Negociar', icon: 'handshake', desc: 'Sai deste mês; veja o custo e o risco', fg: 'var(--warn-t)', bg: 'var(--warn-soft)' },
+      { id: 'cortar', label: 'Cortar', short: 'Cortar', icon: 'content_cut', desc: 'Sai do mês e vira economia', fg: 'var(--ink2)', bg: 'var(--surface2)' },
+    ];
+    const month = this.monthTotal(), diff = 34000 - month, fits = diff >= 0;
+    let cost = 0;
+    this.ITEMS.forEach(it => { const s = this.secOf(it.id); if (s === 'parcelar') cost += it.parcel[2]; if (s === 'negociar') cost += it.delay[0]; });
+    const mx = Math.max(34000, month);
+    const sum = { text: fits ? `Cabe: sobram ${brl(diff)}` : `Não cabe: faltam ${brl(-diff)}`, icon: fits ? 'check_circle' : 'info', fg: fits ? 'var(--good-t)' : 'var(--warn-t)', bar: fits ? 'var(--good)' : 'var(--warn)', month: brl(month), cost: brl(cost), w: (month / mx * 100).toFixed(1), inc: (34000 / mx * 100).toFixed(1), aria: `A pagar ${brl(month)} contra renda de R$ 34.000. ${fits ? 'Cabe' : 'Não cabe'}.` };
+    const mkItem = (it, s) => {
+      const [note, nc, ni] = this.note(it, s), mov = this.allowed(it).length > 1;
+      return { name: it.name, due: it.due, amt: brl(s === 'parcelar' ? it.parcel[1] : it.amount) + (s === 'parcelar' ? '/mês' : ''), note, nc, ni, movable: mov, drag: mov ? 'true' : 'false', cursor: mov ? 'grab' : 'default', op: this.state.dragId === it.id ? 0.4 : 1, onMove: () => this.setState({ moveId: it.id }), onDrag: e => { e.dataTransfer.effectAllowed = 'move'; this.setState({ dragId: it.id }); }, onDragEnd: () => this.setState({ dragId: null }) };
+    };
+    const dragIt = this.ITEMS.find(x => x.id === this.state.dragId);
+    const secs = SECS.map(s => {
+      const its = this.ITEMS.filter(it => this.secOf(it.id) === s.id);
+      const tot = s.id === 'pagar' ? its.reduce((a, it) => a + it.amount, 0) : s.id === 'parcelar' ? its.reduce((a, it) => a + it.parcel[1], 0) : its.reduce((a, it) => a + it.amount, 0);
+      const can = dragIt && this.allowed(dragIt).includes(s.id);
+      return { ...s, items: its.map(it => mkItem(it, s.id)), count: its.length, empty: !its.length, totalTxt: s.id === 'parcelar' ? brl(tot) + ' no mês' : s.id === 'pagar' ? brl(tot) : brl(tot) + ' fora do mês', sel: this.state.mTab === s.id, onTab: () => this.setState({ mTab: s.id }), tabBg: this.state.mTab === s.id ? 'var(--surface)' : 'transparent', tabSh: this.state.mTab === s.id ? 'var(--shadow)' : 'none', colBg: can ? 'var(--brand-soft)' : 'var(--surface2)', colBd: can ? 'var(--brand-t)' : 'transparent', onOver: e => { if (can) e.preventDefault(); }, onDrop: e => { e.preventDefault(); this.move(this.state.dragId, s.id); } };
+    });
+    const SUG = [['p10', 'parcelar', 'Parcelar a fatura Itaú em 6x', '−R$ 7.247 neste mês · custa R$ 1.020 em juros'], ['p11', 'parcelar', 'Parcelar a fatura XP em 3x', '−R$ 2.770 neste mês · custa R$ 290 em juros'], ['p12', 'negociar', 'Combinar com a Helena para novembro', '−R$ 2.340 neste mês · sem custo']];
+    const sugs = SUG.filter(([id, to]) => this.secOf(id) !== to).map(([id, to, t, d]) => ({ t, d, on: () => this.move(id, to) }));
+    const mvIt = this.ITEMS.find(x => x.id === this.state.moveId);
+    let mv = null;
+    if (mvIt) {
+      const cur = this.secOf(mvIt.id), al = this.allowed(mvIt);
+      mv = { name: mvIt.name, amt: brl(mvIt.amount), due: mvIt.due, opts: SECS.map(s => {
+        const ok = al.includes(s.id), sel = cur === s.id;
+        let impact = '', c = '', cc = 'var(--ink3)';
+        if (s.id === 'pagar') { impact = `Entra ${brl(mvIt.amount)} neste mês`; c = 'Sem custo extra'; }
+        if (s.id === 'parcelar') { if (mvIt.parcel) { impact = `${mvIt.parcel[0]}x de ${brl(mvIt.parcel[1])} · entra ${brl(mvIt.parcel[1])} neste mês`; c = `Custa ${brl(mvIt.parcel[2])} em juros`; cc = 'var(--accent-t)'; } else impact = 'Não dá para parcelar este item'; }
+        if (s.id === 'negociar') { if (mvIt.delay) { impact = 'Sai deste mês'; c = mvIt.delay[0] ? `Adiar custa ${brl(mvIt.delay[0])} em juros e ${mvIt.delay[1]}` : mvIt.delay[1]; cc = mvIt.delay[1].includes('negativar') ? 'var(--risk-t)' : mvIt.delay[0] ? 'var(--warn-t)' : 'var(--good-t)'; } else impact = 'Não dá para adiar este item'; }
+        if (s.id === 'cortar') { if (mvIt.cut) { impact = `Economia de ${brl(mvIt.amount)} neste mês`; cc = 'var(--good-t)'; } else impact = 'Item essencial, não dá para cortar'; }
+        return { label: s.label, icon: s.icon, bg: s.bg, fg: s.fg, impact, cost: c, cc, dis: !ok, sel, op: ok ? 1 : 0.5, bd: sel ? 'var(--brand-t)' : 'var(--line)', on: () => this.move(mvIt.id, s.id) };
+      }) };
+    }
+    const sheetBox = isM
+      ? { position: 'fixed', left: 0, right: 0, bottom: 0, zIndex: 61, maxHeight: '90vh', overflowY: 'auto', background: 'var(--surface)', borderRadius: '24px 24px 0 0', padding: '8px 20px calc(24px + env(safe-area-inset-bottom))', boxShadow: 'var(--shadow)', animation: 'pp-sheet .22s ease' }
+      : { position: 'fixed', top: 0, right: 0, bottom: 0, zIndex: 61, width: 'min(440px,100vw)', overflowY: 'auto', background: 'var(--surface)', padding: '24px', borderLeft: '1px solid var(--line)', boxShadow: 'var(--shadow)', animation: 'pp-up .2s ease' };
+    // crédito
+    const CR = [
+      ['Nubank', 'Nu', '#820AD1', '#fff', 'Cartão · com rotativo', 18000, 16900, 3, 10, '14,5% a.m.', 3],
+      ['Itaú Personnalité', 'It', '#EC7000', '#fff', 'Cartão de crédito', 25000, 14200, 20, 27, '13,9% a.m.', 2],
+      ['Santander', 'S', '#EC0000', '#fff', 'Cartão de crédito', 12000, 6800, 8, 15, '15,2% a.m.', 3],
+      ['XP Visa Infinite', 'XP', '#111111', '#fff', 'Cartão de crédito', 20000, 9100, 25, 2, '12,8% a.m.', 2],
+      ['Cheque especial Itaú', 'It', '#EC7000', '#fff', 'Conta corrente', 10000, 2400, null, null, '8,0% a.m.', 2],
+      ['Empréstimo Santander', 'S', '#EC0000', '#fff', 'Pessoal · 24 parcelas restantes', 28000, 28000, null, 17, '3,9% a.m.', 1],
+      ['Cartão da Helena (mãe)', 'H', 'var(--accent)', '#fff', 'Conta manual · sem juros', 6000, 2340, 12, 19, 'sem juros', 0],
+    ];
+    const RB = [['var(--good-soft)', 'var(--good-t)'], ['var(--surface2)', 'var(--ink2)'], ['var(--warn-soft)', 'var(--warn-t)'], ['var(--risk-soft)', 'var(--risk-t)']];
+    const cred = CR.map(([name, m, color, tc, kind, lim, used, f, vd, rate, lv]) => ({ name, m, color, tc, kind, rate, rbg: RB[lv][0], rfg: RB[lv][1], limTxt: brl(lim), usedTxt: brl(used), availTxt: brl(lim - used), pct: (used / lim * 100).toFixed(0), aria: `${name}: ${brl(used)} usados de ${brl(lim)}`, dates: f ? `Fecha dia ${f} · vence dia ${vd}` : vd ? `Parcela vence dia ${vd}` : 'Juros cobrados por dia de uso' }));
+    const credTl = CR.filter(c => c[7]).map(c => { const fl = (c[7] - 1) / 30 * 100, vdd = c[8] < c[7] ? c[8] + 31 : c[8], vl = Math.min(100, (vdd - 1) / 30 * 100); return { short: c[0].split(' ')[0] === 'Cartão' ? 'Helena' : c[0].split(' ')[0], fl: fl.toFixed(1), vl: (c[8] < c[7] ? (c[8] - 1) / 30 * 100 : vl).toFixed(1), span: (c[8] < c[7] ? 100 - fl : vl - fl).toFixed(1) }; });
+    // rolagem
+    const amt = this.state.need === 'itau' ? 8900 : 4300;
+    const RT = this.state.need === 'itau'
+      ? [['A', 'Parcelar a fatura Itaú em 6x', 1020, '150 dias, em parcelas', '+R$ 1.653', 'Custo previsível e a dívida termina em abril.', 'check', 'var(--good-t)', true],
+         ['B', 'Pagar com o limite do cartão XP', 0, '36 dias', '+R$ 8.900', 'Só empurra a conta: se não pagar inteira em novembro, vira rotativo de 12,8% ao mês.', 'warning', 'var(--warn-t)', false],
+         ['C', 'Usar o cheque especial por 12 dias', 285, '12 dias', '+R$ 9.185', 'Caro e curto. Use só se o salário cair antes do dia 27.', 'warning', 'var(--warn-t)', false]]
+      : [['A', 'Parcelar a fatura XP em 3x', 290, '90 dias, em parcelas', '+R$ 1.530', 'Custo previsível e a dívida termina em janeiro.', 'check', 'var(--good-t)', true],
+         ['B', 'Pagar com o limite do cartão Itaú', 0, '25 dias', '+R$ 4.300', 'Só empurra a conta para a fatura de novembro, que já é a maior.', 'warning', 'var(--warn-t)', false],
+         ['C', 'Usar o cheque especial por 10 dias', 115, '10 dias', '+R$ 4.415', 'Caro e curto. Prefira a rota A.', 'warning', 'var(--warn-t)', false]];
+    const routes = RT.map(([letter, name, c, days, next, warn, wi, wc, best]) => { const sel = this.state.pick === letter + this.state.need; return { letter, name, cost: c ? brl(c) : 'R$ 0 agora', days, next, warn, wi, wc, best, sel, bd: best ? 'var(--good)' : 'var(--line)', btn: sel ? 'Rota escolhida' : 'Escolher esta rota', btnBg: sel ? 'var(--brand)' : 'var(--surface)', btnFg: sel ? 'var(--brand-on)' : 'var(--ink)', btnBd: sel ? '0' : '1px solid var(--line)', on: () => this.setState({ pick: letter + this.state.need }) }; });
+    const pickedR = RT.find(r => r[0] + this.state.need === this.state.pick);
+    const RH = [['mai', 3420], ['jun', 3180], ['jul', 2960], ['ago', 2880], ['set', 2610], ['out', 2140]];
+    // quitação
+    const fases = [['Fase 1 · agora', 'Fechar o mês', 'out 2026'], ['Fase 2', 'Estabilizar', 'nov–dez 2026'], ['Fase 3', 'Quitar', 'jan 2027–set 2028'], ['Fase 4', 'Gerar sobra', 'a partir de out 2028']].map(([k, label, when], i) => ({ k, label, when, bg: i === 0 ? 'var(--brand-soft)' : 'var(--surface)', bd: i === 0 ? 'var(--brand-t)' : 'var(--line)', kc: i === 0 ? 'var(--brand-t)' : 'var(--ink3)' }));
+    const debts = [['Rotativo Nubank', '14,5% a.m.', 12300, 4, 'fev 2027', 3120, 'var(--risk)'], ['Cheque especial Itaú', '8,0% a.m.', 2400, 5, 'mar 2027', 410, 'var(--warn)'], ['Empréstimo Santander', '3,9% a.m.', 28000, 23, 'set 2028', 11330, 'var(--accent)'], ['Empréstimo do Paulo (irmão)', 'sem juros', 12000, 12, 'out 2027', 0, 'var(--brand)']]
+      .map(([name, rate, s, e, end, j, c], i) => ({ n: i + 1, name, rate, saldo: brl(s), end, juros: brl(j), c, w: ((e + 1) / 24 * 100).toFixed(1), aria: `${name}, ${rate}, quitada em ${end}` }));
+    // renegociação
+    const RD = { nubank: ['Rotativo Nubank', 12300, 2.9, 'R$ 1.845 (mínimo)', 'Sem fim definido', 'Cresce 14,5% ao mês', [7400, 8600]], cheque: ['Cheque especial Itaú', 2400, 2.5, 'R$ 192 só de juros', 'Sem fim definido', 'Cresce 8% ao mês', [2050, 2250]], santander: ['Empréstimo Santander', 28000, 2.4, 'R$ 1.690', '24 meses', 'R$ 40.560', [24500, 26000]] };
+    const d = RD[this.state.debt], n = this.state.n, i = d[2] / 100, pmt = d[1] * i / (1 - Math.pow(1 + i, -n));
+    const ren = { saldo: brl(d[1]), faixa: `${brl(d[6][0])} a ${brl(d[6][1])}`, n, novo: d[2].toLocaleString('pt-BR') + '%', aParc: d[3], aPrazo: d[4], aTotal: d[5], dParc: brl(pmt), dTotal: brl(pmt * n), script: `“Olá, tenho uma dívida de ${brl(d[1])} (${d[0]}). Quero encerrar: posso pagar ${brl(d[6][0])} à vista, ou ${n} parcelas de ${brl(pmt)}. Vocês conseguem formalizar esse acordo?”` };
+    return {
+      go, tabs, locked, isMobile: isM, isBoard: !isM,
+      boardCols: bp === 'desktop' ? 'repeat(4,minmax(0,1fr))' : 'repeat(2,minmax(0,1fr))',
+      v: { prioridades: !locked && tab === 'prioridades', credito: !locked && tab === 'credito', rolagem: !locked && tab === 'rolagem', quitacao: !locked && tab === 'quitacao', renegociacao: !locked && tab === 'renegociacao' },
+      pw: { prioridades: { h: 'Seu outubro pode caber na renda com 3 movimentos', d: 'Hoje faltam R$ 8.400. Mostramos o que pagar agora, o que parcelar e o custo de cada escolha.' }, credito: { h: 'Você tem 7 fontes de crédito, com custo de 0% a 15,2% ao mês', d: 'Veja limites, datas e taxas lado a lado antes de decidir.' }, rolagem: { h: 'Encontramos 3 rotas mais baratas para fechar este mês', d: 'A melhor custa R$ 1.020 e termina em abril, sem empurrar a conta.' }, quitacao: { h: 'Dá para quitar R$ 54.700 em dívidas até set 2028', d: 'Atacando da mais cara para a mais barata, você paga R$ 9.400 a menos em juros.' }, renegociacao: { h: 'Uma proposta de R$ 7.400 a R$ 8.600 pode encerrar o rotativo do Nubank', d: 'Simule parcela e prazo antes de ligar para o banco.' } }[tab],
+      sum, sumPos: isM ? 'sticky' : 'static', sumTop: isM ? 'calc(68px + env(safe-area-inset-top))' : 'auto',
+      hasSug: sugs.length > 0, sugs, sugTitle: fits ? 'Mais formas de aliviar o mês' : `${sugs.length} formas de cobrir`,
+      secs, mSecs: secs.filter(s => s.id === this.state.mTab),
+      moveOpen: !!mv, mv: mv || { opts: [] }, closeMove: () => this.setState({ moveId: null }), sheetBox,
+      toast: this.state.toast, toastBottom: isM ? 'calc(96px + env(safe-area-inset-bottom))' : '32px',
+      cred, credTl,
+      need: this.state.need, setNeed: e => this.setState({ need: e.target.value, pick: null }), routes, picked: !!pickedR, pickedTxt: pickedR ? 'Rota ' + pickedR[0] + ': ' + pickedR[1] : '',
+      rolCols: bp === 'desktop' ? 'minmax(0,1fr) 280px' : 'minmax(0,1fr)',
+      rolHist: RH.map(([m, v], k) => ({ m, h: (v / 3420 * 100).toFixed(0), c: k === 5 ? 'var(--good)' : 'var(--line)' })),
+      goQuit: () => go('plano', 'quitacao'),
+      fases, debts,
+      rDebts: Object.keys(RD).map(k => ({ name: RD[k][0], sel: this.state.debt === k, on: () => this.setState({ debt: k, copied: false }), bg: this.state.debt === k ? 'var(--ink)' : 'var(--surface)', fg: this.state.debt === k ? 'var(--bg)' : 'var(--ink2)', bd: this.state.debt === k ? 'var(--ink)' : 'var(--line)' })),
+      ren, setN: e => this.setState({ n: +e.target.value }),
+      copy: () => { try { navigator.clipboard.writeText(ren.script); } catch (e) {} this.setState({ copied: true }); }, copyTxt: this.state.copied ? 'Copiado' : 'Copiar mensagem',
+    };
+  }
+}
+</script>
+</body>
+</html>

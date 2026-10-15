@@ -1,14 +1,9 @@
 import { defineConfig } from "drizzle-kit";
 
-if (!process.env.DATABASE_URL) {
-  throw new Error("DATABASE_URL, ensure the database is provisioned");
-}
-
+// Gera o SQL em migrations/ a partir de shared/schema.ts (não precisa de banco).
+// As migrações são aplicadas na subida do servidor (server/db.ts).
 export default defineConfig({
   out: "./migrations",
   schema: "./shared/schema.ts",
   dialect: "postgresql",
-  dbCredentials: {
-    url: process.env.DATABASE_URL,
-  },
 });

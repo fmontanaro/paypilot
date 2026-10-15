@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&amp;family=Nunito:wght@900&amp;display=swap">
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;background:#E9E5DB}
+body{font-family:Manrope,system-ui,sans-serif;color:#16211B}
+a{color:#0B6B3A}a:hover{color:#16211B}
+</style>
+</helmet>
+<div style="padding:56px;display:flex;flex-direction:column;gap:72px;width:max-content">
+  <header style="display:flex;gap:20px;align-items:center">
+    <img src="assets/logo.png" alt="PayPilot" style="width:88px;height:88px;border-radius:22px">
+    <div><h1 style="margin:0;font-family:Nunito,sans-serif;font-weight:900;font-size:44px">PayPilot · Telas e fluxos</h1><div style="font-size:16px;color:#46534B">Cada quadro é o app real e interativo. <a href="PayPilot.dc.html">Abrir o app</a> · <a href="Design System.dc.html">Design system</a></div></div>
+  </header>
+  <sc-for list="{{ groups }}" as="g" hint-placeholder-count="3">
+    <section style="display:flex;flex-direction:column;gap:20px">
+      <div><h2 style="margin:0;font-family:Nunito,sans-serif;font-weight:900;font-size:32px">{{ g.title }}</h2><div style="font-size:15px;color:#46534B;margin-top:4px">{{ g.desc }}</div></div>
+      <div style="display:flex;gap:28px;align-items:flex-start">
+        <sc-for list="{{ g.frames }}" as="f" hint-placeholder-count="5">
+          <figure style="margin:0;display:flex;flex-direction:column;gap:10px">
+            <figcaption style="display:flex;gap:8px;align-items:center;font-weight:800;font-size:15px"><span style="min-width:28px;height:28px;padding:0 8px;border-radius:14px;background:#0B6B3A;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px">{{ f.n }}</span>{{ f.label }}</figcaption>
+            <div style="width:{{ f.bw }}px;height:{{ f.bh }}px;border-radius:{{ f.r }}px;overflow:hidden;background:#F5F2EA;box-shadow:0 1px 2px rgba(0,0,0,.08),0 12px 32px rgba(0,0,0,.12);border:{{ f.bd }}">
+              <iframe src="{{ f.src }}" title="{{ f.label }}" loading="lazy" style="width:{{ f.w }}px;height:{{ f.h }}px;border:0;transform:scale({{ f.s }});transform-origin:0 0;display:block"></iframe>
+            </div>
+          </figure>
+        </sc-for>
+      </div>
+    </section>
+  </sc-for>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    const M = (label, h) => ({ label, src: 'PayPilot.dc.html#' + h, w: 390, h: 844, s: 1, bw: 390, bh: 844, r: 36, bd: '8px solid #16211B' });
+    const D = (label, h) => ({ label, src: 'PayPilot.dc.html#' + h, w: 1440, h: 900, s: 0.6, bw: 864, bh: 540, r: 12, bd: '1px solid #CFC9BC' });
+    const T = (label, h) => ({ label, src: 'PayPilot.dc.html#' + h, w: 834, h: 1112, s: 0.6, bw: 500, bh: 667, r: 24, bd: '6px solid #16211B' });
+    const G = [
+      ['Fluxo · Onboarding com Open Finance', 'Boas-vindas → cadastro → escolha → banco → consentimento → sucesso → Raio-X.', [M('Boas-vindas', 'onb/boasvindas'), M('Cadastro e segurança', 'onb/cadastro'), M('Como conectar', 'onb/conectar'), M('Escolher banco', 'onb/banco'), M('Consentimento', 'onb/consentimento'), M('Redirecionando', 'onb/redirecionando'), M('Banco conectado', 'onb/sucesso'), M('Raio-X', 'onb/raiox')]],
+      ['Fluxo · Onboarding com upload', 'Extratos e faturas em OFX, CSV ou PDF. No app: arquivos ou câmera; na web: arrastar e soltar.', [M('Enviar arquivos', 'onb/upload'), M('Lendo arquivos', 'onb/lendo'), M('Resumo da leitura', 'onb/resumo'), D('Upload na web', 'onb/upload')]],
+      ['Fluxo · Montar as prioridades do mês', 'O total “cabe / não cabe” atualiza na hora a cada movimento.', [M('Prioridades · não cabe', 'plano/prioridades'), M('Mover item', 'plano/prioridades/mover'), M('Prioridades · cabe', 'plano/prioridades/cabe'), D('Quadro kanban no desktop', 'plano/prioridades')]],
+      ['Fluxo · Cancelar uma assinatura', 'Do caçador de vazamentos ao passo a passo e à economia confirmada.', [M('Caçador de vazamentos', 'gastos/vazamentos'), M('Passo a passo', 'gastos/vazamentos/cancelar'), M('Cancelada', 'gastos/vazamentos/cancelado')]],
+      ['Fluxo · Registrar gasto por áudio', 'Microfone em destaque, transcrição e card de confirmação.', [M('Assistente', 'assistente'), M('Gravando', 'assistente//gravando'), M('Confirmar gasto', 'assistente//audio'), M('Registrado', 'assistente//audio-ok'), M('Exemplos de cards ricos', 'assistente//exemplos'), M('WhatsApp', 'assistente/whatsapp')]],
+      ['Mobile · 390 px · Início e Gastos', '', [M('Início', 'inicio'), M('Início · carregando', 'inicio//carregando'), M('Início · vazio', 'inicio//vazio'), M('Início · erro', 'inicio//erro'), M('Por categoria', 'gastos/categorias'), M('Transações', 'gastos/transacoes'), M('Detalhe da transação', 'gastos/transacoes/detalhe'), M('Tetos', 'gastos/tetos'), M('Check-in de assinaturas', 'gastos/checkin')]],
+      ['Mobile · 390 px · Plano, Metas e Contas', '', [M('Mapa de crédito', 'plano/credito'), M('Otimizador de rolagem', 'plano/rolagem'), M('Plano de quitação', 'plano/quitacao'), M('Renegociação', 'plano/renegociacao'), M('Metas', 'metas'), M('Criar meta', 'metas/criar'), M('Meta em grupo', 'metas/grupo'), M('Contas conectadas', 'contas/conectadas'), M('Importações', 'contas/importacoes'), M('Conta manual', 'contas/manuais'), M('Dívida pessoal', 'contas/dividas'), M('Grupo de despesa', 'contas/grupos')]],
+      ['Mobile · 390 px · Planos, bloqueio e perfil', '', [M('Planos', 'perfil/planos'), M('Recurso bloqueado', 'plano/rolagem/bloqueado'), M('Perfil e configurações', 'perfil')]],
+      ['Desktop · 1440 px', 'Barra lateral completa e assistente fixo à direita.', [D('Início', 'inicio'), D('Gastos', 'gastos/categorias'), D('Prioridades do mês', 'plano/prioridades'), D('Otimizador de rolagem', 'plano/rolagem'), D('Metas', 'metas'), D('Assistente', 'assistente')]],
+      ['Tablet · 834 px', 'Barra lateral recolhida, duas colunas.', [T('Início', 'inicio'), T('Prioridades', 'plano/prioridades'), T('Vazamentos', 'gastos/vazamentos')]],
+      ['Modo escuro', '', [M('Início', 'inicio~escuro'), M('Prioridades', 'plano/prioridades~escuro'), M('Assistente', 'assistente//exemplos~escuro'), D('Início · desktop', 'inicio~escuro')]],
+    ];
+    return { groups: G.map(([title, desc, frames]) => ({ title, desc, frames: frames.map((f, k) => ({ ...f, n: k + 1 })) })) };
+  }
+}
+</script>
+</body>
+</html>

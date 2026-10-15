@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0B6B3A">
+<link rel="icon" href="assets/logo.png">
+<link rel="apple-touch-icon" href="assets/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Nunito:wght@700;800;900&amp;display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,300..600,0..1,0&amp;display=block">
+<style>
+:root,[data-theme="claro"]{color-scheme:light;--bg:#F5F2EA;--surface:#FFFFFF;--surface2:#EEEAE0;--line:#E2DDD1;--ink:#16211B;--ink2:#46534B;--ink3:#626D66;--brand:#0B6B3A;--brand-on:#FFFFFF;--brand-t:#0B6B3A;--brand-soft:#E1EFE5;--brand-deep:#0A4F2C;--accent:#E9822A;--accent-soft:#FCEBD6;--accent-t:#9C4B0B;--good:#1E8C4E;--good-soft:#DCF2E3;--good-t:#16703D;--warn:#C98A0B;--warn-soft:#FBEFD2;--warn-t:#7F5300;--risk:#BF4A41;--risk-soft:#F8E3E0;--risk-t:#A03830;--cream:#FCE7C3;--shadow:0 1px 2px rgba(22,33,27,.06),0 6px 20px rgba(22,33,27,.07);--scrim:rgba(14,21,17,.42)}
+[data-theme="escuro"]{color-scheme:dark;--bg:#0D1410;--surface:#151F19;--surface2:#1D2922;--line:#2B3931;--ink:#ECF1ED;--ink2:#B4C0B8;--ink3:#93A097;--brand:#46B97A;--brand-on:#05200F;--brand-t:#6FCF98;--brand-soft:#163524;--brand-deep:#0B5A31;--accent:#F0954A;--accent-soft:#3A2614;--accent-t:#F6B47C;--good:#4FC285;--good-soft:#14341F;--good-t:#7CD8A5;--warn:#E2A93B;--warn-soft:#382B10;--warn-t:#F0C467;--risk:#E07C72;--risk-soft:#3C1E1B;--risk-t:#F29C93;--cream:#3A3020;--shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.28);--scrim:rgba(0,0,0,.6)}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink)}
+body:has(> x-dc > div:first-of-type){padding:0}
+body{font-family:Manrope,system-ui,sans-serif;font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;overscroll-behavior-y:contain}
+i{font-family:'Material Symbols Rounded';font-style:normal;font-weight:normal;line-height:1;font-size:22px;display:inline-block;font-feature-settings:'liga';-webkit-font-feature-settings:'liga';user-select:none;flex:none;letter-spacing:normal;text-transform:none;white-space:nowrap;direction:ltr}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:var(--brand-t)}a:hover{color:var(--ink)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+input[type=range]{accent-color:var(--brand)}
+@keyframes pp-spin{to{transform:rotate(360deg)}}
+@keyframes pp-shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+@keyframes pp-wave{0%,100%{transform:scaleY(.3)}50%{transform:scaleY(1)}}
+@keyframes pp-pulse{0%{box-shadow:0 0 0 0 rgba(233,130,42,.55)}100%{box-shadow:0 0 0 18px rgba(233,130,42,0)}}
+@keyframes pp-up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes pp-sheet{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+@keyframes pp-dots{0%,80%,100%{opacity:.25}40%{opacity:1}}
+@media (prefers-reduced-motion: reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important;transition:none!important}}
+</style>
+</helmet>
+<div style="display:flex;flex-direction:column;gap:16px">
+  <div role="tablist" aria-label="Metas" style="display:flex;gap:8px;overflow-x:auto;padding:2px;scrollbar-width:none">
+    <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="3"><button role="tab" aria-selected="{{ t.sel }}" onClick="{{ t.on }}" style="flex:none;min-height:44px;padding:0 16px;border-radius:999px;border:1px solid {{ t.bd }};background:{{ t.bg }};color:{{ t.fg }};font-weight:700;font-size:14px;white-space:nowrap;display:flex;align-items:center;gap:6px"><i style="font-size:18px">{{ t.icon }}</i>{{ t.label }}</button></sc-for>
+  </div>
+  <sc-if value="{{ lockPlus }}" hint-placeholder-val="{{ false }}"><dc-import name="Paywall" need="Plus" headline="Seu Réveillon de R$ 5.000 cabe com R$ 1.600 por mês" detail="Mostramos de onde tirar o dinheiro e quanto isso mexe no seu plano." go="{{ go }}" hint-size="100%,540px"></dc-import></sc-if>
+
+  <sc-if value="{{ v.lista }}" hint-placeholder-val="{{ true }}">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px">
+      <sc-for list="{{ goals }}" as="g" hint-placeholder-count="2">
+        <article style="background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:18px;display:flex;flex-direction:column;gap:14px">
+          <div style="display:flex;gap:12px;align-items:center">
+            <span style="width:48px;height:48px;border-radius:14px;background:var(--accent-soft);color:var(--accent-t);display:flex;align-items:center;justify-content:center;flex:none"><i>{{ g.icon }}</i></span>
+            <div style="flex:1;min-width:0"><div style="font-weight:800;font-size:17px">{{ g.name }}</div><div style="font-size:13px;color:var(--ink3)">{{ g.when }}</div></div>
+            <sc-if value="{{ g.group }}" hint-placeholder-val="{{ false }}"><span style="padding:4px 10px;border-radius:999px;background:var(--brand-soft);color:var(--brand-t);font-size:12px;font-weight:800;display:flex;gap:4px;align-items:center"><i style="font-size:16px">group</i>Em grupo</span></sc-if>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:24px;font-weight:900">{{ g.saved }}</span><span style="color:var(--ink3);font-size:14px">de {{ g.target }}</span></div>
+          <div role="img" aria-label="{{ g.aria }}" style="height:12px;border-radius:6px;background:var(--surface2)"><div style="width:{{ g.pct }}%;height:100%;border-radius:6px;background:var(--good)"></div></div>
+          <div style="display:flex;justify-content:space-between;gap:8px;font-size:14px;flex-wrap:wrap"><span style="color:var(--ink2)">Precisa de <b style="color:var(--ink)">{{ g.monthly }}/mês</b></span><span style="color:var(--good-t);font-weight:800">{{ g.pctTxt }}</span></div>
+          <sc-if value="{{ g.group }}" hint-placeholder-val="{{ false }}"><button onClick="{{ goGroup }}" style="min-height:44px;border-radius:12px;border:1px solid var(--line);background:var(--surface);font-weight:800">Ver participantes</button></sc-if>
+        </article>
+      </sc-for>
+      <button onClick="{{ goCreate }}" style="min-height:200px;border-radius:22px;border:2px dashed var(--line);background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--brand-t);font-weight:800;font-size:16px"><i style="font-size:32px">add_circle</i>Criar meta</button>
+    </div>
+    <div style="font-size:13px;color:var(--ink3);line-height:1.5">Metas usam a sobra que o plano gera. O PayPilot não indica onde aplicar o dinheiro — essa decisão é sua.</div>
+  </sc-if>
+
+  <sc-if value="{{ v.criar }}" hint-placeholder-val="{{ false }}">
+    <div style="display:grid;grid-template-columns:{{ formCols }};gap:16px;align-items:start">
+      <section style="background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:18px;display:flex;flex-direction:column;gap:14px">
+        <label style="display:flex;flex-direction:column;gap:6px;font-weight:800">Nome da meta<input value="{{ f.name }}" onInput="{{ setName }}" placeholder="Ex.: Notebook novo" style="min-height:50px;border-radius:12px;border:1px solid var(--line);background:var(--surface2);padding:0 12px;font-size:16px"></label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <label style="display:flex;flex-direction:column;gap:6px;font-weight:800">Valor<input inputmode="numeric" value="{{ f.val }}" onInput="{{ setVal }}" style="min-height:50px;border-radius:12px;border:1px solid var(--line);background:var(--surface2);padding:0 12px;font-size:16px;font-weight:700"></label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-weight:800">Prazo<select value="{{ f.months }}" onChange="{{ setMonths }}" style="min-height:50px;border-radius:12px;border:1px solid var(--line);background:var(--surface2);padding:0 10px;font-weight:700"><option value="3">3 meses</option><option value="6">6 meses</option><option value="9">9 meses</option><option value="12">12 meses</option><option value="18">18 meses</option></select></label>
+        </div>
+        <div><div style="font-weight:800;margin-bottom:8px">Ícone</div>
+          <div style="display:flex;flex-wrap:wrap;gap:8px"><sc-for list="{{ icons }}" as="ic" hint-placeholder-count="8"><button onClick="{{ ic.on }}" aria-label="{{ ic.i }}" aria-pressed="{{ ic.sel }}" style="width:48px;height:48px;border-radius:14px;border:2px solid {{ ic.bd }};background:{{ ic.bg }};color:var(--accent-t)"><i>{{ ic.i }}</i></button></sc-for></div>
+        </div>
+      </section>
+      <section style="display:flex;flex-direction:column;gap:12px">
+        <div style="background:var(--brand-deep);color:#fff;border-radius:22px;padding:18px">
+          <div style="font-size:13px;color:#D7EBDD;font-weight:700">Você precisa separar</div>
+          <div style="font-family:Nunito,sans-serif;font-size:38px;font-weight:900">{{ calc.monthly }}<span style="font-size:16px">/mês</span></div>
+          <div style="font-size:14px;color:#E6F2EA">por {{ f.months }} meses · até {{ calc.until }}</div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:16px;display:flex;flex-direction:column;gap:10px">
+          <div style="font-weight:800">De onde tirar o dinheiro</div>
+          <sc-for list="{{ sources }}" as="s" hint-placeholder-count="3">
+            <label style="display:flex;gap:12px;align-items:center;min-height:52px;padding:8px 10px;border-radius:14px;border:1px solid {{ s.bd }};background:{{ s.bg }}"><input type="checkbox" checked="{{ s.on }}" onChange="{{ s.toggle }}" style="width:22px;height:22px;accent-color:var(--brand);flex:none"><span style="flex:1"><span style="display:block;font-weight:700;font-size:14px">{{ s.t }}</span><span style="display:block;font-size:12px;color:var(--ink3)">{{ s.d }}</span></span><b style="font-size:14px">{{ s.v }}</b></label>
+          </sc-for>
+          <div role="img" aria-label="{{ calc.coverAria }}" style="height:10px;border-radius:5px;background:var(--surface2)"><div style="width:{{ calc.cover }}%;height:100%;border-radius:5px;background:var(--good);transition:width .25s"></div></div>
+          <div style="font-size:13px;color:var(--ink2)">{{ calc.coverTxt }}</div>
+        </div>
+        <div style="display:flex;gap:10px;padding:14px;border-radius:18px;background:var(--warn-soft)"><i style="color:var(--warn-t)">balance</i><div style="font-size:14px;line-height:1.45"><b>Trade-off:</b> {{ calc.trade }}</div></div>
+        <button onClick="{{ save }}" style="min-height:54px;border-radius:16px;border:0;background:var(--brand);color:var(--brand-on);font-weight:800;font-size:16px">Criar meta</button>
+      </section>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ v.grupo }}" hint-placeholder-val="{{ false }}">
+    <sc-if value="{{ lockPilot }}" hint-placeholder-val="{{ false }}"><dc-import name="Paywall" need="Pilot" headline="Viagem do casal: R$ 30.000 em 12 meses, dividido do jeito de vocês" detail="Cada pessoa escolhe o que compartilha. Ninguém vê o que não foi liberado." go="{{ go }}" hint-size="100%,540px"></dc-import></sc-if>
+    <sc-if value="{{ groupOpen }}" hint-placeholder-val="{{ true }}">
+      <section style="background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:18px;display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;gap:12px;align-items:center"><span style="width:52px;height:52px;border-radius:14px;background:var(--accent-soft);color:var(--accent-t);display:flex;align-items:center;justify-content:center"><i>flight</i></span><div><div style="font-family:Nunito,sans-serif;font-weight:900;font-size:22px">Viagem do casal</div><div style="font-size:14px;color:var(--ink2)">R$ 30.000 em 12 meses · até set 2027</div></div></div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:24px;font-weight:900">R$ 4.500</span><span style="color:var(--ink3)">15% de R$ 30.000</span></div>
+        <div role="img" aria-label="R$ 4.500 de R$ 30.000; Marcos R$ 2.700, Ana R$ 1.800" style="display:flex;height:14px;border-radius:7px;background:var(--surface2);overflow:hidden"><div style="width:9%;background:var(--brand)"></div><div style="width:6%;background:var(--accent)"></div></div>
+        <div style="display:flex;gap:16px;font-size:13px;color:var(--ink2)"><span style="display:flex;gap:6px;align-items:center"><span style="width:10px;height:10px;border-radius:3px;background:var(--brand)"></span>Marcos</span><span style="display:flex;gap:6px;align-items:center"><span style="width:10px;height:10px;border-radius:3px;background:var(--accent)"></span>Ana</span></div>
+      </section>
+      <div style="display:grid;grid-template-columns:{{ formCols }};gap:16px;align-items:start">
+        <section style="background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:18px;display:flex;flex-direction:column;gap:14px">
+          <div style="font-weight:800">Como dividir</div>
+          <div role="radiogroup" style="display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;border-radius:14px;background:var(--surface2)">
+            <sc-for list="{{ splitOpts }}" as="o" hint-placeholder-count="2"><button role="radio" aria-checked="{{ o.sel }}" onClick="{{ o.on }}" style="min-height:48px;border:0;border-radius:10px;background:{{ o.bg }};box-shadow:{{ o.sh }};font-weight:800;font-size:14px">{{ o.label }}</button></sc-for>
+          </div>
+          <sc-for list="{{ people }}" as="p" hint-placeholder-count="2">
+            <div style="display:flex;gap:12px;align-items:flex-start;padding:14px;border-radius:16px;border:1px solid var(--line)">
+              <span style="width:44px;height:44px;border-radius:50%;background:{{ p.bg }};color:{{ p.fg }};display:flex;align-items:center;justify-content:center;font-weight:900;flex:none">{{ p.ini }}</span>
+              <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:4px">
+                <div style="display:flex;justify-content:space-between;gap:8px"><b>{{ p.name }}</b><b>{{ p.share }}/mês</b></div>
+                <div style="font-size:13px;color:var(--ink3)">{{ p.pct }} · já guardou {{ p.saved }}</div>
+                <div style="font-size:13px;color:var(--ink2);display:flex;gap:6px;align-items:center"><i style="font-size:16px">{{ p.privI }}</i>{{ p.priv }}</div>
+                <sc-if value="{{ p.locked }}" hint-placeholder-val="{{ false }}"><div style="margin-top:4px;padding:10px;border-radius:12px;background:var(--surface2);font-size:13px;color:var(--ink3);display:flex;gap:6px;align-items:center"><i style="font-size:16px">lock</i>Totais por categoria não compartilhados</div></sc-if>
+              </div>
+            </div>
+          </sc-for>
+          <div style="font-size:12px;color:var(--ink3)">Na divisão proporcional usamos a renda que cada um informou, sem mostrar o valor para a outra pessoa.</div>
+        </section>
+        <section style="display:flex;flex-direction:column;gap:12px">
+          <div style="background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:18px;display:flex;flex-direction:column;gap:10px">
+            <div style="font-weight:800">O que você compartilha</div>
+            <sc-for list="{{ privOpts }}" as="o" hint-placeholder-count="2"><button role="radio" aria-checked="{{ o.sel }}" onClick="{{ o.on }}" style="text-align:left;display:flex;gap:12px;align-items:flex-start;padding:14px;border-radius:16px;border:2px solid {{ o.bd }};background:var(--surface);min-height:56px"><i style="color:{{ o.ic }}">{{ o.radio }}</i><span><span style="display:block;font-weight:800">{{ o.t }}</span><span style="display:block;font-size:13px;color:var(--ink2)">{{ o.d }}</span></span></button></sc-for>
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:18px;display:flex;flex-direction:column;gap:10px">
+            <label for="inv" style="font-weight:800">Convidar participante</label>
+            <div style="display:flex;gap:8px;flex-wrap:wrap"><input id="inv" value="{{ invite }}" onInput="{{ setInvite }}" placeholder="E-mail ou celular" style="flex:1 1 180px;min-height:48px;border-radius:12px;border:1px solid var(--line);background:var(--surface2);padding:0 12px"><button onClick="{{ sendInvite }}" style="min-height:48px;padding:0 16px;border-radius:12px;border:0;background:var(--brand);color:var(--brand-on);font-weight:800">Convidar</button></div>
+            <sc-if value="{{ invited }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:var(--good-t);font-weight:700;display:flex;gap:6px;align-items:center"><i style="font-size:16px">mark_email_read</i>Convite enviado para {{ invited }}</div></sc-if>
+          </div>
+        </section>
+      </div>
+    </sc-if>
+  </sc-if>
+  <sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}"><div role="status" style="position:fixed;left:50%;transform:translateX(-50%);bottom:{{ toastBottom }};z-index:70;padding:12px 16px;border-radius:14px;background:var(--ink);color:var(--bg);font-weight:700;font-size:14px;box-shadow:var(--shadow);display:flex;gap:8px;align-items:center"><i style="font-size:20px">check_circle</i>{{ toast }}</div></sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { extra: [], name: '', val: '6000', months: '6', icon: 'laptop_mac', src: { sub: true, rest: true, comp: false }, split: 'prop', priv: 'contrib', invite: '', invited: '', toast: '' };
+  brl(v) { return 'R$ ' + Math.round(v).toLocaleString('pt-BR'); }
+  renderVals() {
+    const bp = this.props.bp || 'mobile', go = this.props.go || (() => {});
+    const rank = { 'Grátis': 0, Plus: 1, Pilot: 2 }[this.props.plan || 'Pilot'] ?? 2;
+    const tab = ['lista', 'criar', 'grupo'].includes(this.props.sub) ? this.props.sub : 'lista';
+    const tabs = [['lista', 'Minhas metas', 'flag'], ['criar', 'Criar meta', 'add'], ['grupo', 'Meta em grupo', 'group']].map(([id, label, icon]) => ({ label, icon, sel: tab === id, on: () => go('metas', id), bg: tab === id ? 'var(--ink)' : 'var(--surface)', fg: tab === id ? 'var(--bg)' : 'var(--ink2)', bd: tab === id ? 'var(--ink)' : 'var(--line)' }));
+    const brl = v => this.brl(v);
+    const G = [{ name: 'Réveillon na praia', icon: 'celebration', when: 'Até dezembro de 2026', saved: 1800, target: 5000, monthly: 1600 }, { name: 'Viagem do casal', icon: 'flight', when: 'Até setembro de 2027 · com Ana', saved: 4500, target: 30000, monthly: 2125, group: true }, ...this.state.extra];
+    const goals = G.map(g => ({ ...g, saved: brl(g.saved), target: brl(g.target), monthly: brl(g.monthly), pct: (g.saved / g.target * 100).toFixed(0), pctTxt: Math.round(g.saved / g.target * 100) + '% guardado', aria: `${g.name}: ${brl(g.saved)} de ${brl(g.target)}` }));
+    const val = parseInt(String(this.state.val).replace(/\D/g, ''), 10) || 0, m = +this.state.months, monthly = val / m;
+    const SRC = [['sub', 'Cancelar 4 assinaturas sem uso', 'Já encontradas pelo caçador de vazamentos', 480], ['rest', 'Baixar o teto de restaurantes', 'De R$ 1.800 para R$ 1.500', 300], ['comp', 'Baixar o teto de compras', 'De R$ 1.500 para R$ 1.300', 200]];
+    const covered = SRC.filter(s => this.state.src[s[0]]).reduce((a, s) => a + s[3], 0);
+    const gap = Math.max(0, monthly - covered), delay = Math.max(0, Math.ceil(gap * m / 2600));
+    const until = new Date(2026, 9 + m, 1).toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' }).replace('.', '');
+    const people = this.state.split === 'igual'
+      ? [['Marcos', 'MR', '50%', 1062.5, 2700, 'var(--brand-soft)', 'var(--brand-t)', true], ['Ana', 'AN', '50%', 1062.5, 1800, 'var(--accent-soft)', 'var(--accent-t)', false]]
+      : [['Marcos', 'MR', '65% (proporcional à renda)', 1381, 2700, 'var(--brand-soft)', 'var(--brand-t)', true], ['Ana', 'AN', '35% (proporcional à renda)', 744, 1800, 'var(--accent-soft)', 'var(--accent-t)', false]];
+    return {
+      go, tabs, lockPlus: rank < 1, lockPilot: rank < 2, groupOpen: rank >= 2,
+      v: { lista: rank >= 1 && tab === 'lista', criar: rank >= 1 && tab === 'criar', grupo: rank >= 1 && tab === 'grupo' },
+      goals, goCreate: () => go('metas', 'criar'), goGroup: () => go('metas', 'grupo'),
+      formCols: bp === 'desktop' ? 'minmax(0,1fr) minmax(0,1fr)' : 'minmax(0,1fr)',
+      f: { name: this.state.name, val: this.state.val, months: this.state.months },
+      setName: e => this.setState({ name: e.target.value }), setVal: e => this.setState({ val: e.target.value }), setMonths: e => this.setState({ months: e.target.value }),
+      icons: ['laptop_mac', 'flight', 'directions_car', 'school', 'home', 'celebration', 'medical_services', 'savings'].map(i => ({ i, sel: this.state.icon === i, bd: this.state.icon === i ? 'var(--accent)' : 'var(--line)', bg: this.state.icon === i ? 'var(--accent-soft)' : 'var(--surface)', on: () => this.setState({ icon: i }) })),
+      sources: SRC.map(([k, t, d, v]) => ({ t, d, v: brl(v) + '/mês', on: !!this.state.src[k], bd: this.state.src[k] ? 'var(--brand-t)' : 'var(--line)', bg: this.state.src[k] ? 'var(--brand-soft)' : 'var(--surface)', toggle: () => this.setState({ src: { ...this.state.src, [k]: !this.state.src[k] } }) })),
+      calc: { monthly: brl(monthly), until, cover: Math.min(100, monthly ? covered / monthly * 100 : 0).toFixed(0), coverAria: `Cobre ${brl(Math.min(covered, monthly))} de ${brl(monthly)}`,
+        coverTxt: gap > 0 ? `Cobre ${brl(covered)} de ${brl(monthly)}. Os ${brl(gap)} restantes saem da sobra do plano.` : `Coberto sem mexer no plano${covered > monthly ? ' — ainda sobram ' + brl(covered - monthly) : ''}.`,
+        trade: delay > 0 ? `separar ${brl(gap)}/mês da sobra atrasa a quitação do rotativo Nubank em ${delay} ${delay === 1 ? 'mês' : 'meses'} (de fev para ${new Date(2027, 1 + delay, 1).toLocaleDateString('pt-BR', { month: 'short' }).replace('.', '')} 2027).` : 'esta meta não atrasa o plano de quitação.' },
+      save: () => { const nm = this.state.name.trim() || 'Nova meta'; this.setState({ extra: [...this.state.extra, { name: nm, icon: this.state.icon, when: 'Até ' + until, saved: 0, target: val || 1, monthly }], toast: `Meta “${nm}” criada` }); setTimeout(() => this.setState({ toast: '' }), 2600); go('metas', 'lista'); },
+      splitOpts: [['igual', 'Igual'], ['prop', 'Proporcional à renda']].map(([id, label]) => ({ label, sel: this.state.split === id, on: () => this.setState({ split: id }), bg: this.state.split === id ? 'var(--surface)' : 'transparent', sh: this.state.split === id ? 'var(--shadow)' : 'none' })),
+      people: people.map(([name, ini, pct, sh, saved, bg, fg, me]) => ({ name: me ? name + ' (você)' : name, ini, pct, share: 'R$ ' + sh.toLocaleString('pt-BR', { minimumFractionDigits: sh % 1 ? 2 : 0, maximumFractionDigits: 2 }), saved: brl(saved), bg, fg,
+        priv: me ? (this.state.priv === 'contrib' ? 'Você compartilha só a contribuição' : 'Você compartilha contribuição e totais por categoria') : 'Ana compartilha só a contribuição', privI: 'visibility', locked: !me })),
+      privOpts: [['contrib', 'Só a minha contribuição', 'A Ana vê quanto você guardou para a meta. Nada mais.'], ['cats', 'Também totais por categoria', 'Ela vê, por exemplo, quanto foi para restaurantes no mês — nunca as transações.']].map(([id, t, d]) => ({ t, d, sel: this.state.priv === id, radio: this.state.priv === id ? 'radio_button_checked' : 'radio_button_unchecked', ic: this.state.priv === id ? 'var(--brand-t)' : 'var(--ink3)', bd: this.state.priv === id ? 'var(--brand-t)' : 'var(--line)', on: () => this.setState({ priv: id }) })),
+      invite: this.state.invite, setInvite: e => this.setState({ invite: e.target.value }), invited: this.state.invited, sendInvite: () => this.state.invite.trim() && this.setState({ invited: this.state.invite.trim(), invite: '' }),
+      toast: this.state.toast, toastBottom: bp === 'mobile' ? 'calc(96px + env(safe-area-inset-bottom))' : '32px',
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,65 +1,69 @@
-import { Switch, Route, useLocation } from "wouter";
-import { queryClient } from "./lib/queryClient";
-import { QueryClientProvider } from "@tanstack/react-query";
-import { Toaster } from "@/components/ui/toaster";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { useAuth } from "@/hooks/use-auth";
-import LoginScreen from "@/components/LoginScreen";
-import DashboardScreen from "@/components/DashboardScreen";
-import DebtsListScreen from "@/components/DebtsListScreen";
-import InvestmentsScreen from "@/components/InvestmentsScreen";
-import StrategyScreen from "@/components/StrategyScreen";
-import IncomesScreen from "@/components/IncomesScreen";
-import NotFound from "@/pages/not-found";
 import { useEffect } from "react";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { useLocation } from "wouter";
+import { queryClient, useMe } from "@/lib/api";
+import { AppProvider, applyTheme, useApp, type ThemePref } from "@/lib/app";
+import { Spinner } from "@/ui";
+import Shell from "@/app/Shell";
+import Onboarding from "@/screens/Onboarding";
+import Inicio from "@/screens/Inicio";
+import Gastos from "@/screens/Gastos";
+import Plano from "@/screens/Plano";
+import Metas from "@/screens/Metas";
+import Contas from "@/screens/Contas";
+import Assistente from "@/screens/Assistente";
+import Perfil from "@/screens/Perfil";
 
-function Router() {
-  const [, setLocation] = useLocation();
-  const { user, isLoading, isAuthenticated } = useAuth();
+const SCREENS: Record<string, () => JSX.Element | null> = { inicio: Inicio, gastos: Gastos, plano: Plano, metas: Metas, contas: Contas, assistente: () => <Assistente mode="full" />, perfil: Perfil };
 
+function Routes() {
+  const { route, user, go } = useApp();
+  const [loc] = useLocation();
+  // Rota inicial: logado → última rota (ou Início); sem sessão → boas-vindas.
   useEffect(() => {
-    if (!isLoading) {
-      if (!isAuthenticated && window.location.pathname !== "/") {
-        setLocation("/");
-      } else if (isAuthenticated && window.location.pathname === "/") {
-        setLocation("/dashboard");
+    if (loc === "/" || !route) {
+      if (!user) return go("onb", "boasvindas");
+      let last = "/inicio";
+      try {
+        last = localStorage.getItem("pp-route") || last;
+      } catch {
+        /* sem armazenamento */
       }
-    }
-  }, [isAuthenticated, isLoading, setLocation]);
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Carregando...</p>
-        </div>
-      </div>
-    );
-  }
-
+      const [, r, s] = last.split("/");
+      go(r || "inicio", s);
+    } else if (!user && route !== "onb") go("onb", "boasvindas");
+  }, [loc, route, user, go]);
+  if (route === "onb" || !user) return <Onboarding />;
+  const Screen = SCREENS[route] || Inicio;
   return (
-    <Switch>
-      <Route path="/" component={LoginScreen} />
-      <Route path="/dashboard" component={DashboardScreen} />
-      <Route path="/debts" component={DebtsListScreen} />
-      <Route path="/investments" component={InvestmentsScreen} />
-      <Route path="/incomes" component={IncomesScreen} />
-      <Route path="/strategy" component={StrategyScreen} />
-      <Route component={NotFound} />
-    </Switch>
+    <Shell>
+      <Screen />
+    </Shell>
   );
 }
 
-function App() {
+function Root() {
+  const me = useMe();
+  useEffect(() => {
+    if (me.data?.prefs?.theme) applyTheme(me.data.prefs.theme as ThemePref);
+  }, [me.data?.prefs?.theme]);
+  if (me.isLoading)
+    return (
+      <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <Spinner size={32} />
+      </div>
+    );
+  return (
+    <AppProvider user={me.data ?? null}>
+      <Routes />
+    </AppProvider>
+  );
+}
+
+export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Router />
-      </TooltipProvider>
+      <Root />
     </QueryClientProvider>
   );
 }
-
-export default App;

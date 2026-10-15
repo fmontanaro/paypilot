@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0B6B3A">
+<link rel="icon" href="assets/logo.png">
+<link rel="apple-touch-icon" href="assets/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Nunito:wght@700;800;900&amp;display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,300..600,0..1,0&amp;display=block">
+<style>
+:root,[data-theme="claro"]{color-scheme:light;--bg:#F5F2EA;--surface:#FFFFFF;--surface2:#EEEAE0;--line:#E2DDD1;--ink:#16211B;--ink2:#46534B;--ink3:#626D66;--brand:#0B6B3A;--brand-on:#FFFFFF;--brand-t:#0B6B3A;--brand-soft:#E1EFE5;--brand-deep:#0A4F2C;--accent:#E9822A;--accent-soft:#FCEBD6;--accent-t:#9C4B0B;--good:#1E8C4E;--good-soft:#DCF2E3;--good-t:#16703D;--warn:#C98A0B;--warn-soft:#FBEFD2;--warn-t:#7F5300;--risk:#BF4A41;--risk-soft:#F8E3E0;--risk-t:#A03830;--cream:#FCE7C3;--shadow:0 1px 2px rgba(22,33,27,.06),0 6px 20px rgba(22,33,27,.07);--scrim:rgba(14,21,17,.42)}
+[data-theme="escuro"]{color-scheme:dark;--bg:#0D1410;--surface:#151F19;--surface2:#1D2922;--line:#2B3931;--ink:#ECF1ED;--ink2:#B4C0B8;--ink3:#93A097;--brand:#46B97A;--brand-on:#05200F;--brand-t:#6FCF98;--brand-soft:#163524;--brand-deep:#0B5A31;--accent:#F0954A;--accent-soft:#3A2614;--accent-t:#F6B47C;--good:#4FC285;--good-soft:#14341F;--good-t:#7CD8A5;--warn:#E2A93B;--warn-soft:#382B10;--warn-t:#F0C467;--risk:#E07C72;--risk-soft:#3C1E1B;--risk-t:#F29C93;--cream:#3A3020;--shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.28);--scrim:rgba(0,0,0,.6)}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink)}
+body:has(> x-dc > div:first-of-type){padding:0}
+body{font-family:Manrope,system-ui,sans-serif;font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;overscroll-behavior-y:contain}
+i{font-family:'Material Symbols Rounded';font-style:normal;font-weight:normal;line-height:1;font-size:22px;display:inline-block;font-feature-settings:'liga';-webkit-font-feature-settings:'liga';user-select:none;flex:none;letter-spacing:normal;text-transform:none;white-space:nowrap;direction:ltr}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:var(--brand-t)}a:hover{color:var(--ink)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+input[type=range]{accent-color:var(--brand)}
+@keyframes pp-spin{to{transform:rotate(360deg)}}
+@keyframes pp-shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+@keyframes pp-wave{0%,100%{transform:scaleY(.3)}50%{transform:scaleY(1)}}
+@keyframes pp-pulse{0%{box-shadow:0 0 0 0 rgba(233,130,42,.55)}100%{box-shadow:0 0 0 18px rgba(233,130,42,0)}}
+@keyframes pp-up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes pp-sheet{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+@keyframes pp-dots{0%,80%,100%{opacity:.25}40%{opacity:1}}
+@media (prefers-reduced-motion: reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important;transition:none!important}}
+</style>
+</helmet>
+<div style="display:flex;flex-direction:column;gap:16px">
+  <div role="tablist" aria-label="Contas" style="display:flex;gap:8px;overflow-x:auto;padding:2px;scrollbar-width:none">
+    <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="5"><button role="tab" aria-selected="{{ t.sel }}" onClick="{{ t.on }}" style="flex:none;min-height:44px;padding:0 16px;border-radius:999px;border:1px solid {{ t.bd }};background:{{ t.bg }};color:{{ t.fg }};font-weight:700;font-size:14px;white-space:nowrap;display:flex;align-items:center;gap:6px"><i style="font-size:18px">{{ t.icon }}</i>{{ t.label }}</button></sc-for>
+  </div>
+
+  <sc-if value="{{ v.conectadas }}" hint-placeholder-val="{{ true }}">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px">
+      <sc-for list="{{ banks }}" as="b" hint-placeholder-count="4">
+        <article style="background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;gap:12px;align-items:center">
+            <span aria-hidden="true" style="width:44px;height:44px;border-radius:12px;background:{{ b.c }};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;flex:none">{{ b.m }}</span>
+            <div style="flex:1;min-width:0"><div style="font-weight:800">{{ b.n }}</div><div style="font-size:13px;color:var(--ink3)">{{ b.items }}</div></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:12px;background:{{ b.sbg }};color:{{ b.sfg }};font-size:14px;font-weight:700"><i style="font-size:18px">{{ b.si }}</i>{{ b.status }}</div>
+          <div style="font-size:13px;color:var(--ink2);display:flex;gap:6px;align-items:center"><i style="font-size:18px">verified_user</i>{{ b.consent }}</div>
+          <sc-if value="{{ b.action }}" hint-placeholder-val="{{ false }}"><button onClick="{{ b.onAction }}" style="min-height:44px;border-radius:12px;border:1px solid var(--line);background:var(--surface);font-weight:800">{{ b.action }}</button></sc-if>
+        </article>
+      </sc-for>
+      <button onClick="{{ goConnect }}" style="min-height:180px;border-radius:20px;border:2px dashed var(--line);background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--brand-t);font-weight:800"><i style="font-size:32px">add_link</i>Conectar outro banco</button>
+    </div>
+    <sc-if value="{{ isFree }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:var(--ink3)">No plano Grátis, 1 conta via Open Finance. A importação de arquivos é ilimitada.</div></sc-if>
+  </sc-if>
+
+  <sc-if value="{{ v.importacoes }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:16px;border-radius:20px;background:var(--brand-soft)">
+      <i style="color:var(--brand-t)">notifications_active</i>
+      <div style="flex:1;min-width:200px"><div style="font-weight:800">Próximo envio: 5 de novembro</div><div style="font-size:14px;color:var(--ink2)">Extrato de outubro do Santander e fatura do cartão da Helena.</div></div>
+      <label style="display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px;min-height:44px">Lembrete<input type="checkbox" checked="{{ remind }}" onChange="{{ toggleRemind }}" style="width:24px;height:24px;accent-color:var(--brand)"></label>
+    </div>
+    <button onClick="{{ goUpload }}" style="min-height:96px;border-radius:20px;border:2px dashed var(--line);background:var(--surface);display:flex;align-items:center;justify-content:center;gap:10px;font-weight:800;color:var(--brand-t)"><i style="font-size:28px">upload_file</i>Enviar extratos ou faturas</button>
+    <section style="background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:4px 16px">
+      <sc-for list="{{ imports }}" as="f" hint-placeholder-count="5">
+        <div style="display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:12px;align-items:center;min-height:64px;border-bottom:1px solid var(--line)">
+          <span style="width:40px;height:40px;border-radius:10px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:var(--ink2)">{{ f.ext }}</span>
+          <div style="min-width:0"><div style="font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ f.n }}</div><div style="font-size:12px;color:var(--ink3)">{{ f.d }}</div></div>
+          <span style="font-size:13px;font-weight:800;color:var(--good-t);display:flex;gap:4px;align-items:center"><i style="font-size:16px">check_circle</i>{{ f.t }}</span>
+        </div>
+      </sc-for>
+    </section>
+  </sc-if>
+
+  <sc-if value="{{ lockPlus }}" hint-placeholder-val="{{ false }}"><dc-import name="Paywall" need="Plus" headline="{{ pw.h }}" detail="{{ pw.d }}" go="{{ go }}" hint-size="100%,540px"></dc-import></sc-if>
+
+  <sc-if value="{{ v.manuais }}" hint-placeholder-val="{{ false }}">
+    <article style="background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:18px;display:flex;flex-direction:column;gap:14px">
+      <div style="display:flex;gap:12px;align-items:center"><span aria-hidden="true" style="width:48px;height:48px;border-radius:14px;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900">H</span><div style="flex:1"><div style="font-weight:800;font-size:17px">Cartão da Helena (mãe)</div><div style="font-size:13px;color:var(--ink3)">Conta manual · fecha dia 12 · vence dia 19</div></div></div>
+      <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:24px;font-weight:900">{{ helena.usedTxt }}</span><span style="color:var(--ink3)">de R$ 6.000 de limite</span></div>
+      <div role="img" aria-label="{{ helena.aria }}" style="height:12px;border-radius:6px;background:var(--surface2)"><div style="width:{{ helena.pct }}%;height:100%;border-radius:6px;background:var(--accent)"></div></div>
+      <div style="display:flex;gap:12px;align-items:center;padding:14px;border-radius:16px;background:var(--warn-soft)"><i style="color:var(--warn-t)">send_money</i><div style="flex:1;font-size:14px"><b>A transferir para a Helena: {{ helena.usedTxt }}</b><div style="color:var(--ink2)">até 19 out, dia do vencimento dela</div></div></div>
+      <div style="display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--ink2);line-height:1.45"><i style="font-size:18px;color:var(--good-t)">join_inner</i>O Pix de R$ 2.340 de 15 out foi reconhecido como pagamento desta fatura e não conta como gasto duas vezes.</div>
+      <div style="font-weight:800">Gastos lançados</div>
+      <sc-for list="{{ helena.list }}" as="g" hint-placeholder-count="3"><div style="display:flex;justify-content:space-between;gap:8px;min-height:48px;align-items:center;border-bottom:1px solid var(--line);font-size:14px"><span><b>{{ g.n }}</b> <span style="color:var(--ink3)">· {{ g.d }}</span></span><b>{{ g.v }}</b></div></sc-for>
+      <sc-if value="{{ adding }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;gap:8px;flex-wrap:wrap"><input value="{{ nName }}" onInput="{{ setNName }}" placeholder="Descrição" aria-label="Descrição" style="flex:2 1 160px;min-height:48px;border-radius:12px;border:1px solid var(--line);background:var(--surface2);padding:0 12px"><input inputmode="decimal" value="{{ nVal }}" onInput="{{ setNVal }}" placeholder="Valor" aria-label="Valor" style="flex:1 1 100px;min-height:48px;border-radius:12px;border:1px solid var(--line);background:var(--surface2);padding:0 12px"><button onClick="{{ addGasto }}" style="min-height:48px;padding:0 16px;border-radius:12px;border:0;background:var(--brand);color:var(--brand-on);font-weight:800">Lançar</button></div>
+      </sc-if>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <button onClick="{{ toggleAdd }}" style="min-height:48px;border-radius:12px;border:1px solid var(--line);background:var(--surface);font-weight:800;display:flex;align-items:center;justify-content:center;gap:6px"><i style="font-size:18px">add</i>Lançar gasto</button>
+        <button onClick="{{ attach }}" style="min-height:48px;border-radius:12px;border:1px solid var(--line);background:var(--surface);font-weight:800;display:flex;align-items:center;justify-content:center;gap:6px"><i style="font-size:18px">attach_file</i>{{ attachTxt }}</button>
+      </div>
+    </article>
+  </sc-if>
+
+  <sc-if value="{{ v.dividas }}" hint-placeholder-val="{{ false }}">
+    <article style="background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:18px;display:flex;flex-direction:column;gap:14px">
+      <div style="display:flex;gap:12px;align-items:center"><span style="width:48px;height:48px;border-radius:50%;background:var(--brand-soft);color:var(--brand-t);display:flex;align-items:center;justify-content:center;font-weight:900">PR</span><div style="flex:1"><div style="font-weight:800;font-size:17px">Paulo (irmão)</div><div style="font-size:13px;color:var(--ink3)">Emprestou R$ 15.000 em jun 2026 · sem juros</div></div></div>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px">
+        <div><div style="font-size:12px;color:var(--ink3)">Saldo</div><div style="font-size:20px;font-weight:900">{{ paulo.saldo }}</div></div>
+        <div><div style="font-size:12px;color:var(--ink3)">Já pago</div><div style="font-size:20px;font-weight:900;color:var(--good-t)">{{ paulo.pago }}</div></div>
+        <div><div style="font-size:12px;color:var(--ink3)">Quitação</div><div style="font-size:20px;font-weight:900">{{ paulo.end }}</div></div>
+      </div>
+      <div role="img" aria-label="{{ paulo.aria }}" style="height:12px;border-radius:6px;background:var(--surface2)"><div style="width:{{ paulo.pct }}%;height:100%;border-radius:6px;background:var(--good)"></div></div>
+      <div style="font-weight:800">Histórico de pagamentos</div>
+      <sc-for list="{{ paulo.hist }}" as="h" hint-placeholder-count="3"><div style="display:flex;justify-content:space-between;min-height:48px;align-items:center;border-bottom:1px solid var(--line);font-size:14px"><span>{{ h.d }} <span style="color:var(--ink3)">· {{ h.how }}</span></span><b>{{ h.v }}</b></div></sc-for>
+      <button onClick="{{ payPaulo }}" style="min-height:50px;border-radius:14px;border:0;background:var(--brand);color:var(--brand-on);font-weight:800">Registrar pagamento de R$ 1.000</button>
+      <div style="font-size:12px;color:var(--ink3)">Um Pix pode ser dividido entre fatura e esta dívida no detalhe da transação.</div>
+    </article>
+  </sc-if>
+
+  <sc-if value="{{ v.grupos }}" hint-placeholder-val="{{ false }}">
+    <sc-if value="{{ lockPilot }}" hint-placeholder-val="{{ false }}"><dc-import name="Paywall" need="Pilot" headline="Sua empresa parada custa R$ 18.240 por ano" detail="Grupos de despesa juntam tudo o que é da empresa, de qualquer conta, com regras automáticas." go="{{ go }}" hint-size="100%,540px"></dc-import></sc-if>
+    <sc-if value="{{ gruposOpen }}" hint-placeholder-val="{{ true }}">
+      <article style="background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:18px;display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;gap:12px;align-items:center"><span style="width:48px;height:48px;border-radius:14px;background:oklch(0.6 0.13 285 / .16);color:oklch(0.6 0.13 285);display:flex;align-items:center;justify-content:center"><i>business_center</i></span><div><div style="font-weight:800;font-size:17px">Minha empresa</div><div style="font-size:13px;color:var(--ink3)">MR Design Ltda · sem faturamento desde março</div></div></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div style="padding:14px;border-radius:16px;background:var(--surface2)"><div style="font-size:13px;color:var(--ink3)">Total do mês</div><div style="font-size:24px;font-weight:900">R$ 1.520</div></div>
+          <div style="padding:14px;border-radius:16px;background:var(--surface2)"><div style="font-size:13px;color:var(--ink3)">Custo anual</div><div style="font-size:24px;font-weight:900">R$ 18.240</div></div>
+        </div>
+        <div style="font-weight:800">Obrigações fixas</div>
+        <sc-for list="{{ obrig }}" as="o" hint-placeholder-count="3">
+          <div style="display:flex;flex-direction:column;gap:6px;padding:12px 0;border-bottom:1px solid var(--line)">
+            <div style="display:flex;justify-content:space-between;gap:8px"><b>{{ o.n }}</b><b>{{ o.v }}</b></div>
+            <div style="font-size:13px;color:var(--ink3)">{{ o.d }}</div>
+            <sc-if value="{{ o.bar }}" hint-placeholder-val="{{ false }}"><div role="img" aria-label="18 de 48 parcelas pagas" style="height:8px;border-radius:4px;background:var(--surface2)"><div style="width:37.5%;height:100%;border-radius:4px;background:oklch(0.6 0.13 285)"></div></div></sc-if>
+          </div>
+        </sc-for>
+        <div style="font-weight:800">Regras automáticas</div>
+        <sc-for list="{{ rules }}" as="r" hint-placeholder-count="3">
+          <label style="display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:56px;padding:8px 12px;border-radius:14px;border:1px solid var(--line)"><span style="font-size:14px;line-height:1.4"><span style="color:var(--ink3)">Se</span> <b>{{ r.if }}</b> <span style="color:var(--ink3)">→</span> Minha empresa</span><input type="checkbox" checked="{{ r.on }}" onChange="{{ r.toggle }}" style="width:24px;height:24px;accent-color:var(--brand);flex:none"></label>
+        </sc-for>
+      </article>
+    </sc-if>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { xp: 'erro', santander: 'expira', remind: true, gastos: [['Farmácia São Paulo', '11 out', 186.4], ['Leroy Merlin', '6 out', 1420], ['Posto Ipiranga', '2 out', 733.6]], adding: false, nName: '', nVal: '', attached: false, pagos: [['15 set', 'Pix', 1000], ['15 ago', 'Pix', 1000], ['15 jul', 'Pix', 1000]], rules: { a: true, b: true, c: true } };
+  brl(v, c) { return 'R$ ' + v.toLocaleString('pt-BR', { minimumFractionDigits: c ? 2 : 0, maximumFractionDigits: c ? 2 : 0 }); }
+  renderVals() {
+    const go = this.props.go || (() => {});
+    const rank = { 'Grátis': 0, Plus: 1, Pilot: 2 }[this.props.plan || 'Pilot'] ?? 2;
+    const tab = ['conectadas', 'importacoes', 'manuais', 'dividas', 'grupos'].includes(this.props.sub) ? this.props.sub : 'conectadas';
+    const tabs = [['conectadas', 'Conectadas', 'link'], ['importacoes', 'Importações', 'upload_file'], ['manuais', 'Contas manuais', 'edit_note'], ['dividas', 'Dívidas pessoais', 'handshake'], ['grupos', 'Grupos de despesa', 'workspaces']].map(([id, label, icon]) => ({ label, icon, sel: tab === id, on: () => go('contas', id), bg: tab === id ? 'var(--ink)' : 'var(--surface)', fg: tab === id ? 'var(--bg)' : 'var(--ink2)', bd: tab === id ? 'var(--ink)' : 'var(--line)' }));
+    const OK = ['var(--good-soft)', 'var(--good-t)', 'check_circle'], W = ['var(--warn-soft)', 'var(--warn-t)', 'schedule'], L = ['var(--surface2)', 'var(--ink2)', 'progress_activity'];
+    const xp = this.state.xp, sa = this.state.santander;
+    const B = [
+      ['Nubank', 'Nu', '#820AD1', 'Conta + cartão', OK, 'Sincronizado há 12 min', 'Consentimento válido até 14/04/2027'],
+      ['Itaú', 'It', '#EC7000', '2 contas + 2 cartões', OK, 'Sincronizado há 1 h', 'Consentimento válido até 02/01/2027'],
+      ['Santander', 'S', '#EC0000', 'Cartão + empréstimo', sa === 'expira' ? W : OK, 'Sincronizado há 3 h', sa === 'expira' ? 'Consentimento vence em 6 dias (21/10/2026)' : 'Consentimento renovado até 15/10/2027', sa === 'expira' ? 'Renovar consentimento' : '', () => this.setState({ santander: 'ok' })],
+      ['XP', 'XP', '#111', 'Cartão Visa Infinite', xp === 'erro' ? W : xp === 'sync' ? L : OK, xp === 'erro' ? 'Não conseguimos atualizar desde 13 out' : xp === 'sync' ? 'Sincronizando…' : 'Sincronizado agora', 'Consentimento válido até 30/05/2027', xp === 'erro' ? 'Tentar de novo' : '', () => { this.setState({ xp: 'sync' }); setTimeout(() => this.setState({ xp: 'ok' }), 1400); }],
+    ];
+    const banks = B.map(([n, m, c, items, s, status, consent, action, onAction]) => ({ n, m, c, items, sbg: s[0], sfg: s[1], si: s[2], status: status, consent, action: action || '', onAction }));
+    const used = this.state.gastos.reduce((a, g) => a + g[2], 0);
+    const pago = this.state.pagos.reduce((a, p) => a + p[2], 0), saldo = 15000 - pago;
+    const endD = new Date(2026, 10 + Math.ceil(saldo / 1000) - 1, 1);
+    const PW = { manuais: ['Cartão emprestado da família, no mesmo lugar que os outros', 'Lance gastos, leia a foto da fatura e saiba quanto transferir.'], dividas: ['Faltam R$ 12.000 para quitar a dívida com o Paulo', 'Registre pagamentos e veja a data de quitação sem planilha.'] };
+    return {
+      go, tabs, isFree: rank === 0,
+      v: { conectadas: tab === 'conectadas', importacoes: tab === 'importacoes', manuais: rank >= 1 && tab === 'manuais', dividas: rank >= 1 && tab === 'dividas', grupos: tab === 'grupos' },
+      lockPlus: rank < 1 && (tab === 'manuais' || tab === 'dividas' || tab === 'grupos'), lockPilot: rank === 1, gruposOpen: rank >= 2,
+      pw: { h: (PW[tab] || PW.manuais)[0], d: (PW[tab] || PW.manuais)[1] },
+      banks, goConnect: () => go('onb', 'banco'), goUpload: () => go('onb', 'upload'),
+      remind: this.state.remind, toggleRemind: () => this.setState({ remind: !this.state.remind }),
+      imports: [['fatura_helena_set.jpg', 'Foto da fatura · 20/09/2026', '23 lançamentos'], ['extrato_santander_set.csv', 'Enviado 05/10/2026', '96 transações'], ['extrato_santander_ago.csv', 'Enviado 04/09/2026', '102 transações'], ['extrato_itau_jul-set.ofx', 'Enviado no cadastro', '214 transações'], ['fatura_xp_set.pdf', 'Enviado no cadastro', '58 transações']].map(([n, d, t]) => ({ n, d, t, ext: n.split('.').pop().toUpperCase() })),
+      helena: { usedTxt: this.brl(used, true), pct: Math.min(100, used / 6000 * 100).toFixed(0), aria: `${this.brl(used, true)} usados de R$ 6.000`, list: this.state.gastos.map(([n, d, v]) => ({ n, d, v: this.brl(v, true) })) },
+      adding: this.state.adding, toggleAdd: () => this.setState({ adding: !this.state.adding }), nName: this.state.nName, nVal: this.state.nVal,
+      setNName: e => this.setState({ nName: e.target.value }), setNVal: e => this.setState({ nVal: e.target.value }),
+      addGasto: () => { const v = parseFloat(String(this.state.nVal).replace(/\./g, '').replace(',', '.')); if (!v) return; this.setState({ gastos: [[this.state.nName || 'Gasto', '15 out', v], ...this.state.gastos], nName: '', nVal: '', adding: false }); },
+      attach: () => this.setState({ attached: true }), attachTxt: this.state.attached ? 'Fatura anexada' : 'Foto ou PDF da fatura',
+      paulo: { saldo: this.brl(saldo), pago: this.brl(pago), end: endD.toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' }).replace('.', '').replace(' de ', ' '), pct: (pago / 15000 * 100).toFixed(0), aria: `${this.brl(pago)} pagos de R$ 15.000`, hist: this.state.pagos.map(([d, how, v]) => ({ d, how, v: this.brl(v) })) },
+      payPaulo: () => this.setState({ pagos: [['15 out', 'Registrado agora', 1000], ...this.state.pagos] }),
+      obrig: [{ n: 'Parcelamento de impostos', v: 'R$ 890/mês', d: 'Parcela 18 de 48 · restam 30 · R$ 26.700', bar: true }, { n: 'Contabilidade', v: 'R$ 450/mês', d: 'Contabilidade Exata · vence dia 10' }, { n: 'Taxas e certificados', v: 'R$ 180/mês', d: 'Certificado digital, alvará e domínio (média mensal)' }],
+      rules: [['a', 'Pix para “Contabilidade Exata”'], ['b', 'DARF ou Simples Nacional'], ['c', 'Cartão XP, compras de “Software”']].map(([k, t]) => ({ if: t, on: this.state.rules[k], toggle: () => this.setState({ rules: { ...this.state.rules, [k]: !this.state.rules[k] } }) })),
+    };
+  }
+}
+</script>
+</body>
+</html>

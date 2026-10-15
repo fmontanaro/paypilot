@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0B6B3A">
+<link rel="icon" href="assets/logo.png">
+<link rel="apple-touch-icon" href="assets/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Nunito:wght@700;800;900&amp;display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,300..600,0..1,0&amp;display=block">
+<style>
+:root,[data-theme="claro"]{color-scheme:light;--bg:#F5F2EA;--surface:#FFFFFF;--surface2:#EEEAE0;--line:#E2DDD1;--ink:#16211B;--ink2:#46534B;--ink3:#626D66;--brand:#0B6B3A;--brand-on:#FFFFFF;--brand-t:#0B6B3A;--brand-soft:#E1EFE5;--brand-deep:#0A4F2C;--accent:#E9822A;--accent-soft:#FCEBD6;--accent-t:#9C4B0B;--good:#1E8C4E;--good-soft:#DCF2E3;--good-t:#16703D;--warn:#C98A0B;--warn-soft:#FBEFD2;--warn-t:#7F5300;--risk:#BF4A41;--risk-soft:#F8E3E0;--risk-t:#A03830;--cream:#FCE7C3;--shadow:0 1px 2px rgba(22,33,27,.06),0 6px 20px rgba(22,33,27,.07);--scrim:rgba(14,21,17,.42)}
+[data-theme="escuro"]{color-scheme:dark;--bg:#0D1410;--surface:#151F19;--surface2:#1D2922;--line:#2B3931;--ink:#ECF1ED;--ink2:#B4C0B8;--ink3:#93A097;--brand:#46B97A;--brand-on:#05200F;--brand-t:#6FCF98;--brand-soft:#163524;--brand-deep:#0B5A31;--accent:#F0954A;--accent-soft:#3A2614;--accent-t:#F6B47C;--good:#4FC285;--good-soft:#14341F;--good-t:#7CD8A5;--warn:#E2A93B;--warn-soft:#382B10;--warn-t:#F0C467;--risk:#E07C72;--risk-soft:#3C1E1B;--risk-t:#F29C93;--cream:#3A3020;--shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.28);--scrim:rgba(0,0,0,.6)}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink)}
+body:has(> x-dc > div:first-of-type){padding:0}
+body{font-family:Manrope,system-ui,sans-serif;font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;overscroll-behavior-y:contain}
+i{font-family:'Material Symbols Rounded';font-style:normal;font-weight:normal;line-height:1;font-size:22px;display:inline-block;font-feature-settings:'liga';-webkit-font-feature-settings:'liga';user-select:none;flex:none;letter-spacing:normal;text-transform:none;white-space:nowrap;direction:ltr}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:var(--brand-t)}a:hover{color:var(--ink)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+input[type=range]{accent-color:var(--brand)}
+@keyframes pp-spin{to{transform:rotate(360deg)}}
+@keyframes pp-shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+@keyframes pp-wave{0%,100%{transform:scaleY(.3)}50%{transform:scaleY(1)}}
+@keyframes pp-pulse{0%{box-shadow:0 0 0 0 rgba(233,130,42,.55)}100%{box-shadow:0 0 0 18px rgba(233,130,42,0)}}
+@keyframes pp-up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes pp-sheet{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+@keyframes pp-dots{0%,80%,100%{opacity:.25}40%{opacity:1}}
+@media (prefers-reduced-motion: reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important;transition:none!important}}
+</style>
+</helmet>
+<div style="position:relative;min-height:540px;border-radius:24px;overflow:hidden;border:1px solid var(--line);background:var(--surface)">
+  <div aria-hidden="true" style="padding:20px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;filter:blur(6px);opacity:.75;pointer-events:none;user-select:none">
+    <sc-for list="{{ teaser }}" as="t" hint-placeholder-count="3">
+      <div style="padding:18px;border-radius:18px;border:1px solid var(--line);background:var(--surface2);display:flex;flex-direction:column;gap:10px">
+        <div style="font-weight:800">{{ t.a }}</div><div style="font-size:28px;font-weight:900">{{ t.b }}</div>
+        <div style="height:10px;border-radius:5px;background:var(--brand-soft)"></div><div style="height:10px;width:70%;border-radius:5px;background:var(--line)"></div><div style="height:10px;width:50%;border-radius:5px;background:var(--line)"></div>
+      </div>
+    </sc-for>
+  </div>
+  <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:16px">
+    <div style="max-width:440px;width:100%;background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:24px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:14px">
+      <span style="align-self:flex-start;display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;background:var(--brand-soft);color:var(--brand-t);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.05em"><i style="font-size:16px">lock</i>Recurso do plano {{ needTxt }}</span>
+      <div style="font-size:13px;font-weight:700;color:var(--ink3)">Prévia com os seus dados</div>
+      <h2 style="margin:0;font-family:Nunito,sans-serif;font-weight:900;font-size:24px;line-height:1.2;text-wrap:pretty">{{ headTxt }}</h2>
+      <p style="margin:0;color:var(--ink2);line-height:1.5;text-wrap:pretty">{{ detailTxt }}</p>
+      <ul style="margin:0;padding:0;list-style:none;display:grid;gap:8px">
+        <sc-for list="{{ feats }}" as="f" hint-placeholder-count="3"><li style="display:flex;gap:8px;align-items:flex-start;font-size:14px"><i style="font-size:20px;color:var(--good-t)">check_circle</i>{{ f }}</li></sc-for>
+      </ul>
+      <button onClick="{{ assinar }}" style="min-height:50px;border-radius:14px;border:0;background:var(--brand);color:var(--brand-on);font-weight:800;font-size:15px">Assinar o {{ needTxt }} · R$ XX/mês</button>
+      <button onClick="{{ assinar }}" style="min-height:44px;border-radius:14px;border:0;background:none;color:var(--brand-t);font-weight:800">Comparar planos</button>
+      <div style="font-size:12px;color:var(--ink3);text-align:center">Sem fidelidade. Cancele quando quiser. Não vendemos crédito.</div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:420,&quot;height&quot;:560},&quot;need&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Plus&quot;,&quot;Pilot&quot;],&quot;default&quot;:&quot;Pilot&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;headline&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Encontramos 3 rotas mais baratas para fechar este mês&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;detail&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;go&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;function&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const need = this.props.need || 'Pilot';
+    const F = {
+      Plus: ['Várias contas e cartões', 'Tetos com alertas e caçador de vazamentos completo', 'Metas, relatórios e assistente no WhatsApp'],
+      Pilot: ['Prioridades do mês com custo de cada escolha', 'Plano de quitação e otimizador de rolagem', 'Renegociação, grupos de despesa e metas em grupo'],
+    };
+    return {
+      needTxt: need, headTxt: this.props.headline || 'Encontramos 3 rotas mais baratas para fechar este mês',
+      detailTxt: this.props.detail || 'A mais barata custa R$ 1.020 a menos que a que você usou em setembro.',
+      feats: F[need] || F.Pilot,
+      teaser: [{ a: 'Rota A', b: 'R$ 1.020' }, { a: 'Rota B', b: 'R$ 0' }, { a: 'Rota C', b: 'R$ 285' }],
+      assinar: () => this.props.go && this.props.go('perfil', 'planos'),
+    };
+  }
+}
+</script>
+</body>
+</html>
