@@ -135,6 +135,24 @@ describe("tetos e ritmo", () => {
 });
 
 describe("Início", () => {
+  it("mostra o resumo com apenas rendas, sem exigir banco, gastos ou compromissos", () => {
+    const data = { ...appData(), transactions: [], commitments: [], incomes: [] };
+    expect(buildContext(data).hasData).toBe(false);
+    const template = appData().incomes[0];
+    const ctx = buildContext({
+      ...data,
+      incomes: [
+        { ...template, id: "income-a", amount: 0.1, recurring: true },
+        { ...template, id: "income-b", amount: 0.2, recurring: true },
+        { ...template, id: "income-c", amount: 1000, recurring: false },
+      ],
+    });
+    expect(ctx.hasData).toBe(true);
+    expect(ctx.income).toBe(0.3);
+    expect(ctx.summary.income).toBe(0.3);
+    expect(ctx.summary.diff).toBe(0.3);
+  });
+
   const ctx = buildContext(appData());
   it("mostra no máximo 3 ações, começando pelo que vence hoje", () => {
     const a = actions(ctx);

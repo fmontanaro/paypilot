@@ -16,6 +16,8 @@ import { afterImport, importFile } from "./ingestion";
 import { sampleFiles } from "./seed/samples";
 import { BANKS, provider } from "./openfinance";
 import { canUseSandbox, disconnectSandboxConnection, REAL_OPEN_FINANCE_UNAVAILABLE } from "./openfinance/disconnect";
+import { contributionInput, GoalContributionError, recordGoalContribution } from "./goals/contributions";
+import { createIncome, deleteIncome, IncomeError, listIncomes, updateIncome } from "./incomes";
 import { ChatLimitError, handleAction, handleMessage, history } from "./assistant";
 import { getLink, onIncoming, startLink, verifyLink, VERIFY_TOKEN } from "./whatsapp";
 
@@ -25,7 +27,7 @@ const wrap = (h: H) => (req: Request, res: Response, next: NextFunction) =>
   h(req, res).catch((e) => {
     if (e instanceof z.ZodError) return res.status(400).json({ error: e.issues[0]?.message || "Dados inválidos." });
     if (e instanceof ChatLimitError) return res.status(402).json({ error: e.message, need: "plus" });
-    if (e instanceof HttpError) return res.status(e.status).json({ error: e.message });
+    if (e instanceof HttpError || e instanceof GoalContributionError || e instanceof IncomeError) return res.status(e.status).json({ error: e.message });
     next(e);
   });
 
@@ -145,6 +147,12 @@ export function registerRoutes(app: Express) {
     auth,
     wrap(async (req, res) => res.json(await loadAppData(uid(req)))),
   );
+
+  // ---------- Rendas (todos os planos) ----------
+  app.get("/api/incomes", auth, wrap(async (req, res) => res.json(await listIncomes(db(), uid(req)))));
+  app.post("/api/incomes", auth, wrap(async (req, res) => res.status(201).json(await createIncome(db(), uid(req), req.body))));
+  app.patch("/api/incomes/:id", auth, wrap(async (req, res) => res.json(await updateIncome(db(), uid(req), req.params.id, req.body))));
+  app.delete("/api/incomes/:id", auth, wrap(async (req, res) => res.json(await deleteIncome(db(), uid(req), req.params.id))));
 
   // ---------- Gastos ----------
   app.post(
@@ -323,6 +331,17 @@ export function registerRoutes(app: Express) {
         .values({ userId: uid(req), name: b.name, icon: b.icon, target: b.target, months: b.months, startMonth: monthKey(todayBR()), sources: b.sources })
         .returning();
       res.status(201).json(g);
+    }),
+  );
+
+  app.post(
+    "/api/goals/:id/contributions",
+    auth,
+    requirePlan("metas"),
+    wrap(async (req, res) => {
+      const { amount } = contributionInput.parse(req.body);
+      const result = await recordGoalContribution(db(), req.user!, req.params.id, amount);
+      res.status(201).json(result);
     }),
   );
 

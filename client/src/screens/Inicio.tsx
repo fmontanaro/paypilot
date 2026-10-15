@@ -7,6 +7,7 @@ import { brl, daysInMonth, monthLong, monthShort, weekday } from "@shared/format
 import { api, useAction, useCtx } from "@/lib/api";
 import { useApp } from "@/lib/app";
 import { Bar, btnPrimary, btnSecondary, card, ErrorNote, h2, I, LOGO_BG, MarkerLegend, nunito, Skeleton, TONE } from "@/ui";
+import { IncomeManagement } from "./inicio/IncomeManagement";
 
 export default function Inicio() {
   const { bp, go } = useApp();
@@ -43,6 +44,12 @@ export default function Inicio() {
           <button onClick={() => go("onb", "upload")} style={btnSecondary(48)}>
             Enviar extratos
           </button>
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8, marginTop: 8 }}>
+          <IncomeManagement incomes={ctx.data.incomes} />
+          <span style={{ maxWidth: 380, fontSize: 12, color: "var(--ink3)", lineHeight: 1.45 }}>
+            Você também pode registrar suas rendas manualmente para compor a previsão do mês.
+          </span>
         </div>
       </div>
     );
@@ -121,13 +128,20 @@ export default function Inicio() {
               <div style={{ fontSize: 13, color: "var(--ink2)", marginTop: 6 }}>Você já cobriu {brl(s.covered)} cortando, adiando e parcelando.</div>
             </div>
           )}
-          <div role="img" aria-label={`Renda prevista ${brl(s.income)} contra compromissos de ${brl(s.monthTotal)}`} style={{ display: "grid", gap: 10 }}>
+          <div role="group" aria-label={`Renda prevista ${brl(s.income)} contra compromissos de ${brl(s.monthTotal)}`} style={{ display: "grid", gap: 10 }}>
             {[
               ["Renda prevista", s.income, "var(--brand)"],
               ["Compromissos", s.monthTotal, "var(--accent)"],
             ].map(([k, v, c]) => (
               <div key={k as string} style={{ display: "grid", gridTemplateColumns: "110px minmax(0,1fr) auto", gap: 10, alignItems: "center", fontSize: 14 }}>
-                <span style={{ color: "var(--ink2)" }}>{k}</span>
+                <span style={{ color: "var(--ink2)" }}>
+                  {k === "Renda prevista" ? (
+                    <span style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 4 }}>
+                      <span>{k}</span>
+                      <IncomeManagement incomes={ctx.data.incomes} compact />
+                    </span>
+                  ) : k}
+                </span>
                 <div style={{ height: 12, borderRadius: 6, background: "var(--surface2)" }}>
                   <div style={{ width: `${((v as number) / mx) * 100}%`, height: "100%", borderRadius: 6, background: c as string }} />
                 </div>

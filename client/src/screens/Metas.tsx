@@ -6,6 +6,7 @@ import { hasFeature } from "@shared/plans";
 import { api, useAction, useCtx } from "@/lib/api";
 import { useApp } from "@/lib/app";
 import { Bar, btnPrimary, card, I, input, labelCol, nunito, Paywall, PillTabs, Segmented } from "@/ui";
+import { RegistrarValorGuardado } from "./metas/RegistrarValorGuardado";
 
 const TABS = [
   { id: "lista", label: "Minhas metas", icon: "flag" },
@@ -60,11 +61,14 @@ export default function Metas() {
                   </span>
                   <span style={{ color: "var(--good-t)", fontWeight: 800 }}>{Math.round(g.pct * 100)}% guardado</span>
                 </div>
-                {g.isGroup && (
-                  <button onClick={() => go("metas", "grupo")} style={{ minHeight: 44, borderRadius: 12, border: "1px solid var(--line)", background: "var(--surface)", fontWeight: 800 }}>
-                    Ver participantes
-                  </button>
-                )}
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                  {(!g.isGroup || hasFeature(plan, "metas_grupo")) && <RegistrarValorGuardado goalId={g.id} goalName={g.name} saved={g.saved} />}
+                  {g.isGroup && (
+                    <button onClick={() => go("metas", "grupo")} style={{ minHeight: 44, borderRadius: 12, border: "1px solid var(--line)", background: "var(--surface)", fontWeight: 800 }}>
+                      Ver participantes
+                    </button>
+                  )}
+                </div>
               </article>
             ))}
             <button onClick={() => go("metas", "criar")} style={{ minHeight: 200, borderRadius: 22, border: "2px dashed var(--line)", background: "none", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8, color: "var(--brand-t)", fontWeight: 800, fontSize: 16 }}>
@@ -217,6 +221,7 @@ function Grupo({ ctx }: { ctx: Context }) {
             <div key={m.id} style={{ width: `${(m.saved / g.target) * 100}%`, background: COLORS[k % COLORS.length] }} />
           ))}
         </div>
+        <RegistrarValorGuardado goalId={g.id} goalName={g.name} saved={v.saved} />
         <div style={{ display: "flex", gap: 16, fontSize: 13, color: "var(--ink2)" }}>
           {members.map((m, k) => (
             <span key={m.id} style={{ display: "flex", gap: 6, alignItems: "center" }}>

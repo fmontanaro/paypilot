@@ -81,7 +81,7 @@ export interface Context {
 }
 
 export function monthlyIncome(incomes: Income[]): number {
-  return sum(incomes.filter((i) => i.recurring).map((i) => i.amount));
+  return sum(incomes.filter((i) => i.recurring).map((i) => Math.round(i.amount * 100))) / 100;
 }
 
 export function makeAccountLabel(accounts: Account[]) {
@@ -130,6 +130,6 @@ export function buildContext(data: AppData, decisionsOverride?: Record<string, S
     phase: ph.current,
     accountLabel: label,
     accountShort: short,
-    hasData: data.transactions.length > 0 || data.commitments.length > 0,
+    hasData: data.transactions.length > 0 || data.commitments.length > 0 || data.incomes.length > 0,
   };
 }
