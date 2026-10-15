@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { api, useAction } from "@/lib/api";
 import { useApp } from "@/lib/app";
 import { brl } from "@shared/format";
@@ -13,14 +14,23 @@ type ContributionResult = {
 
 export function RegistrarValorGuardado({ goalId, goalName, saved }: { goalId: string; goalName: string; saved: number }) {
   const { toast } = useApp();
+  const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState("");
   const [attempted, setAttempted] = useState(false);
   const fieldRef = useRef<HTMLInputElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const submittingRef = useRef(false);
-  const contribution = useAction<number, ContributionResult>((amount) =>
-    api<ContributionResult>("POST", `/api/goals/${goalId}/contributions`, { amount }),
+  const idempotencyRef = useRef<{ amount: number; key: string } | null>(null);
+  const contribution = useAction<{ amount: number; idempotencyKey: string }, ContributionResult>(
+    ({ amount, idempotencyKey }) =>
+      api<ContributionResult>("POST", `/api/goals/${goalId}/contributions`, { amount, idempotencyKey }),
+    {
+      onDone: () => {
+        void queryClient.invalidateQueries({ queryKey: ["goal-history", goalId] });
+        idempotencyRef.current = null;
+      },
+    },
   );
   const result = validateAmount(draft);
   const errorId = `contribution-error-${goalId}`;
@@ -72,7 +82,13 @@ export function RegistrarValorGuardado({ goalId, goalName, saved }: { goalId: st
     }
     submittingRef.current = true;
     try {
-      const response = await contribution.mutateAsync(result.amount);
+      if (!idempotencyRef.current || idempotencyRef.current.amount !== result.amount) {
+        idempotencyRef.current = { amount: result.amount, key: crypto.randomUUID() };
+      }
+      const response = await contribution.mutateAsync({
+        amount: result.amount,
+        idempotencyKey: idempotencyRef.current.key,
+      });
       toast(`${brl(response.amount, true)} registrados para “${goalName}”`);
       resetAndClose();
     } catch {
@@ -146,7 +162,12 @@ export function RegistrarValorGuardado({ goalId, goalName, saved }: { goalId: st
                 inputMode="decimal"
                 autoComplete="off"
                 value={draft}
-                onChange={(event) => setDraft(formatDraft(event.target.value))}
+                onChange={(event) => {
+                  const next = formatDraft(event.target.value);
+                  const nextAmount = validateAmount(next).amount;
+                  if (idempotencyRef.current && nextAmount !== idempotencyRef.current.amount) idempotencyRef.current = null;
+                  setDraft(next);
+                }}
                 onBlur={() => {
                   setAttempted(true);
                   if (result.amount !== null) setDraft(result.amount.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }));

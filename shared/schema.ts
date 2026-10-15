@@ -342,6 +342,7 @@ export const goals = pgTable("goals", {
   saved: money("saved").notNull().default(0),
   months: integer("months").notNull(),
   startMonth: varchar("start_month").notNull(),
+  historyStartedAt: timestamp("history_started_at"),
   isGroup: boolean("is_group").notNull().default(false),
   splitMode: varchar("split_mode").notNull().default("prop"), // igual | prop
   myPrivacy: varchar("my_privacy").notNull().default("contrib"), // contrib | cats
@@ -368,6 +369,30 @@ export const goalInvites = pgTable("goal_invites", {
   contact: text("contact").notNull(),
   createdAt: createdAt(),
 });
+
+/** Histórico append-only; saldos anteriores são capturados na primeira consulta/escrita. */
+export const goalContributions = pgTable("goal_contributions", {
+  id: id(),
+  sequence: integer("sequence").generatedAlwaysAsIdentity(),
+  userId: userRef(),
+  goalId: varchar("goal_id").notNull().references(() => goals.id, { onDelete: "cascade" }),
+  memberId: varchar("member_id").references(() => goalMembers.id, { onDelete: "set null" }),
+  actorId: varchar("actor_id").references(() => users.id, { onDelete: "set null" }),
+  actorName: text("actor_name"),
+  participantName: text("participant_name").notNull(),
+  kind: varchar("kind").$type<"initial" | "contribution" | "reversal" | "correction">().notNull(),
+  amount: money("amount").notNull(),
+  reversesId: varchar("reverses_id"),
+  replacesId: varchar("replaces_id"),
+  reason: text("reason"),
+  idempotencyKey: varchar("idempotency_key"),
+  requestFingerprint: text("request_fingerprint"),
+  createdAt: createdAt(),
+}, (t) => [
+  index("goal_contributions_history_idx").on(t.userId, t.goalId, t.createdAt),
+  uniqueIndex("goal_contributions_request_idx").on(t.goalId, t.idempotencyKey),
+  uniqueIndex("goal_contributions_reversal_idx").on(t.reversesId),
+]);
 
 export const chatMessages = pgTable("chat_messages", {
   id: id(),

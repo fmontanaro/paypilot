@@ -7,6 +7,7 @@ import { api, useAction, useCtx } from "@/lib/api";
 import { useApp } from "@/lib/app";
 import { Bar, btnPrimary, card, I, input, labelCol, nunito, Paywall, PillTabs, Segmented } from "@/ui";
 import { RegistrarValorGuardado } from "./metas/RegistrarValorGuardado";
+import { HistoricoMeta } from "./metas/HistoricoMeta";
 import { EditarMeta } from "./metas/EditarMeta";
 
 const TABS = [
@@ -64,6 +65,7 @@ export default function Metas() {
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                   {(!g.isGroup || hasFeature(plan, "metas_grupo")) && <RegistrarValorGuardado goalId={g.id} goalName={g.name} saved={g.saved} />}
+                  {(!g.isGroup || hasFeature(plan, "metas_grupo")) && <HistoricoMeta goalId={g.id} />}
                   {(() => {
                     const source = ctx.data.goals.find((goal) => goal.id === g.id);
                     const canEdit = source?.userId === ctx.data.user.id && (!g.isGroup || hasFeature(plan, "metas_grupo"));
@@ -228,6 +230,7 @@ function Grupo({ ctx }: { ctx: Context }) {
           ))}
         </div>
         <RegistrarValorGuardado goalId={g.id} goalName={g.name} saved={v.saved} />
+        <HistoricoMeta goalId={g.id} />
         <div style={{ display: "flex", gap: 16, fontSize: 13, color: "var(--ink2)" }}>
           {members.map((m, k) => (
             <span key={m.id} style={{ display: "flex", gap: 6, alignItems: "center" }}>

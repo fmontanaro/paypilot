@@ -28,7 +28,9 @@ export function goalView(g: Goal, members: GoalMember[], today: Date): GoalView 
   const firstContribution = Math.max(startYear * 12 + startMonth - 1, today.getFullYear() * 12 + today.getMonth());
   const monthsLeft = Math.max(1, until.getFullYear() * 12 + until.getMonth() - firstContribution + 1);
   const mine = members.filter((m) => m.goalId === g.id);
-  const saved = g.isGroup && mine.length ? sum(mine.map((m) => m.saved)) : g.saved;
+  // O total da meta é mantido transacionalmente pelo histórico. Pode incluir
+  // saldo legado sem participante identificado, que não deve desaparecer.
+  const saved = g.isGroup && !g.historyStartedAt && mine.length ? sum(mine.map((m) => m.saved)) : g.saved;
   return {
     id: g.id,
     name: g.name,

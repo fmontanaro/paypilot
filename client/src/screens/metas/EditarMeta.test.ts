@@ -13,7 +13,7 @@ vi.mock("@/lib/app", () => ({ useApp: () => ({ toast, bp: "desktop" }) }));
 const goal: Goal = {
   id: "edit-ui", userId: "owner", name: "Viagem", icon: "flight", target: 2400.29,
   saved: 400.29, months: 6, startMonth: "2026-01", isGroup: false,
-  splitMode: "prop", myPrivacy: "contrib", sources: ["sub"], createdAt: new Date(2026, 0, 1),
+  splitMode: "prop", myPrivacy: "contrib", sources: ["sub"], createdAt: new Date(2026, 0, 1), historyStartedAt: null,
 };
 let container: HTMLDivElement;
 let root: Root;

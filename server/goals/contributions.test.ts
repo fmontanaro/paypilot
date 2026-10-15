@@ -106,7 +106,7 @@ describe("valores guardados em metas", () => {
     await recordGoalContribution(connectionDb, pilot, goal.id, 50);
     const members = await database.select().from(S.goalMembers).where(eq(S.goalMembers.goalId, goal.id));
     expect(members).toHaveLength(1);
-    expect(members[0]).toMatchObject({ isMe: true, saved: 350 });
+    expect(members[0]).toMatchObject({ isMe: true, saved: 50 });
     expect(goalView(await getGoal(goal.id), members, new Date()).saved).toBe(350);
   });
 

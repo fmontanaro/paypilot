@@ -79,7 +79,7 @@ Todas as rotas ficam sob `/api`, falam JSON e exigem sessão, exceto cadastro, l
 | Rendas | `GET /incomes`, `POST /incomes`, `PATCH /incomes/:id`, `DELETE /incomes/:id` (todos os planos; somente rendas incluídas na previsão mensal compõem a renda prevista) |
 | Gastos | `POST /transactions`, `PATCH /transactions/:id`, `POST /budgets`, `PATCH /budgets/:id`, `PATCH /leaks/:id`, `POST /subscriptions/:id/checkin` |
 | Plano | `PUT /priorities/:commitmentId`, `PUT /rollover/choice` |
-| Metas | `POST /goals`, `POST /goals/:id/contributions`, `POST /goals/:id/invites`, `PATCH /goals/:id` |
+| Metas | `POST /goals`, `GET /goals/:id/contributions`, `POST /goals/:id/contributions` (com chave de reenvio), `POST /goals/:id/contributions/:entryId/reverse` (confirmação, motivo e valor substituto opcional), `POST /goals/:id/invites`, `PATCH /goals/:id` |
 | Contas | `POST /openfinance/connect`, `POST /connections/:id/sync`, `POST /connections/:id/renew`, `DELETE /connections/:id`, `POST /imports`, `POST /imports/sample`, `PATCH /me` (lembrete), `POST /accounts/:id/entries`, `POST /accounts/:id/statement`, `POST /personal-debts/:id/payments`, `PATCH /category-rules/:id` |
 | Assistente | `GET /assistant/messages`, `POST /assistant/messages`, `POST /assistant/actions` |
 | WhatsApp | `GET /whatsapp`, `POST /whatsapp/link`, `POST /whatsapp/verify`, `PATCH /whatsapp`, `DELETE /whatsapp`, `GET|POST /whatsapp/webhook` |
@@ -108,7 +108,7 @@ Todas as tabelas de dados pessoais têm `user_id` com `ON DELETE CASCADE`: apaga
 | `snapshots` | Foto mensal da dívida total e da data prevista de quitação, para mostrar a evolução. |
 | `personal_debts`, `personal_debt_payments` | Dívidas com pessoas e o histórico de pagamentos. |
 | `expense_groups`, `group_obligations` | Grupos de despesa (centros de custo) e obrigações fixas. |
-| `goals`, `goal_members`, `goal_invites` | Metas individuais e em grupo, com a privacidade de cada participante. |
+| `goals`, `goal_members`, `goal_invites`, `goal_contributions` | Metas e histórico manual auditável: saldo inicial, registros e estornos/correções sem apagar originais. |
 | `chat_messages` | Histórico do assistente (texto e cards ricos). |
 | `whatsapp_links` | Número vinculado e alertas escolhidos. |
 

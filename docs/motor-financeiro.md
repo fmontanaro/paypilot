@@ -11,6 +11,18 @@ Princípios (da spec):
 
 Valores em reais, taxas em % ao mês. Arredondamento só na exibição (`shared/format.ts`).
 
+### Registros manuais de metas
+
+Registros e estornos usam centavos inteiros para atualizar o total guardado
+e a participação própria na mesma transação. O total da meta (`goals.saved`)
+é a fonte do progresso; saldos legados sem participante identificado não são
+descartados. Na primeira consulta ou escrita, cada saldo anterior vira saldo
+inicial, sem inventar data ou responsável pelo registro antigo. Divergências
+entre o total legado e os participantes ficam explícitas em um saldo inicial
+sem participante, que não pode ser alterado como se fosse de outra pessoa.
+Correções mantêm o original, registram seu estorno e um novo valor; estornos
+e correções exigem confirmação, motivo e chave de reenvio. Não movimentam dinheiro.
+
 ## Matemática básica (`finance.ts`)
 
 - **Parcela (PMT):** `P = V × i / (1 − (1 + i)^−n)`; com `i = 0`, `P = V / n`.

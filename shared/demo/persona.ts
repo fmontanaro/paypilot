@@ -332,8 +332,8 @@ export function buildPersona(today: Date, uid: string): PersonaRows {
   const startKey = monthKey(today);
   const monthsToDec = 12 - m; // até dezembro deste ano
   const goals: Goal[] = [
-    { id: p("goal_reveillon"), userId, name: "Réveillon na praia", icon: "celebration", target: 5000, saved: 1800, months: Math.max(2, monthsToDec), startMonth: startKey, isGroup: false, splitMode: "prop", myPrivacy: "contrib", sources: [], createdAt: created },
-    { id: p("goal_viagem"), userId, name: "Viagem do casal", icon: "flight", target: 30000, saved: 4500, months: 12, startMonth: monthKey(new Date(y, m - 1, 1)), isGroup: true, splitMode: "prop", myPrivacy: "contrib", sources: [], createdAt: created },
+    { id: p("goal_reveillon"), userId, name: "Réveillon na praia", icon: "celebration", target: 5000, saved: 1800, months: Math.max(2, monthsToDec), startMonth: startKey, isGroup: false, splitMode: "prop", myPrivacy: "contrib", sources: [], createdAt: created, historyStartedAt: null },
+    { id: p("goal_viagem"), userId, name: "Viagem do casal", icon: "flight", target: 30000, saved: 4500, months: 12, startMonth: monthKey(new Date(y, m - 1, 1)), isGroup: true, splitMode: "prop", myPrivacy: "contrib", sources: [], createdAt: created, historyStartedAt: null },
   ];
   const goalMembers: GoalMember[] = [
     { id: p("gm_marcos"), userId, goalId: p("goal_viagem"), name: "Marcos", isMe: true, income: 34000, saved: 2700, privacy: "contrib" },

@@ -16,7 +16,7 @@ import { afterImport, importFile } from "./ingestion";
 import { sampleFiles } from "./seed/samples";
 import { BANKS, provider } from "./openfinance";
 import { canUseSandbox, disconnectSandboxConnection, REAL_OPEN_FINANCE_UNAVAILABLE } from "./openfinance/disconnect";
-import { contributionInput, GoalContributionError, recordGoalContribution } from "./goals/contributions";
+import { contributionRequest, GoalContributionError, listGoalContributions, recordGoalContribution, reverseGoalContribution } from "./goals/contributions";
 import { createIncome, deleteIncome, IncomeError, listIncomes, updateIncome } from "./incomes";
 import { ChatLimitError, handleAction, handleMessage, history } from "./assistant";
 import { getLink, onIncoming, startLink, verifyLink, VERIFY_TOKEN } from "./whatsapp";
@@ -128,8 +128,9 @@ export function registerRoutes(app: Express) {
     auth,
     wrap(async (req, res) => {
       const data = await loadAppData(uid(req));
+      const goalContributions = await db().select().from(S.goalContributions).where(eq(S.goalContributions.userId, uid(req)));
       res.setHeader("Content-Disposition", `attachment; filename="paypilot-dados-${data.today}.json"`);
-      res.json({ exportadoEm: new Date().toISOString(), ...data });
+      res.json({ exportadoEm: new Date().toISOString(), ...data, goalContributions });
     }),
   );
 
@@ -340,11 +341,19 @@ export function registerRoutes(app: Express) {
     auth,
     requirePlan("metas"),
     wrap(async (req, res) => {
-      const { amount } = contributionInput.parse(req.body);
-      const result = await recordGoalContribution(db(), req.user!, req.params.id, amount);
+      const { amount, idempotencyKey } = contributionRequest.parse(req.body);
+      const result = await recordGoalContribution(db(), req.user!, req.params.id, amount, idempotencyKey);
       res.status(201).json(result);
     }),
   );
+
+  app.get("/api/goals/:id/contributions", auth, requirePlan("metas"), wrap(async (req, res) => {
+    res.json(await listGoalContributions(db(), req.user!, req.params.id));
+  }));
+
+  app.post("/api/goals/:id/contributions/:entryId/reverse", auth, requirePlan("metas"), wrap(async (req, res) => {
+    res.json(await reverseGoalContribution(db(), req.user!, req.params.id, req.params.entryId, req.body));
+  }));
 
   app.patch(
     "/api/goals/:id",
