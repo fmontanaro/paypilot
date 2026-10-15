@@ -22,6 +22,13 @@
       "when": 1792043762026,
       "tag": "0002_smooth_lila_cheney",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1792071828731,
+      "tag": "0003_goal_invite_accounts",
+      "breakpoints": true
     }
   ]
 }

@@ -6,6 +6,7 @@ import type { AppData } from "@shared/engine";
 import { isoDate, monthKey } from "@shared/format";
 import { db } from "./db";
 import { applyComplimentaryPlan } from "./entitlements";
+import { loadVisibleGoals } from "./goals/sharing";
 
 export function publicUser(u: User): PublicUser {
   const { passwordHash: _ph, ...rest } = applyComplimentaryPlan(u);
@@ -58,8 +59,7 @@ export async function loadAppData(userId: string): Promise<AppData> {
     personalDebtPayments,
     groups,
     obligations,
-    goals,
-    goalMembers,
+    visibleGoals,
     goalInvites,
     wa,
     chat,
@@ -82,8 +82,7 @@ export async function loadAppData(userId: string): Promise<AppData> {
     d.select().from(S.personalDebtPayments).where(eq(S.personalDebtPayments.userId, userId)).orderBy(desc(S.personalDebtPayments.date)),
     d.select().from(S.expenseGroups).where(eq(S.expenseGroups.userId, userId)),
     d.select().from(S.groupObligations).where(eq(S.groupObligations.userId, userId)),
-    d.select().from(S.goals).where(eq(S.goals.userId, userId)).orderBy(S.goals.createdAt),
-    d.select().from(S.goalMembers).where(eq(S.goalMembers.userId, userId)),
+    loadVisibleGoals(d, userId),
     d.select().from(S.goalInvites).where(eq(S.goalInvites.userId, userId)),
     d.select().from(S.whatsappLinks).where(eq(S.whatsappLinks.userId, userId)),
     d
@@ -113,9 +112,8 @@ export async function loadAppData(userId: string): Promise<AppData> {
     personalDebtPayments,
     groups,
     obligations,
-    goals,
-    goalMembers,
-    goalInvites,
+    ...visibleGoals,
+    goalInvites: goalInvites.map((i) => ({ ...i, tokenHash: null, acceptedBy: null })),
     whatsapp,
     chatCount: chat[0]?.n ?? 0,
   };

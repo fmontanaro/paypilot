@@ -79,7 +79,7 @@ Todas as rotas ficam sob `/api`, falam JSON e exigem sessão, exceto cadastro, l
 | Rendas | `GET /incomes`, `POST /incomes`, `PATCH /incomes/:id`, `DELETE /incomes/:id` (todos os planos; somente rendas incluídas na previsão mensal compõem a renda prevista) |
 | Gastos | `POST /transactions`, `PATCH /transactions/:id`, `POST /budgets`, `PATCH /budgets/:id`, `PATCH /leaks/:id`, `POST /subscriptions/:id/checkin` |
 | Plano | `PUT /priorities/:commitmentId`, `PUT /rollover/choice` |
-| Metas | `POST /goals`, `GET /goals/:id/contributions`, `POST /goals/:id/contributions` (com chave de reenvio), `POST /goals/:id/contributions/:entryId/reverse` (confirmação, motivo e valor substituto opcional), `POST /goals/:id/invites`, `PATCH /goals/:id` |
+| Metas | `POST /goals`, `GET /goals/:id/contributions`, `POST /goals/:id/contributions` (com chave de reenvio), `POST /goals/:id/contributions/:entryId/reverse` (confirmação, motivo e valor substituto opcional), `POST /goals/:id/invites`, `POST /goal-invites/accept` (código), `PATCH /goals/:id` |
 | Contas | `POST /openfinance/connect`, `POST /connections/:id/sync`, `POST /connections/:id/renew`, `DELETE /connections/:id`, `POST /imports`, `POST /imports/sample`, `PATCH /me` (lembrete), `POST /accounts/:id/entries`, `POST /accounts/:id/statement`, `POST /personal-debts/:id/payments`, `PATCH /category-rules/:id` |
 | Assistente | `GET /assistant/messages`, `POST /assistant/messages`, `POST /assistant/actions` |
 | WhatsApp | `GET /whatsapp`, `POST /whatsapp/link`, `POST /whatsapp/verify`, `PATCH /whatsapp`, `DELETE /whatsapp`, `GET|POST /whatsapp/webhook` |
@@ -118,11 +118,41 @@ Todas as tabelas de dados pessoais têm `user_id` com `ON DELETE CASCADE`: apaga
 
 A cobrança pelas lojas (Apple e Google) ou pelo site ainda não existe. Enquanto isso, `PUT /me/plan` troca o plano direto quando `ALLOW_PLAN_SWITCH=true`; em produção essa variável fica desligada e a troca responde "assinatura em breve".
 
+### Convites de metas e limites de compartilhamento
+
+O proprietário Pilot gera um código aleatório de 256 bits, válido por sete dias.
+Somente o hash fica no banco; o código aparece uma vez para compartilhamento
+manual, sem prometer envio de e-mail ou SMS. O aceite exige sessão autenticada,
+posse do código e contato normalizado correspondente à conta. Contatos sozinhos
+não comprovam identidade, pois o cadastro atual não os verifica. Convites antigos
+sem código não dão acesso: devem ser emitidos novamente.
+
+Aceitar é idempotente e vincula uma nova participação em zero à conta, sem
+reivindicar participantes legados pelo nome. Uma meta individual passa a ser
+compartilhada apenas no aceite, preservando autoria e saldo existentes. O
+proprietário mantém a administração dos detalhes; convidados aceitos podem
+registrar e corrigir a própria participação em qualquer plano, sem assinatura
+ou cobrança automática. A cobrança familiar permanece uma decisão de produto.
+
+O snapshot inclui metas próprias e metas com participação autenticada. A projeção
+compartilhada remove fontes privadas e renda e limita a visibilidade a detalhes da
+meta, nomes, valores e histórico manual. Categorias, transações, contas e renda
+pessoal não são compartilhadas. Motivos de correções só aparecem para o autor.
+Não se calcula uma divisão proporcional no cliente com renda oculta.
+O histórico é mantido no contexto da meta, com autoria separada, e a autorização
+de correção verifica essa autoria mesmo para o proprietário. A exportação inclui
+somente os registros de autoria da conta que a solicitou.
+
+As alterações de estrutura estão na migração aditiva `0003_goal_invite_accounts`.
+PGlite a aplica localmente; Postgres não executa DDL ao iniciar o servidor.
+Revisar e aplicar a mudança de estrutura pelo processo do ambiente antes de usar
+as novas rotas, sem executar migrações históricas automaticamente no merge.
+
 ## Segurança e LGPD
 
 - Senhas com bcrypt; o PayPilot nunca recebe nem guarda senha de banco (Open Finance é por consentimento no app do banco).
 - Cookie de sessão `httpOnly`, `secure` em produção, `sameSite=lax`.
-- Toda consulta filtra por `user_id` da sessão (`server/storage.ts`).
+- Dados pessoais filtram por `user_id` da sessão (`server/storage.ts`); metas compartilhadas exigem participação vinculada à conta e usam projeção restrita.
 - Exportar dados (`GET /me/export`) e apagar tudo (`DELETE /me`, em cascata).
 - Consentimento explícito por fonte de dados, com validade e renovação visíveis em Contas.
 - O assistente recusa conversa fora das finanças do usuário (exigência da Meta para o WhatsApp desde 15/01/2026) e nunca cita produto, ativo ou instituição para investir.

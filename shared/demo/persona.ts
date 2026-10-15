@@ -336,8 +336,8 @@ export function buildPersona(today: Date, uid: string): PersonaRows {
     { id: p("goal_viagem"), userId, name: "Viagem do casal", icon: "flight", target: 30000, saved: 4500, months: 12, startMonth: monthKey(new Date(y, m - 1, 1)), isGroup: true, splitMode: "prop", myPrivacy: "contrib", sources: [], createdAt: created, historyStartedAt: null },
   ];
   const goalMembers: GoalMember[] = [
-    { id: p("gm_marcos"), userId, goalId: p("goal_viagem"), name: "Marcos", isMe: true, income: 34000, saved: 2700, privacy: "contrib" },
-    { id: p("gm_ana"), userId, goalId: p("goal_viagem"), name: "Ana", isMe: false, income: 18300, saved: 1800, privacy: "contrib" },
+    { id: p("gm_marcos"), userId, accountId: null, goalId: p("goal_viagem"), name: "Marcos", isMe: true, income: 34000, saved: 2700, privacy: "contrib" },
+    { id: p("gm_ana"), userId, accountId: null, goalId: p("goal_viagem"), name: "Ana", isMe: false, income: 18300, saved: 1800, privacy: "contrib" },
   ];
 
   return { incomes, connections, accounts, imports, transactions, rules, budgets, subscriptions, leaks, commitments, personalDebts, personalDebtPayments, groups, obligations, goals, goalMembers, previousDebtExtra: 2310, debtBudget: 5500 };

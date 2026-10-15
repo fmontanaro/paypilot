@@ -21,6 +21,7 @@ import { createIncome, deleteIncome, IncomeError, listIncomes, updateIncome } fr
 import { ChatLimitError, handleAction, handleMessage, history } from "./assistant";
 import { getLink, onIncoming, startLink, verifyLink, VERIFY_TOKEN } from "./whatsapp";
 import { GoalEditError, updateGoal } from "./goals/edit";
+import { acceptGoalInvite, createGoalInvite, GoalSharingError } from "./goals/sharing";
 
 type H = (req: Request, res: Response) => Promise<unknown>;
 /** Encapsula erros: zod vira 400, o resto vira 500 com mensagem simples. */
@@ -28,7 +29,7 @@ const wrap = (h: H) => (req: Request, res: Response, next: NextFunction) =>
   h(req, res).catch((e) => {
     if (e instanceof z.ZodError) return res.status(400).json({ error: e.issues[0]?.message || "Dados inválidos." });
     if (e instanceof ChatLimitError) return res.status(402).json({ error: e.message, need: "plus" });
-    if (e instanceof HttpError || e instanceof GoalContributionError || e instanceof GoalEditError || e instanceof IncomeError) return res.status(e.status).json({ error: e.message });
+    if (e instanceof HttpError || e instanceof GoalSharingError || e instanceof GoalContributionError || e instanceof GoalEditError || e instanceof IncomeError) return res.status(e.status).json({ error: e.message });
     next(e);
   });
 
@@ -128,7 +129,7 @@ export function registerRoutes(app: Express) {
     auth,
     wrap(async (req, res) => {
       const data = await loadAppData(uid(req));
-      const goalContributions = await db().select().from(S.goalContributions).where(eq(S.goalContributions.userId, uid(req)));
+      const goalContributions = await db().select().from(S.goalContributions).where(eq(S.goalContributions.actorId, uid(req)));
       res.setHeader("Content-Disposition", `attachment; filename="paypilot-dados-${data.today}.json"`);
       res.json({ exportadoEm: new Date().toISOString(), ...data, goalContributions });
     }),
@@ -339,7 +340,6 @@ export function registerRoutes(app: Express) {
   app.post(
     "/api/goals/:id/contributions",
     auth,
-    requirePlan("metas"),
     wrap(async (req, res) => {
       const { amount, idempotencyKey } = contributionRequest.parse(req.body);
       const result = await recordGoalContribution(db(), req.user!, req.params.id, amount, idempotencyKey);
@@ -347,11 +347,11 @@ export function registerRoutes(app: Express) {
     }),
   );
 
-  app.get("/api/goals/:id/contributions", auth, requirePlan("metas"), wrap(async (req, res) => {
+  app.get("/api/goals/:id/contributions", auth, wrap(async (req, res) => {
     res.json(await listGoalContributions(db(), req.user!, req.params.id));
   }));
 
-  app.post("/api/goals/:id/contributions/:entryId/reverse", auth, requirePlan("metas"), wrap(async (req, res) => {
+  app.post("/api/goals/:id/contributions/:entryId/reverse", auth, wrap(async (req, res) => {
     res.json(await reverseGoalContribution(db(), req.user!, req.params.id, req.params.entryId, req.body));
   }));
 
@@ -369,12 +369,12 @@ export function registerRoutes(app: Express) {
     auth,
     requirePlan("metas_grupo"),
     wrap(async (req, res) => {
-      const b = z.object({ contact: z.string().trim().min(5).max(120) }).parse(req.body);
-      await owned(S.goals, req.params.id, uid(req));
-      const [i] = await db().insert(S.goalInvites).values({ userId: uid(req), goalId: req.params.id, contact: b.contact }).returning();
-      res.status(201).json(i);
+      res.status(201).json(await createGoalInvite(db(), req.user!, req.params.id, req.body));
     }),
   );
+  app.post("/api/goal-invites/accept", auth, wrap(async (req, res) => {
+    res.json(await acceptGoalInvite(db(), req.user!, req.body));
+  }));
 
   // ---------- Contas ----------
   app.get("/api/openfinance/banks", auth, (_req, res) => res.json(BANKS));

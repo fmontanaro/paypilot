@@ -7,7 +7,6 @@ import { btnPrimary, btnSecondary, CloseBtn, I, input, labelCol, Sheet } from "@
 import { formatDraft, validateAmount } from "./amount";
 
 type ContributionResult = {
-  goal: unknown;
   amount: number;
   saved: number;
 };

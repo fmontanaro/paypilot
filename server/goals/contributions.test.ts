@@ -34,7 +34,7 @@ describe("valores guardados em metas", () => {
   it("soma ao valor anterior e persiste sem alterar contas ou lançamentos", async () => {
     const goal = await fixture(1000);
     const result = await recordGoalContribution(connectionDb, owner, goal.id, 500);
-    expect(result).toMatchObject({ amount: 500, saved: 1500, goal: { id: goal.id, saved: 1500 } });
+    expect(result).toMatchObject({ amount: 500, saved: 1500 });
     expect((await getGoal(goal.id)).saved).toBe(1500);
     const view = goalView(await getGoal(goal.id), [], new Date(2026, 9, 15));
     expect(view.pct).toBe(0.75);

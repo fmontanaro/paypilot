@@ -353,6 +353,8 @@ export const goals = pgTable("goals", {
 export const goalMembers = pgTable("goal_members", {
   id: id(),
   userId: userRef(),
+  /** Conta autenticada; nulo nos participantes legados informados pelo proprietário. */
+  accountId: varchar("account_id").references(() => users.id, { onDelete: "set null" }),
   goalId: varchar("goal_id").notNull().references(() => goals.id, { onDelete: "cascade" }),
   name: text("name").notNull(),
   isMe: boolean("is_me").notNull().default(false),
@@ -360,15 +362,19 @@ export const goalMembers = pgTable("goal_members", {
   income: money("income"),
   saved: money("saved").notNull().default(0),
   privacy: varchar("privacy").notNull().default("contrib"),
-});
+}, (t) => [uniqueIndex("goal_members_account_idx").on(t.goalId, t.accountId)]);
 
 export const goalInvites = pgTable("goal_invites", {
   id: id(),
   userId: userRef(),
   goalId: varchar("goal_id").notNull().references(() => goals.id, { onDelete: "cascade" }),
   contact: text("contact").notNull(),
+  tokenHash: varchar("token_hash"),
+  expiresAt: timestamp("expires_at"),
+  acceptedBy: varchar("accepted_by").references(() => users.id, { onDelete: "set null" }),
+  acceptedAt: timestamp("accepted_at"),
   createdAt: createdAt(),
-});
+}, (t) => [uniqueIndex("goal_invites_token_idx").on(t.tokenHash)]);
 
 /** Histórico append-only; saldos anteriores são capturados na primeira consulta/escrita. */
 export const goalContributions = pgTable("goal_contributions", {

@@ -36,7 +36,7 @@ Itens da spec que não são código e seguem pendentes:
 | Otimizador de rolagem | 3 · Diferenciar | Pilot | Pronto | — |
 | Simulador de renegociação | 3 · Diferenciar | Pilot | Pronto | — |
 | Metas | 2 · Conectar | Plus | Pronto | — |
-| Metas em grupo | 4 · Expandir | Pilot | Parcial | Convite registrado; falta o aceite pelo outro participante e a cobrança por participante (ponto em aberto da spec). |
+| Metas em grupo | 4 · Expandir | Pilot (proprietário) | Parcial | Convite com código e aceite autenticado, participação própria e histórico prontos. Cobrança por participante segue em aberto. |
 | Assistente no app | 1 · MVP | Grátis (limitado), Plus/Pilot | Pronto | Interpretação por regras em português; IA opcional para pedidos livres, áudio e foto. |
 | Assistente no WhatsApp | 2 · Conectar | Plus | Parcial | Vinculação, alertas e webhook prontos; falta conta na Meta (tokens) e aprovação de templates. |
 | Planos e assinatura | 2 · Conectar | — | Parcial | Bloqueios e paywall prontos. Falta cobrança pelas lojas ou pelo site; preços a definir no teste de preço. |
