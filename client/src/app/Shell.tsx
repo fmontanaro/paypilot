@@ -220,7 +220,16 @@ export default function Shell({ children }: { children: ReactNode }) {
               </div>
             </header>
           )}
-          <div style={contentBox}>{children}</div>
+          <div style={contentBox}>
+            {!user?.isDemo && ctx && (ctx.data.connections.some((c) => c.provider === "sandbox") || ctx.data.accounts.some((a) => a.source === "simulacao")) && (
+              <div role="status" style={{ padding: 16, marginBottom: 16, borderRadius: 16, background: "var(--warn-soft)", color: "var(--warn-t)", lineHeight: 1.5 }}>
+                <strong>Atenção: há dados fictícios de simulação nos seus totais.</strong>
+                <div>Nenhum banco real foi conectado. Desconectar mantém o histórico de exemplo; não use esses saldos como suas finanças reais.</div>
+                <button onClick={() => go("contas", "conectadas")} style={{ background: "none", border: 0, color: "inherit", textDecoration: "underline", padding: "10px 0", fontWeight: 800 }}>Gerenciar simulações</button>
+              </div>
+            )}
+            {children}
+          </div>
         </main>
         {isD && panelOpen && !chatFull && (
           <aside aria-label="Assistente" style={{ position: "sticky", top: 0, height: "100vh", width: 368, flex: "none", borderLeft: "1px solid var(--line)", background: "var(--surface)" }}>

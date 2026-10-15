@@ -79,7 +79,7 @@ Todas as rotas ficam sob `/api`, falam JSON e exigem sessão, exceto cadastro, l
 | Gastos | `POST /transactions`, `PATCH /transactions/:id`, `POST /budgets`, `PATCH /budgets/:id`, `PATCH /leaks/:id`, `POST /subscriptions/:id/checkin` |
 | Plano | `PUT /priorities/:commitmentId`, `PUT /rollover/choice` |
 | Metas | `POST /goals`, `POST /goals/:id/invites`, `PATCH /goals/:id` |
-| Contas | `POST /openfinance/connect`, `POST /connections/:id/sync`, `POST /connections/:id/renew`, `POST /imports`, `POST /imports/sample`, `PATCH /me` (lembrete), `POST /accounts/:id/entries`, `POST /accounts/:id/statement`, `POST /personal-debts/:id/payments`, `PATCH /category-rules/:id` |
+| Contas | `POST /openfinance/connect`, `POST /connections/:id/sync`, `POST /connections/:id/renew`, `DELETE /connections/:id`, `POST /imports`, `POST /imports/sample`, `PATCH /me` (lembrete), `POST /accounts/:id/entries`, `POST /accounts/:id/statement`, `POST /personal-debts/:id/payments`, `PATCH /category-rules/:id` |
 | Assistente | `GET /assistant/messages`, `POST /assistant/messages`, `POST /assistant/actions` |
 | WhatsApp | `GET /whatsapp`, `POST /whatsapp/link`, `POST /whatsapp/verify`, `PATCH /whatsapp`, `DELETE /whatsapp`, `GET|POST /whatsapp/webhook` |
 

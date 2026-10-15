@@ -4,9 +4,10 @@ import { bankOf } from "@shared/banks";
 import { groupView, manualStatement, type Context } from "@shared/engine";
 import { brl, dateBR, dayMonth, fromIso, monthYear, parseMoney } from "@shared/format";
 import { hasFeature } from "@shared/plans";
+import type { Connection } from "@shared/schema";
 import { api, filesToUpload, useAction, useCtx } from "@/lib/api";
 import { useApp } from "@/lib/app";
-import { Bar, btnPrimary, card, check, I, input, Paywall, PillTabs, TONE } from "@/ui";
+import { Bar, btnPrimary, card, check, I, input, Paywall, PillTabs, Sheet, TONE } from "@/ui";
 
 const TABS = [
   { id: "conectadas", label: "Conectadas", icon: "link" },
@@ -52,13 +53,27 @@ function syncAgo(d: Date | string) {
 }
 
 function Conectadas({ ctx }: { ctx: Context }) {
-  const { go, plan, toast } = useApp();
+  const { go, plan, toast, user } = useApp();
   const [syncing, setSyncing] = useState<string | null>(null);
+  const [disconnecting, setDisconnecting] = useState<Connection | null>(null);
+  const disconnect = useAction((id: string) => api("DELETE", `/api/connections/${id}`), {
+    onDone: () => {
+      setDisconnecting(null);
+      toast("Simulação desconectada. O histórico foi preservado.");
+    },
+  });
   const sync = useAction((id: string) => api("POST", `/api/connections/${id}/sync`), { onDone: () => (setSyncing(null), toast("Conta atualizada")) });
   const renew = useAction((id: string) => api("POST", `/api/connections/${id}/renew`), { onDone: () => toast("Consentimento renovado por 12 meses") });
   const conns = ctx.data.connections;
   return (
     <>
+      <section role="status" style={{ ...card(18, 16), background: "var(--warn-soft)", color: "var(--warn-t)", lineHeight: 1.5 }}>
+        <strong>Open Finance real ainda não está configurado.</strong>
+        <div>As conexões de teste usam dados fictícios e não autorizam acesso ao seu banco. Para usar seus dados reais agora, importe um extrato OFX ou CSV.</div>
+        {(conns.some((c) => c.provider === "sandbox") || ctx.data.accounts.some((a) => a.source === "simulacao")) && (
+          <div style={{ marginTop: 8 }}>Há dados de simulação armazenados que podem afetar seus totais. Desconectar não apaga esse histórico nem corrige automaticamente seus saldos.</div>
+        )}
+      </section>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(300px,1fr))", gap: 12 }}>
         {conns.map((c) => {
           const b = bankOf(c.institution);
@@ -66,7 +81,8 @@ function Conectadas({ ctx }: { ctx: Context }) {
           const expiring = days <= 15;
           const isSync = syncing === c.id;
           const st = isSync ? TONE.muted : c.status === "erro" || expiring ? TONE.warn : TONE.good;
-          const status = isSync ? "Sincronizando…" : c.status === "erro" ? c.lastError || "Não conseguimos atualizar" : `Sincronizado ${syncAgo(c.lastSyncAt)}`;
+          const simulated = c.provider === "sandbox";
+          const status = isSync ? "Atualizando simulação…" : simulated ? "Dados fictícios — sem conexão real" : c.status === "erro" ? c.lastError || "Não conseguimos atualizar" : `Sincronizado ${syncAgo(c.lastSyncAt)}`;
           const action = isSync ? "" : c.status === "erro" ? "Tentar de novo" : expiring ? "Renovar consentimento" : "";
           return (
             <article key={c.id} style={{ ...card(20, 16), display: "flex", flexDirection: "column", gap: 12 }}>
@@ -85,9 +101,9 @@ function Conectadas({ ctx }: { ctx: Context }) {
               </div>
               <div style={{ fontSize: 13, color: "var(--ink2)", display: "flex", gap: 6, alignItems: "center" }}>
                 <I name="verified_user" size={18} />
-                {expiring ? `Consentimento vence em ${days} dias (${dateBR(new Date(c.consentExpiresAt))})` : `Consentimento válido até ${dateBR(new Date(c.consentExpiresAt))}`}
+                {simulated ? "Simulação: nenhuma autorização foi dada no banco." : expiring ? `Consentimento vence em ${days} dias (${dateBR(new Date(c.consentExpiresAt))})` : `Consentimento válido até ${dateBR(new Date(c.consentExpiresAt))}`}
               </div>
-              {action && (
+              {action && (!simulated || user?.isDemo) && (
                 <button
                   onClick={() => {
                     if (c.status === "erro") {
@@ -97,19 +113,42 @@ function Conectadas({ ctx }: { ctx: Context }) {
                   }}
                   style={{ minHeight: 44, borderRadius: 12, border: "1px solid var(--line)", background: "var(--surface)", fontWeight: 800 }}
                 >
-                  {action}
+                  {simulated ? "Atualizar simulação" : action}
                 </button>
               )}
+              <button
+                type="button"
+                aria-label={`Desconectar ${c.institution}`}
+                disabled={disconnect.isPending || isSync || renew.isPending}
+                onClick={() => {
+                  disconnect.reset();
+                  setDisconnecting(c);
+                }}
+                style={{ minHeight: 44, borderRadius: 12, border: "1px solid var(--line)", background: "var(--surface)", color: "var(--bad-t)", fontWeight: 800 }}
+              >
+                Desconectar {simulated ? "simulação" : "banco"}
+              </button>
             </article>
           );
         })}
-        <button onClick={() => go("onb", "banco")} style={{ minHeight: 180, borderRadius: 20, border: "2px dashed var(--line)", background: "none", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8, color: "var(--brand-t)", fontWeight: 800 }}>
+        <button onClick={() => go("onb", user?.isDemo ? "banco" : "upload")} style={{ minHeight: 180, borderRadius: 20, border: "2px dashed var(--line)", background: "none", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8, color: "var(--brand-t)", fontWeight: 800 }}>
           <I name="add_link" size={32} />
-          {conns.length ? "Conectar outro banco" : "Conectar um banco"}
+          {user?.isDemo ? "Simular outra instituição" : "Importar dados reais por arquivo"}
         </button>
       </div>
       {plan === "gratis" && <div style={{ fontSize: 13, color: "var(--ink3)" }}>No plano Grátis, 1 conta via Open Finance. A importação de arquivos é ilimitada.</div>}
-      <div style={{ fontSize: 12, color: "var(--ink3)", lineHeight: 1.5 }}>A conexão é feita por instituição autorizada pelo Banco Central. Nesta versão, a conexão roda em ambiente de testes (sandbox) com dados de exemplo.</div>
+      <Sheet open={!!disconnecting} onClose={() => !disconnect.isPending && setDisconnecting(null)} label={`Desconectar ${disconnecting?.institution || "instituição"}`}>
+        <h2>Desconectar {disconnecting?.institution}?</h2>
+        <p style={{ lineHeight: 1.6 }}>O vínculo será removido do PayPilot. As contas, os lançamentos e os saldos já armazenados serão mantidos, identificados como simulação.</p>
+        <p style={{ lineHeight: 1.6 }}>Não existe autorização bancária real para revogar nesta simulação. Seus dados de exemplo continuarão no histórico e nos totais.</p>
+        {disconnect.error && <p role="alert" style={{ color: "var(--bad-t)" }}>{disconnect.error.message}</p>}
+        <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+          <button disabled={disconnect.isPending} onClick={() => setDisconnecting(null)} style={{ ...btnPrimary(48), background: "var(--surface2)", color: "var(--ink)", padding: "0 20px" }}>Cancelar</button>
+          <button disabled={disconnect.isPending} onClick={() => disconnecting && disconnect.mutate(disconnecting.id)} style={{ ...btnPrimary(48), padding: "0 20px" }}>
+            {disconnect.isPending ? "Desconectando…" : "Confirmar desconexão"}
+          </button>
+        </div>
+      </Sheet>
     </>
   );
 }
@@ -119,7 +158,7 @@ function Importacoes({ ctx }: { ctx: Context }) {
   const remind = user?.prefs?.importReminder ?? true;
   const toggle = useAction(() => api("PATCH", "/api/me", { prefs: { importReminder: !remind } }), { me: true });
   const next = new Date(ctx.today.getFullYear(), ctx.today.getMonth() + (ctx.today.getDate() >= 5 ? 1 : 0), 5);
-  const fileAccounts = ctx.data.accounts.filter((a) => a.source !== "open_finance");
+  const fileAccounts = ctx.data.accounts.filter((a) => a.source !== "open_finance" && a.source !== "simulacao");
   return (
     <>
       <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap", padding: 16, borderRadius: 20, background: "var(--brand-soft)" }}>

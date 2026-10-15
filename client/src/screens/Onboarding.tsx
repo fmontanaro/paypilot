@@ -44,6 +44,7 @@ export default function Onboarding() {
   const prevOf: Partial<Record<Step, Step>> = { cadastro: "boasvindas", entrar: "boasvindas", conectar: user ? undefined : "cadastro", banco: "conectar", consentimento: "banco", redirecionando: "consentimento", sucesso: "banco", upload: "conectar", lendo: "upload", resumo: "upload", raiox: flow.path === "up" ? "resumo" : "sucesso" };
   const back = prevOf[step];
   const to = (s: Step) => go("onb", s);
+  const blockedBank = !!user && !user.isDemo && ["banco", "consentimento", "redirecionando", "sucesso"].includes(step);
   const skip = () => go("inicio");
   return (
     <div style={{ minHeight: "100vh", display: "grid", gridTemplateColumns: wide ? "minmax(360px,42%) minmax(0,1fr)" : "minmax(0,1fr)", background: "var(--bg)" }}>
@@ -80,10 +81,17 @@ export default function Onboarding() {
           {step === "cadastro" && <Cadastro to={to} />}
           {step === "entrar" && <Entrar />}
           {step === "conectar" && <Conectar to={to} />}
-          {step === "banco" && <Banco to={to} />}
-          {step === "consentimento" && <Consentimento to={to} />}
-          {step === "redirecionando" && <Redirecionando to={to} />}
-          {step === "sucesso" && <Sucesso to={to} />}
+          {blockedBank && (
+            <>
+              <h1 style={H1()}>Open Finance real ainda não disponível</h1>
+              <p role="status" style={{ lineHeight: 1.6 }}>Ainda não há um provedor de Open Finance configurado. Não vamos abrir seu banco nem criar saldos de exemplo na sua conta.</p>
+              <button onClick={() => { flow.path = "up"; to("upload"); }} style={primary}>Importar um extrato OFX ou CSV</button>
+            </>
+          )}
+          {!blockedBank && step === "banco" && <Banco to={to} />}
+          {!blockedBank && step === "consentimento" && <Consentimento to={to} />}
+          {!blockedBank && step === "redirecionando" && <Redirecionando to={to} />}
+          {!blockedBank && step === "sucesso" && <Sucesso to={to} />}
           {step === "upload" && <Upload to={to} isM={isM} />}
           {step === "lendo" && <Lendo to={to} />}
           {step === "resumo" && <Resumo to={to} />}
@@ -299,6 +307,7 @@ function Entrar() {
 }
 
 function Conectar({ to }: { to: (s: Step) => void }) {
+  const { user } = useApp();
   const O = [
     { i: "account_balance", t: "Conectar via Open Finance", d: "Automático e seguro, autorizado pelo Banco Central.", pros: ["Atualiza sozinho todo dia", "Pega faturas, limites e datas", "Revogue quando quiser"], cons: ["No plano Grátis, 1 conta"], cta: "Conectar banco", on: () => ((flow.path = "of"), to("banco")), hl: true },
     { i: "upload_file", t: "Enviar extratos e faturas", d: "OFX, CSV ou PDF, para quem prefere não conectar.", pros: ["Nada fica conectado ao banco", "Ilimitado no plano Grátis", "Funciona com qualquer banco"], cons: ["Você envia todo mês (a gente lembra)"], cta: "Enviar arquivos", on: () => ((flow.path = "up"), to("upload")), hl: false },
@@ -306,9 +315,9 @@ function Conectar({ to }: { to: (s: Step) => void }) {
   return (
     <>
       <h1 style={H1()}>Como você quer trazer seus dados?</h1>
-      <p style={{ margin: 0, color: "var(--ink2)", lineHeight: 1.5 }}>Dá para trocar depois. Muita gente começa enviando arquivos e conecta mais tarde.</p>
+      <p style={{ margin: 0, color: "var(--ink2)", lineHeight: 1.5 }}>{user?.isDemo ? "Conta de demonstração: a conexão bancária abaixo é apenas uma simulação, sem acessar bancos reais." : "Importe seus arquivos para usar dados reais. A conexão Open Finance ainda não foi configurada e não está disponível nesta conta."}</p>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(230px,1fr))", gap: 12 }}>
-        {O.map((o) => (
+        {O.filter((o) => user?.isDemo || !o.hl).map((o) => (
           <article key={o.t} style={{ padding: 18, borderRadius: 20, background: "var(--surface)", border: `2px solid ${o.hl ? "var(--brand-t)" : "var(--line)"}`, display: "flex", flexDirection: "column", gap: 12 }}>
             <span style={{ width: 48, height: 48, borderRadius: 14, background: o.hl ? "var(--brand-soft)" : "var(--accent-soft)", color: o.hl ? "var(--brand-t)" : "var(--accent-t)", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <I name={o.i} />
@@ -347,7 +356,7 @@ function Banco({ to }: { to: (s: Step) => void }) {
   const b = BANKS.find((x) => x.id === bank);
   return (
     <>
-      <h1 style={H1()}>Escolha seu banco</h1>
+      <h1 style={H1()}>Escolha uma instituição para simular</h1>
       <label style={{ display: "flex", alignItems: "center", gap: 8, minHeight: 52, padding: "0 14px", borderRadius: 14, border: "1px solid var(--line)", background: "var(--surface)" }}>
         <I name="search" style={{ color: "var(--ink3)" }} />
         <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Buscar banco ou cartão" aria-label="Buscar banco" style={{ flex: 1, minWidth: 0, border: 0, background: "none", outline: "none", fontSize: 16 }} />
@@ -365,7 +374,7 @@ function Banco({ to }: { to: (s: Step) => void }) {
       <div style={foot}>
         <div style={{ fontSize: 13, color: "var(--ink3)", display: "flex", gap: 6, alignItems: "center" }}>
           <I name="verified_user" size={18} />
-          Conexão feita por instituição autorizada pelo Banco Central.
+          Demonstração: dados fictícios, sem conexão ou autorização no banco.
         </div>
         <button
           disabled={!b}
@@ -403,7 +412,8 @@ function Consentimento({ to }: { to: (s: Step) => void }) {
         <I name="sync_alt" style={{ color: "var(--ink3)" }} />
         <span style={{ width: 52, height: 52, borderRadius: 14, background: LOGO_BG() }} />
       </div>
-      <h1 style={H1(26)}>O {b.name} vai compartilhar com o PayPilot</h1>
+      <h1 style={H1(26)}>Simulação de dados do {b.name}</h1>
+      <p role="status" style={{ lineHeight: 1.5 }}>Nenhum dado será solicitado ao banco. Estes itens e valores são exemplos fictícios.</p>
       <div style={{ background: "var(--surface)", border: "1px solid var(--line)", borderRadius: 18, padding: "6px 16px" }}>
         {D.map((c) => (
           <div key={c.t} style={{ display: "flex", gap: 12, alignItems: "flex-start", padding: "12px 0", borderBottom: "1px solid var(--line)" }}>
@@ -432,10 +442,10 @@ function Consentimento({ to }: { to: (s: Step) => void }) {
       </div>
       <div style={foot}>
         <button onClick={() => to("redirecionando")} style={primary}>
-          Continuar no app do {b.name}
+          Criar dados de exemplo do {b.name}
           <I name="open_in_new" />
         </button>
-        <div style={small}>Você vai confirmar a autorização no ambiente seguro do seu banco.</div>
+        <div style={small}>Você permanecerá no PayPilot. Não existe autorização bancária neste modo.</div>
       </div>
     </>
   );
@@ -450,7 +460,7 @@ function Redirecionando({ to }: { to: (s: Step) => void }) {
   const run = () => {
     setErr(null);
     const t0 = Date.now();
-    api<{ found: { n: string; v: string }[] }>("POST", "/api/openfinance/connect", { institution: b.name })
+    api<{ found: { n: string; v: string }[] }>("POST", "/api/openfinance/connect", { institution: b.name, simulation: true })
       .then(async (r) => {
         flow.found = r.found;
         await qc.invalidateQueries({ queryKey: ["snapshot"] });
@@ -493,8 +503,8 @@ function Redirecionando({ to }: { to: (s: Step) => void }) {
         </>
       ) : (
         <>
-          <h1 style={H1(24)}>Levando você ao {b.name} com segurança…</h1>
-          <p style={{ margin: 0, color: "var(--ink2)", maxWidth: 360, lineHeight: 1.5 }}>Confirme o compartilhamento por lá. Depois voltamos sozinhos para cá.</p>
+          <h1 style={H1(24)}>Criando exemplos de {b.name}…</h1>
+          <p style={{ margin: 0, color: "var(--ink2)", maxWidth: 360, lineHeight: 1.5 }}>Esta é uma simulação na conta de demonstração. Nenhum banco será aberto.</p>
           <div style={{ fontSize: 12, color: "var(--ink3)", maxWidth: 360 }}>Nesta versão, a conexão roda em ambiente de testes (sandbox) com dados de exemplo.</div>
         </>
       )}
@@ -513,9 +523,9 @@ function Sucesso({ to }: { to: (s: Step) => void }) {
         <span style={{ width: 88, height: 88, borderRadius: "50%", background: "var(--good-soft)", color: "var(--good-t)", display: "flex", alignItems: "center", justifyContent: "center" }}>
           <I name="task_alt" size={46} />
         </span>
-        <h1 style={H1()}>{b.name} conectado!</h1>
+        <h1 style={H1()}>Simulação de {b.name} criada</h1>
         <p style={{ margin: 0, color: "var(--ink2)", lineHeight: 1.5 }}>
-          Encontramos {contas} {contas === 1 ? "conta" : "contas"} e {cards} {cards === 1 ? "cartão" : "cartões"}, com 3 meses de histórico. Atualizamos sozinhos todo dia.
+          Criamos {contas} {contas === 1 ? "conta" : "contas"} e {cards} {cards === 1 ? "cartão" : "cartões"} de exemplo, com histórico fictício. Não são dados do banco e não há sincronização bancária automática.
         </p>
         <div style={{ width: "100%", background: "var(--surface)", border: "1px solid var(--line)", borderRadius: 18, padding: "4px 16px", textAlign: "left" }}>
           {found.map((f) => (

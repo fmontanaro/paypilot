@@ -15,6 +15,7 @@ import { deleteUserData, endSession, loadAppData, publicUser, todayBR, userSessi
 import { afterImport, importFile } from "./ingestion";
 import { sampleFiles } from "./seed/samples";
 import { BANKS, provider } from "./openfinance";
+import { canUseSandbox, disconnectSandboxConnection, REAL_OPEN_FINANCE_UNAVAILABLE } from "./openfinance/disconnect";
 import { ChatLimitError, handleAction, handleMessage, history } from "./assistant";
 import { getLink, onIncoming, startLink, verifyLink, VERIFY_TOKEN } from "./whatsapp";
 
@@ -361,7 +362,8 @@ export function registerRoutes(app: Express) {
     "/api/openfinance/connect",
     auth,
     wrap(async (req, res) => {
-      const b = z.object({ institution: z.string().min(2).max(60) }).parse(req.body);
+      if (provider.id === "sandbox" && !canUseSandbox(req.user!)) throw new HttpError(503, REAL_OPEN_FINANCE_UNAVAILABLE);
+      const b = z.object({ institution: z.string().min(2).max(60), simulation: z.literal(true) }).parse(req.body);
       const current = await db().select().from(S.connections).where(eq(S.connections.userId, uid(req)));
       if (current.length >= 1 && !hasFeature(req.user!.plan as PlanId, "multi_open_finance")) throw new HttpError(402, "No plano Grátis, 1 conta via Open Finance. A importação de arquivos é ilimitada.");
       if (current.some((c) => c.institution === b.institution)) throw new HttpError(409, `${b.institution} já está conectado.`);
@@ -374,7 +376,8 @@ export function registerRoutes(app: Express) {
     "/api/connections/:id/sync",
     auth,
     wrap(async (req, res) => {
-      await owned(S.connections, req.params.id, uid(req));
+      const connection = await owned<S.Connection>(S.connections, req.params.id, uid(req));
+      if (connection.provider === "sandbox" && !canUseSandbox(req.user!)) throw new HttpError(503, REAL_OPEN_FINANCE_UNAVAILABLE);
       res.json(await provider.sync(uid(req), req.params.id));
     }),
   );
@@ -383,7 +386,8 @@ export function registerRoutes(app: Express) {
     "/api/connections/:id/renew",
     auth,
     wrap(async (req, res) => {
-      await owned(S.connections, req.params.id, uid(req));
+      const connection = await owned<S.Connection>(S.connections, req.params.id, uid(req));
+      if (connection.provider === "sandbox" && !canUseSandbox(req.user!)) throw new HttpError(503, REAL_OPEN_FINANCE_UNAVAILABLE);
       const t = todayBR();
       const [c] = await db()
         .update(S.connections)
@@ -391,6 +395,18 @@ export function registerRoutes(app: Express) {
         .where(eq(S.connections.id, req.params.id))
         .returning();
       res.json(c);
+    }),
+  );
+
+  app.delete(
+    "/api/connections/:id",
+    auth,
+    wrap(async (req, res) => {
+      const connection = await owned<S.Connection>(S.connections, req.params.id, uid(req));
+      if (connection.provider !== "sandbox") throw new HttpError(503, "É necessário configurar a revogação no provedor antes de desconectar uma conta real.");
+      const removed = await disconnectSandboxConnection(db(), uid(req), connection.id);
+      if (!removed) throw new HttpError(404, "Conexão não encontrada.");
+      res.json({ ok: true, historyPreserved: true, simulated: true });
     }),
   );
 
