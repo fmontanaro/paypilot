@@ -20,6 +20,7 @@ import { contributionInput, GoalContributionError, recordGoalContribution } from
 import { createIncome, deleteIncome, IncomeError, listIncomes, updateIncome } from "./incomes";
 import { ChatLimitError, handleAction, handleMessage, history } from "./assistant";
 import { getLink, onIncoming, startLink, verifyLink, VERIFY_TOKEN } from "./whatsapp";
+import { GoalEditError, updateGoal } from "./goals/edit";
 
 type H = (req: Request, res: Response) => Promise<unknown>;
 /** Encapsula erros: zod vira 400, o resto vira 500 com mensagem simples. */
@@ -27,7 +28,7 @@ const wrap = (h: H) => (req: Request, res: Response, next: NextFunction) =>
   h(req, res).catch((e) => {
     if (e instanceof z.ZodError) return res.status(400).json({ error: e.issues[0]?.message || "Dados inválidos." });
     if (e instanceof ChatLimitError) return res.status(402).json({ error: e.message, need: "plus" });
-    if (e instanceof HttpError || e instanceof GoalContributionError || e instanceof IncomeError) return res.status(e.status).json({ error: e.message });
+    if (e instanceof HttpError || e instanceof GoalContributionError || e instanceof GoalEditError || e instanceof IncomeError) return res.status(e.status).json({ error: e.message });
     next(e);
   });
 
@@ -348,17 +349,9 @@ export function registerRoutes(app: Express) {
   app.patch(
     "/api/goals/:id",
     auth,
-    requirePlan("metas_grupo"),
+    requirePlan("metas"),
     wrap(async (req, res) => {
-      const b = z.object({ splitMode: z.enum(["igual", "prop"]).optional(), myPrivacy: z.enum(["contrib", "cats"]).optional() }).parse(req.body);
-      const g = await owned<S.Goal>(S.goals, req.params.id, uid(req));
-      const [n] = await db()
-        .update(S.goals)
-        .set({ splitMode: b.splitMode ?? g.splitMode, myPrivacy: b.myPrivacy ?? g.myPrivacy })
-        .where(eq(S.goals.id, g.id))
-        .returning();
-      if (b.myPrivacy) await db().update(S.goalMembers).set({ privacy: b.myPrivacy }).where(and(eq(S.goalMembers.goalId, g.id), eq(S.goalMembers.isMe, true)));
-      res.json(n);
+      res.json(await updateGoal(db(), req.user!, req.params.id, req.body, todayBR()));
     }),
   );
 

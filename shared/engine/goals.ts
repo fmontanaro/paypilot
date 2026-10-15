@@ -24,7 +24,9 @@ export function goalUntil(g: Pick<Goal, "startMonth" | "months">): Date {
 
 export function goalView(g: Goal, members: GoalMember[], today: Date): GoalView {
   const until = goalUntil(g);
-  const monthsLeft = Math.max(1, (until.getFullYear() - today.getFullYear()) * 12 + until.getMonth() - today.getMonth() + 1);
+  const [startYear, startMonth] = g.startMonth.split("-").map(Number);
+  const firstContribution = Math.max(startYear * 12 + startMonth - 1, today.getFullYear() * 12 + today.getMonth());
+  const monthsLeft = Math.max(1, until.getFullYear() * 12 + until.getMonth() - firstContribution + 1);
   const mine = members.filter((m) => m.goalId === g.id);
   const saved = g.isGroup && mine.length ? sum(mine.map((m) => m.saved)) : g.saved;
   return {
@@ -76,7 +78,7 @@ export function goalCalc(target: number, months: number, chosen: MoneySource[], 
   const monthly = months > 0 ? target / months : target;
   const covered = round2(sum(chosen.map((s) => s.amount)));
   const gap = Math.max(0, monthly - covered);
-  const until = addMonths(new Date(today.getFullYear(), today.getMonth(), 1), months);
+  const until = addMonths(new Date(today.getFullYear(), today.getMonth(), 1), Math.max(0, months - 1));
   let delayMonths = 0;
   let trade = "esta meta não atrasa o plano de quitação.";
   if (gap > 0 && debts.length) {

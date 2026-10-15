@@ -129,6 +129,10 @@ Para uma fatura a pagar, compara até 3 rotas com o crédito atual:
 
 ## Metas (`goals.ts`)
 
+- **Início e prazo:** o mês de início é preservado na edição. O mês final é inclusivo: uma meta de janeiro a março tem três contribuições. Um prazo alterado deve ir do mês atual em diante, entre 1 e 120 meses desde o início original. O prazo original pode ser mantido mesmo vencido ao editar os outros detalhes.
+- **Esforço restante:** divide o que falta guardar pelos meses entre o maior de início/mês atual e o mês final, incluindo ambos. Metas vencidas usam pelo menos um mês; objetivos já atingidos têm esforço zero.
+- **Edição:** nome, ícone, objetivo e prazo não alteram os valores já guardados, os saldos dos participantes nem registros anteriores. Reduzir o objetivo abaixo do guardado é permitido.
+
 - **Valor mensal:** (valor − já guardado) ÷ meses.
 - **De onde tirar:** assinaturas sem uso abertas no caçador; e para cada teto supérfluo (restaurantes, compras, lazer), baixar `⌊teto ÷ 6 ÷ 100⌋ × 100`.
 - **Trade-off:** o que faltar sai do valor mensal para dívidas; o motor refaz a quitação com esse valor a menos durante o prazo da meta e mostra quantos meses a dívida mais cara atrasa.

@@ -7,6 +7,7 @@ import { api, useAction, useCtx } from "@/lib/api";
 import { useApp } from "@/lib/app";
 import { Bar, btnPrimary, card, I, input, labelCol, nunito, Paywall, PillTabs, Segmented } from "@/ui";
 import { RegistrarValorGuardado } from "./metas/RegistrarValorGuardado";
+import { EditarMeta } from "./metas/EditarMeta";
 
 const TABS = [
   { id: "lista", label: "Minhas metas", icon: "flag" },
@@ -63,6 +64,11 @@ export default function Metas() {
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                   {(!g.isGroup || hasFeature(plan, "metas_grupo")) && <RegistrarValorGuardado goalId={g.id} goalName={g.name} saved={g.saved} />}
+                  {(() => {
+                    const source = ctx.data.goals.find((goal) => goal.id === g.id);
+                    const canEdit = source?.userId === ctx.data.user.id && (!g.isGroup || hasFeature(plan, "metas_grupo"));
+                    return canEdit && source ? <EditarMeta goal={source} saved={g.saved} members={ctx.data.goalMembers} today={ctx.today} currentMonth={ctx.month} availableIcons={ctx.data.goals.map((goal) => goal.icon)} /> : null;
+                  })()}
                   {g.isGroup && (
                     <button onClick={() => go("metas", "grupo")} style={{ minHeight: 44, borderRadius: 12, border: "1px solid var(--line)", background: "var(--surface)", fontWeight: 800 }}>
                       Ver participantes
@@ -193,7 +199,7 @@ function Grupo({ ctx }: { ctx: Context }) {
   if (!g) return <div style={{ ...card(22, 18), color: "var(--ink2)" }}>Você ainda não tem meta em grupo. Crie uma meta e convide quem vai dividir com você.</div>;
   const v = goalView(g, ctx.data.goalMembers, ctx.today);
   const members = ctx.data.goalMembers.filter((m) => m.goalId === g.id).sort((a, b) => Number(b.isMe) - Number(a.isMe));
-  const shares = groupShares(members, (g.target - v.saved) / Math.max(1, g.months - 1) || v.monthly, g.splitMode as "igual" | "prop");
+  const shares = groupShares(members, v.monthly, g.splitMode as "igual" | "prop");
   const COLORS = ["var(--brand)", "var(--accent)", "var(--warn)", "var(--good)"];
   const other = members.find((m) => !m.isMe);
   return (
